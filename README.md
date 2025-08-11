@@ -1,6 +1,7 @@
 # Node90 Firmware
 
 MCU: PIC32MX795F512H
+
 PHY: LAN8720A
 
 # Project
