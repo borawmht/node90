@@ -2,13 +2,13 @@
 
 manifest_file_version: 1.0.0
 project: node90
-creation_date: 2025-08-10T19:10:48.890-04:00[America/New_York]
-operating_system: Windows 10
+creation_date: 2025-08-11T11:20:35.291-04:00[America/New_York]
+operating_system: Linux
 mcc_mode: IDE
-mcc_mode_version: v6.20
+mcc_mode_version: v6.25
 device_name: PIC32MX795F512H
 compiler: XC32 4.60
-mcc_version: 5.5.1
+mcc_version: 5.5.2
 mcc_core_version: 5.7.1
 content_manager_version: 5.0.1
 is_mcc_offline: false

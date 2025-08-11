@@ -10,7 +10,9 @@
 #include "config/default/library/tcpip/src/tcpip_private.h"
 
 TCPIP_NET_HANDLE netH = NULL;
+TCPIP_STACK_PROCESS_HANDLE packetHandlerHandle = NULL;
 
+bool is_stack_ready = false;
 bool has_ip = false;
 bool is_ready = false;
 bool link_up = false;
@@ -18,12 +20,94 @@ bool link_up = false;
 uint8_t mac_addr[6] = {0,0,0,0,0,0};
 IPV4_ADDR ip_address = {0};
 
+// Packet handler function type
+typedef bool (*ethernet_packet_handler_t)(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam);
+
+// Packet handler functions
+bool ethernet_register_packet_handler(ethernet_packet_handler_t handler, const void* handlerParam);
+bool ethernet_deregister_packet_handler(void);
+
+bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam) {
+    // Process the incoming packet
+    // frameType contains the Ethernet frame type (0x0800 for IPv4, 0x0806 for ARP, etc.)
+    
+    // Example: Check if it's an IPv4 packet
+    if (frameType == 0x0800) {
+        //SYS_CONSOLE_PRINT("ethernet: received IPv4 packet, length: %d\r\n", rxPkt->totTransportLen);
+        
+        // Access the packet data
+        uint8_t* packetData = (uint8_t*)rxPkt->pMacLayer;
+        uint32_t packetLen = rxPkt->totTransportLen;
+        
+        // Process the packet data here...
+        
+        // Return true if you processed the packet (TCP/IP stack won't process it further)
+        // Return false if you want the TCP/IP stack to process it normally
+        return false; // Let the stack handle it normally
+    }
+    
+    // For other frame types, let the stack handle them
+    return false;
+}
+
+// New packet handler registration function
+bool ethernet_register_packet_handler(ethernet_packet_handler_t handler, const void* handlerParam) {
+    if (netH == NULL) {
+        SYS_CONSOLE_PRINT("ethernet: cannot register handler - network not initialized\r\n");
+        return false;
+    }
+    
+    if (packetHandlerHandle != NULL) {
+        SYS_CONSOLE_PRINT("ethernet: packet handler already registered\r\n");
+        return false;
+    }
+    
+    packetHandlerHandle = TCPIP_STACK_PacketHandlerRegister(netH, handler, handlerParam);
+    if (packetHandlerHandle == NULL) {
+        SYS_CONSOLE_PRINT("ethernet: failed to register packet handler\r\n");
+        return false;
+    }
+    
+    SYS_CONSOLE_PRINT("ethernet: packet handler registered successfully\r\n");
+    return true;
+}
+
+// New packet handler deregistration function
+bool ethernet_deregister_packet_handler(void) {
+    if (packetHandlerHandle == NULL) {
+        SYS_CONSOLE_PRINT("ethernet: no packet handler registered\r\n");
+        return false;
+    }
+    
+    bool result = TCPIP_STACK_PacketHandlerDeregister(netH, packetHandlerHandle);
+    if (result) {
+        packetHandlerHandle = NULL;
+        SYS_CONSOLE_PRINT("ethernet: packet handler deregistered successfully\r\n");
+    } else {
+        SYS_CONSOLE_PRINT("ethernet: failed to deregister packet handler\r\n");
+    }
+    
+    return result;
+}
+
 void ethernet_task(void *pvParameters){
     SYS_CONSOLE_PRINT("ethernet: start task\r\n");
     while(1){
+        if(!is_stack_ready ){
+            SYS_STATUS stack_status = TCPIP_STACK_Status(sysObj.tcpip);
+            if(stack_status == SYS_STATUS_READY){
+                SYS_CONSOLE_PRINT("ethernet: stack is ready\r\n");
+                netH = TCPIP_STACK_IndexToNet(0);                  
+                is_stack_ready = true;
+                // Register the packet handler (equivalent to esp_eth_update_input_path)
+                if(packetHandlerHandle == NULL){
+                    ethernet_register_packet_handler(ethernet_packet_handler, NULL);
+                }
+            }
+        }
         if(!is_ready && TCPIP_STACK_NetIsReady(netH)){
             SYS_CONSOLE_PRINT("ethernet: is ready\r\n");
-            is_ready = true;
+            is_ready = true;            
             TCPIP_STACK_NetAddressMac(netH);
             memcpy(mac_addr, (uint8_t*)TCPIP_STACK_NetAddressMac(netH), 6);
             SYS_CONSOLE_PRINT("ethernet: MAC address: %02X:%02X:%02X:%02X:%02X:%02X\r\n",
@@ -41,16 +125,14 @@ void ethernet_task(void *pvParameters){
             ip_address.Val = TCPIP_STACK_NetAddress(netH);
             if(ip_address.Val != 0) has_ip = true;                
             SYS_CONSOLE_PRINT("ethernet: IP address changed to %d.%d.%d.%d\r\n",
-                    ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
+                    ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);            
         }
         vTaskDelay(100/portTICK_PERIOD_MS);
     }
 }
 
 void ethernet_init() {    
-    SYS_CONSOLE_PRINT("ethernet: init\r\n"); 
-
-    netH = TCPIP_STACK_IndexToNet(0);  
+    SYS_CONSOLE_PRINT("ethernet: init\r\n");     
         
     (void) xTaskCreate(
         (TaskFunction_t) ethernet_task,
