@@ -11,18 +11,22 @@
 
 // Example resource handlers
 bool coap_hello_handler(const coap_message_t *request, coap_message_t *response) {
-    SYS_CONSOLE_PRINT("coap: hello_handler called\r\n");
+    // SYS_CONSOLE_PRINT("coap_server: hello_handler\r\n");
     
     const char *hello_msg = "Hello from CoAP server!";
     response->code = COAP_CODE_CONTENT;
     response->payload_length = strlen(hello_msg);
     memcpy(response->payload, hello_msg, response->payload_length);
+    response->payload[response->payload_length] = '\0';
     
-    SYS_CONSOLE_PRINT("coap: hello_handler completed, payload_length: %d\r\n", response->payload_length);
+    // SYS_CONSOLE_PRINT("coap: hello_handler completed, payload_length: %d\r\n", response->payload_length);
+    SYS_CONSOLE_PRINT("coap_server: response: %s\r\n", response->payload);
     return true;
 }
 
 bool coap_status_handler(const coap_message_t *request, coap_message_t *response) {
+    // SYS_CONSOLE_PRINT("coap_server: status_handler\r\n");
+    
     char status_msg[128];
     snprintf(status_msg, sizeof(status_msg), 
              "{\"status\":\"ok\",\"ip\":\"%d.%d.%d.%d\",\"link\":%s}",
@@ -33,6 +37,9 @@ bool coap_status_handler(const coap_message_t *request, coap_message_t *response
     response->code = COAP_CODE_CONTENT;
     response->payload_length = strlen(status_msg);
     memcpy(response->payload, status_msg, response->payload_length);
+    response->payload[response->payload_length] = '\0';
+    
+    SYS_CONSOLE_PRINT("coap_server: response: %s\r\n", response->payload);
     return true;
 } 
 

@@ -40,8 +40,7 @@ def get(ip_address,resource,timeout):
 
 
 if __name__ == "__main__":
-    # get('192.168.1.29', '/', 1)
-    time.sleep(1)
-    get('192.168.1.29', '/status', 1)
-    time.sleep(1)
+    get('192.168.1.29', '/', 1)
+    time.sleep(0.25)
+    get('192.168.1.29', '/status', 1)    
     

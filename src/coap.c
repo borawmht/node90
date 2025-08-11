@@ -122,8 +122,8 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: building message, type: %d, code: %d, options_count: %d\r\n", 
-                      message->type, message->code, message->options_count);
+    // SYS_CONSOLE_PRINT("coap: building message, type: %d, code: %d, options_count: %d\r\n", 
+    //                   message->type, message->code, message->options_count);
     
     uint16_t offset = 0;
     
@@ -133,13 +133,13 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
     *(uint16_t*)(&buffer[offset]) = TCPIP_Helper_htons(message->message_id);
     offset += 2;
     
-    SYS_CONSOLE_PRINT("coap: header built, offset: %d\r\n", offset);
+    // SYS_CONSOLE_PRINT("coap: header built, offset: %d\r\n", offset);
     
     // Build token
     if (message->token_length > 0) {
         memcpy(&buffer[offset], message->token, message->token_length);
         offset += message->token_length;
-        SYS_CONSOLE_PRINT("coap: token built, offset: %d\r\n", offset);
+        // SYS_CONSOLE_PRINT("coap: token built, offset: %d\r\n", offset);
     }
     
     // Build options (simplified)
@@ -148,17 +148,33 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         uint16_t current_option_number = message->options[i].number;
         uint16_t option_length = message->options[i].length;
         
-        SYS_CONSOLE_PRINT("coap: building option %d, number: %d, length: %d\r\n", 
-                          i, current_option_number, option_length);
+        // SYS_CONSOLE_PRINT("coap: building option %d, number: %d, length: %d\r\n", 
+        //                   i, current_option_number, option_length);
         
         // Calculate delta (difference from previous option number)
         uint16_t option_delta = current_option_number - option_number;
         
-        // Build option header (simplified - assume small deltas and lengths)
+        // SYS_CONSOLE_PRINT("coap: option_delta: %d, option_length: %d\r\n", option_delta, option_length);
+        
+        // Build option header with proper extended encoding support
         if (option_delta < 13 && option_length < 13) {
+            // Standard encoding
             buffer[offset++] = (option_delta << 4) | option_length;
+        } else if (option_delta < 269 && option_length < 13) {
+            // Extended delta encoding
+            buffer[offset++] = (13 << 4) | option_length;
+            buffer[offset++] = option_delta - 13;
+        } else if (option_delta < 13 && option_length < 269) {
+            // Extended length encoding
+            buffer[offset++] = (option_delta << 4) | 13;
+            buffer[offset++] = option_length - 13;
+        } else if (option_delta < 269 && option_length < 269) {
+            // Both extended
+            buffer[offset++] = (13 << 4) | 13;
+            buffer[offset++] = option_delta - 13;
+            buffer[offset++] = option_length - 13;
         } else {
-            SYS_CONSOLE_PRINT("coap: option too large, skipping\r\n");
+            // SYS_CONSOLE_PRINT("coap: option too large, skipping\r\n");
             continue;  // Skip options that are too large for now
         }
         
@@ -169,7 +185,7 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         }
         
         option_number = current_option_number;
-        SYS_CONSOLE_PRINT("coap: option built, offset: %d\r\n", offset);
+        // SYS_CONSOLE_PRINT("coap: option built, offset: %d\r\n", offset);
     }
     
     // Add payload marker if there's payload
@@ -177,11 +193,11 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         buffer[offset++] = 0xFF;
         memcpy(&buffer[offset], message->payload, message->payload_length);
         offset += message->payload_length;
-        SYS_CONSOLE_PRINT("coap: payload added, offset: %d\r\n", offset);
+        // SYS_CONSOLE_PRINT("coap: payload added, offset: %d\r\n", offset);
     }
     
     *length = offset;
-    SYS_CONSOLE_PRINT("coap: message built successfully, total length: %d\r\n", *length);
+    // SYS_CONSOLE_PRINT("coap: message built successfully, total length: %d\r\n", *length);
     return true;
 }
 
@@ -242,8 +258,8 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         return false;  // Not a CoAP packet
     }
     
-    SYS_CONSOLE_PRINT("coap: packet from %d.%d.%d.%d:%d\r\n", 
-                      src_ip[0], src_ip[1], src_ip[2], src_ip[3], src_port);
+    // SYS_CONSOLE_PRINT("coap: packet from %d.%d.%d.%d:%d\r\n", 
+    //                   src_ip[0], src_ip[1], src_ip[2], src_ip[3], src_port);
     
     // Parse CoAP message
     coap_message_t request;
@@ -252,15 +268,15 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: %s request, code: %d, options_count: %d\r\n", 
-                      request.type == COAP_TYPE_CON ? "CON" : "NON", request.code, request.options_count);
+    // SYS_CONSOLE_PRINT("coap: %s request, code: %d, options_count: %d\r\n", 
+    //                   request.type == COAP_TYPE_CON ? "CON" : "NON", request.code, request.options_count);
     
     // Debug: Check server status
-    SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
+    // SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
     
     // Handle the request
     if (coap_ctx.is_server) {
-        SYS_CONSOLE_PRINT("coap: creating response\r\n");
+        // SYS_CONSOLE_PRINT("coap: creating response\r\n");
         
         coap_message_t response = {0};
         response.version = 1;
@@ -273,20 +289,21 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         // Parse the URI from the request
         char request_uri[64];
         if (coap_parse_uri(&request, request_uri, sizeof(request_uri))) {
-            SYS_CONSOLE_PRINT("coap: parsed URI: '%s'\r\n", request_uri);
+            // SYS_CONSOLE_PRINT("coap: parsed URI: '%s'\r\n", request_uri);
         } else {
-            SYS_CONSOLE_PRINT("coap: failed to parse URI, using default\r\n");
+            // SYS_CONSOLE_PRINT("coap: failed to parse URI, using default\r\n");
             strcpy(request_uri, "/");
         }
         
         // Find matching resource
         bool resource_found = false;
         for (int i = 0; i < coap_resource_count; i++) {
-            SYS_CONSOLE_PRINT("coap: checking resource '%s' against '%s'\r\n", coap_resources[i].path, request_uri);
+            // SYS_CONSOLE_PRINT("coap: checking resource '%s' against '%s'\r\n", coap_resources[i].path, request_uri);
             if (strcmp(coap_resources[i].path, request_uri) == 0) {
-                SYS_CONSOLE_PRINT("coap: calling resource handler\r\n");
+                // SYS_CONSOLE_PRINT("coap: calling resource handler\r\n");
+                SYS_CONSOLE_PRINT("coap: resource handler: %s\r\n", coap_resources[i].path);
                 resource_found = coap_resources[i].handler(&request, &response);
-                SYS_CONSOLE_PRINT("coap: resource handler returned: %d\r\n", resource_found);
+                // SYS_CONSOLE_PRINT("coap: resource handler returned: %d\r\n", resource_found);
                 break;
             }
         }
@@ -296,16 +313,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
             response.code = COAP_CODE_NOT_FOUND;
         }
         
-        // Add Content-Format option for text responses
-        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
-            response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
-            response.options[response.options_count].length = 1;
-            response.options[response.options_count].value = (uint8_t*)&(uint8_t){COAP_CONTENT_FORMAT_TEXT_PLAIN};
-            response.options_count++;
-            SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
-        }
-        
-        // Add URI_PATH option to response (echo back the requested URI)
+        // Add URI_PATH option to response first (lower option number)
         if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
             // Remove leading slash for the option value
             const char *path_segment = request_uri;
@@ -318,11 +326,20 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
                 response.options[response.options_count].length = strlen(path_segment);
                 response.options[response.options_count].value = (uint8_t*)path_segment;
                 response.options_count++;
-                SYS_CONSOLE_PRINT("coap: added URI_PATH option: '%s'\r\n", path_segment);
+                // SYS_CONSOLE_PRINT("coap: added URI_PATH option: '%s'\r\n", path_segment);
             }
         }
         
-        SYS_CONSOLE_PRINT("coap: calling send_packet_response\r\n");
+        // Add Content-Format option for text responses (higher option number)
+        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
+            response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
+            response.options[response.options_count].length = 1;
+            response.options[response.options_count].value = (uint8_t*)&(uint8_t){COAP_CONTENT_FORMAT_TEXT_PLAIN};
+            response.options_count++;
+            // SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
+        }
+        
+        // SYS_CONSOLE_PRINT("coap: calling send_packet_response\r\n");
         
         // Send response
         coap_packet_info_t packet_info = {
@@ -333,7 +350,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         memcpy(packet_info.dst_ip, src_ip, 4);
         
         bool send_result = coap_send_packet_response(src_mac, &packet_info, &response);
-        SYS_CONSOLE_PRINT("coap: send_packet_response returned: %d\r\n", send_result);
+        // SYS_CONSOLE_PRINT("coap: send_packet_response returned: %d\r\n", send_result);
     } else {
         SYS_CONSOLE_PRINT("coap: not in server mode, ignoring request\r\n");
     }
@@ -356,7 +373,7 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: response built, len: %d\r\n", coap_length);
+    // SYS_CONSOLE_PRINT("coap: response built, len: %d\r\n", coap_length);
     
     // Create UDP packet (IP + UDP headers + CoAP payload)
     uint8_t udp_packet[1518];
@@ -397,7 +414,7 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     memcpy(&udp_packet[udp_packet_length], coap_buffer, coap_length);
     udp_packet_length += coap_length;
     
-    SYS_CONSOLE_PRINT("coap: UDP packet created, length: %d\r\n", udp_packet_length);
+    // SYS_CONSOLE_PRINT("coap: UDP packet created, length: %d\r\n", udp_packet_length);
     
     // Send the packet
     if (!ethernet_send_to(src_mac, udp_packet, udp_packet_length, 0x0800)) {
@@ -405,7 +422,7 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: response sent successfully\r\n");
+    // SYS_CONSOLE_PRINT("coap: response sent successfully\r\n");
     return true;
 }
 
@@ -479,7 +496,7 @@ void coap_task(void *pvParameters) {
     
     while (1) {
         if (coap_packet_ready) {
-            SYS_CONSOLE_PRINT("coap: processing packet\r\n");
+            // SYS_CONSOLE_PRINT("coap: processing packet\r\n");
             
             coap_packet_ready = false;
             
@@ -489,10 +506,10 @@ void coap_task(void *pvParameters) {
                              coap_current_packet.src_port, coap_current_packet.dst_port,
                              coap_current_packet.src_mac);
             
-            SYS_CONSOLE_PRINT("coap: packet processed\r\n");
+            // SYS_CONSOLE_PRINT("coap: packet processed\r\n");
         }
         
-        vTaskDelay(1 / portTICK_PERIOD_MS);  // Small delay
+        vTaskDelay(10 / portTICK_PERIOD_MS);  // Small delay
     }
 }
 

@@ -108,8 +108,8 @@ void APP_Initialize ( void )
  */
 
 // bool send_test_packet = true;
-uint8_t send_test_packet = 2;
-uint8_t app_counter = 0;
+uint8_t send_test_packet = 0;
+uint8_t app_counter = 255;
 void APP_Tasks ( void )
 {
     LED_STAT_Toggle(); 
