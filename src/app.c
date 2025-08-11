@@ -29,6 +29,7 @@
 
 #include "app.h"
 #include "ethernet.h"
+#include "coap.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -94,6 +95,7 @@ void APP_Initialize ( void )
 
     SYS_CONSOLE_PRINT("Initialize Application\r\n");
     ethernet_init();    
+    coap_init();    
 }
 
 

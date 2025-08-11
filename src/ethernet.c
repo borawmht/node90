@@ -6,8 +6,10 @@
 */
 
 #include "ethernet.h"
+#include "coap_server.h"
 #include "definitions.h"
 #include "config/default/library/tcpip/src/tcpip_private.h"
+#include "third_party/rtos/FreeRTOS/Source/include/queue.h"
 
 TCPIP_NET_HANDLE netH = NULL;
 TCPIP_STACK_PROCESS_HANDLE packetHandlerHandle = NULL;
@@ -20,6 +22,11 @@ bool link_up = false;
 uint8_t mac_addr[6] = {0,0,0,0,0,0};
 IPV4_ADDR ip_address = {0};
 
+typedef struct {
+    TCPIP_MAC_ETHERNET_HEADER header;
+    uint8_t * payload;
+} packet_t;
+
 // Packet handler function type
 typedef bool (*ethernet_packet_handler_t)(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam);
 
@@ -27,6 +34,7 @@ typedef bool (*ethernet_packet_handler_t)(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKE
 bool ethernet_register_packet_handler(ethernet_packet_handler_t handler, const void* handlerParam);
 bool ethernet_deregister_packet_handler(void);
 
+// Ethernet packet handler
 bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam) {
     // Process the incoming packet
     // frameType contains the Ethernet frame type (0x0800 for IPv4, 0x0806 for ARP, etc.)
@@ -38,8 +46,46 @@ bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uin
         // Access the packet data
         uint8_t* packetData = (uint8_t*)rxPkt->pMacLayer;
         uint32_t packetLen = rxPkt->totTransportLen;
+
+        packet_t * packet = (packet_t *)packetData;
+        //SYS_CONSOLE_PRINT("ethernet: packet type: %04x\r\n", TCPIP_Helper_ntohs(packet->header.Type));
+        //SYS_CONSOLE_PRINT("ethernet: packet length: %d\r\n", packetLen);
         
-        // Process the packet data here...
+        // Parse IP header to check if it's UDP
+        if (packetLen >= 28) {  // Ethernet(14) + IP(20) + UDP(8) minimum
+            uint8_t protocol = packetData[23];  // IP protocol field
+            if (protocol == 17) {  // UDP protocol
+                // Parse UDP header
+                uint16_t src_port = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[34]));
+                uint16_t dst_port = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[36]));
+                
+                // Check if it's a CoAP packet (port 5683)
+                if (src_port == 5683 || dst_port == 5683) {
+                    //SYS_CONSOLE_PRINT("ethernet: found CoAP packet\r\n");
+                    
+                    // Extract IP addresses
+                    uint8_t src_ip[4], dst_ip[4];
+                    memcpy(src_ip, &packetData[26], 4);
+                    memcpy(dst_ip, &packetData[30], 4);
+                    
+                    // Extract UDP payload (CoAP data)
+                    uint8_t* udp_payload = &packetData[42];
+                    uint16_t udp_length = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[38])) - 8;  // UDP length - header
+                    
+                    // Queue the packet for processing instead of handling it directly
+                    if (coap_queue_packet(udp_payload, udp_length, src_ip, dst_ip, src_port, dst_port, packet->header.SourceMACAddr.v)) {
+                        //SYS_CONSOLE_PRINT("ethernet: CoAP packet queued\r\n");
+                        // Return FALSE to let TCP/IP stack also process it
+                        // This prevents double processing
+                        return false;
+                    } else {
+                        SYS_CONSOLE_PRINT("ethernet: failed to queue CoAP packet\r\n");
+                    }
+                }
+            }
+        }
+        
+        // Process other packet data here...
         
         // Return true if you processed the packet (TCP/IP stack won't process it further)
         // Return false if you want the TCP/IP stack to process it normally
@@ -90,6 +136,12 @@ bool ethernet_deregister_packet_handler(void) {
     return result;
 }
 
+void ethernet_services_init(void){
+    // Initialize the services
+    SYS_CONSOLE_PRINT("ethernet: services init\r\n");
+    coap_server_init(); // Initialize CoAP server
+}
+
 void ethernet_task(void *pvParameters){
     SYS_CONSOLE_PRINT("ethernet: start task\r\n");
     while(1){
@@ -125,7 +177,8 @@ void ethernet_task(void *pvParameters){
             ip_address.Val = TCPIP_STACK_NetAddress(netH);
             if(ip_address.Val != 0) has_ip = true;                
             SYS_CONSOLE_PRINT("ethernet: IP address changed to %d.%d.%d.%d\r\n",
-                    ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);            
+                    ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
+            ethernet_services_init();           
         }
         vTaskDelay(100/portTICK_PERIOD_MS);
     }
