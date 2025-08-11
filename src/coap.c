@@ -119,11 +119,11 @@ bool coap_parse_message(const uint8_t *data, uint16_t length, coap_message_t *me
 // CoAP message building (simplified and fixed)
 bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t *length) {
     if (message == NULL || buffer == NULL || length == NULL) {
-        SYS_CONSOLE_PRINT("coap: build_message - null parameters\r\n");
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: building message, type: %d, code: %d\r\n", message->type, message->code);
+    SYS_CONSOLE_PRINT("coap: building message, type: %d, code: %d, options_count: %d\r\n", 
+                      message->type, message->code, message->options_count);
     
     uint16_t offset = 0;
     
@@ -142,8 +142,35 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         SYS_CONSOLE_PRINT("coap: token built, offset: %d\r\n", offset);
     }
     
-    // Skip options for now - they're causing issues
-    SYS_CONSOLE_PRINT("coap: skipping options\r\n");
+    // Build options (simplified)
+    uint16_t option_number = 0;
+    for (int i = 0; i < message->options_count; i++) {
+        uint16_t current_option_number = message->options[i].number;
+        uint16_t option_length = message->options[i].length;
+        
+        SYS_CONSOLE_PRINT("coap: building option %d, number: %d, length: %d\r\n", 
+                          i, current_option_number, option_length);
+        
+        // Calculate delta (difference from previous option number)
+        uint16_t option_delta = current_option_number - option_number;
+        
+        // Build option header (simplified - assume small deltas and lengths)
+        if (option_delta < 13 && option_length < 13) {
+            buffer[offset++] = (option_delta << 4) | option_length;
+        } else {
+            SYS_CONSOLE_PRINT("coap: option too large, skipping\r\n");
+            continue;  // Skip options that are too large for now
+        }
+        
+        // Add option value
+        if (option_length > 0 && message->options[i].value != NULL) {
+            memcpy(&buffer[offset], message->options[i].value, option_length);
+            offset += option_length;
+        }
+        
+        option_number = current_option_number;
+        SYS_CONSOLE_PRINT("coap: option built, offset: %d\r\n", offset);
+    }
     
     // Add payload marker if there's payload
     if (message->payload_length > 0) {
@@ -153,10 +180,8 @@ bool coap_build_message(const coap_message_t *message, uint8_t *buffer, uint16_t
         SYS_CONSOLE_PRINT("coap: payload added, offset: %d\r\n", offset);
     }
     
-    // Set the length and return
     *length = offset;
     SYS_CONSOLE_PRINT("coap: message built successfully, total length: %d\r\n", *length);
-    
     return true;
 }
 
@@ -227,8 +252,8 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: %s request, code: %d\r\n", 
-                      request.type == COAP_TYPE_CON ? "CON" : "NON", request.code);
+    SYS_CONSOLE_PRINT("coap: %s request, code: %d, options_count: %d\r\n", 
+                      request.type == COAP_TYPE_CON ? "CON" : "NON", request.code, request.options_count);
     
     // Debug: Check server status
     SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
@@ -269,6 +294,32 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         if (!resource_found) {
             SYS_CONSOLE_PRINT("coap: no resource found for '%s', setting NOT_FOUND\r\n", request_uri);
             response.code = COAP_CODE_NOT_FOUND;
+        }
+        
+        // Add Content-Format option for text responses
+        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
+            response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
+            response.options[response.options_count].length = 1;
+            response.options[response.options_count].value = (uint8_t*)&(uint8_t){COAP_CONTENT_FORMAT_TEXT_PLAIN};
+            response.options_count++;
+            SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
+        }
+        
+        // Add URI_PATH option to response (echo back the requested URI)
+        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
+            // Remove leading slash for the option value
+            const char *path_segment = request_uri;
+            if (path_segment[0] == '/') {
+                path_segment++;  // Skip leading slash
+            }
+            
+            if (strlen(path_segment) > 0) {
+                response.options[response.options_count].number = COAP_OPTION_URI_PATH;
+                response.options[response.options_count].length = strlen(path_segment);
+                response.options[response.options_count].value = (uint8_t*)path_segment;
+                response.options_count++;
+                SYS_CONSOLE_PRINT("coap: added URI_PATH option: '%s'\r\n", path_segment);
+            }
         }
         
         SYS_CONSOLE_PRINT("coap: calling send_packet_response\r\n");
