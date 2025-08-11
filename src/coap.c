@@ -217,18 +217,21 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         return false;  // Not a CoAP packet
     }
     
-    SYS_CONSOLE_PRINT("coap: received packet from %d.%d.%d.%d:%d\r\n", 
+    SYS_CONSOLE_PRINT("coap: packet from %d.%d.%d.%d:%d\r\n", 
                       src_ip[0], src_ip[1], src_ip[2], src_ip[3], src_port);
     
     // Parse CoAP message
     coap_message_t request;
     if (!coap_parse_message(packet_data, packet_length, &request)) {
-        SYS_CONSOLE_PRINT("coap: failed to parse message\r\n");
+        SYS_CONSOLE_PRINT("coap: parse failed\r\n");
         return false;
     }
     
-    SYS_CONSOLE_PRINT("coap: received %s request, code: %d\r\n", 
+    SYS_CONSOLE_PRINT("coap: %s request, code: %d\r\n", 
                       request.type == COAP_TYPE_CON ? "CON" : "NON", request.code);
+    
+    // Debug: Check server status
+    SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
     
     // Handle the request
     if (coap_ctx.is_server) {
@@ -240,16 +243,22 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         response.message_id = request.message_id;
         response.token_length = request.token_length;
         memcpy(response.token, request.token, request.token_length);
-        response.options_count = 0;  // No options for now
+        response.options_count = 0;
         
-        SYS_CONSOLE_PRINT("coap: response structure initialized\r\n");
+        // Parse the URI from the request
+        char request_uri[64];
+        if (coap_parse_uri(&request, request_uri, sizeof(request_uri))) {
+            SYS_CONSOLE_PRINT("coap: parsed URI: '%s'\r\n", request_uri);
+        } else {
+            SYS_CONSOLE_PRINT("coap: failed to parse URI, using default\r\n");
+            strcpy(request_uri, "/");
+        }
         
         // Find matching resource
         bool resource_found = false;
         for (int i = 0; i < coap_resource_count; i++) {
-            SYS_CONSOLE_PRINT("coap: checking resource %s\r\n", coap_resources[i].path);
-            // Simple path matching (in real implementation, parse URI_PATH option)
-            if (strcmp(coap_resources[i].path, "/") == 0) {
+            SYS_CONSOLE_PRINT("coap: checking resource '%s' against '%s'\r\n", coap_resources[i].path, request_uri);
+            if (strcmp(coap_resources[i].path, request_uri) == 0) {
                 SYS_CONSOLE_PRINT("coap: calling resource handler\r\n");
                 resource_found = coap_resources[i].handler(&request, &response);
                 SYS_CONSOLE_PRINT("coap: resource handler returned: %d\r\n", resource_found);
@@ -258,7 +267,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         }
         
         if (!resource_found) {
-            SYS_CONSOLE_PRINT("coap: no resource found, setting NOT_FOUND\r\n");
+            SYS_CONSOLE_PRINT("coap: no resource found for '%s', setting NOT_FOUND\r\n", request_uri);
             response.code = COAP_CODE_NOT_FOUND;
         }
         
@@ -272,11 +281,12 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         memcpy(packet_info.src_ip, dst_ip, 4);
         memcpy(packet_info.dst_ip, src_ip, 4);
         
-        bool send_result = coap_send_packet_response(src_mac,&packet_info, &response);
+        bool send_result = coap_send_packet_response(src_mac, &packet_info, &response);
         SYS_CONSOLE_PRINT("coap: send_packet_response returned: %d\r\n", send_result);
+    } else {
+        SYS_CONSOLE_PRINT("coap: not in server mode, ignoring request\r\n");
     }
     
-    SYS_CONSOLE_PRINT("coap: packet handling completed\r\n");
     return true;
 }
 
@@ -449,4 +459,40 @@ void coap_init(void) {
         NULL,
         1U,
         (TaskHandle_t*) NULL);
+}
+
+// Parse URI from CoAP options
+bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t buffer_size) {
+    if (message == NULL || uri_buffer == NULL || buffer_size == 0) {
+        return false;
+    }
+    
+    uri_buffer[0] = '\0';  // Start with empty string
+    uint16_t uri_length = 0;
+    
+    // Always start with a slash
+    if (buffer_size > 1) {
+        uri_buffer[0] = '/';
+        uri_length = 1;
+    }
+    
+    // Look for URI_PATH options
+    for (int i = 0; i < message->options_count; i++) {
+        if (message->options[i].number == COAP_OPTION_URI_PATH) {
+            // Add path segment
+            uint16_t segment_len = message->options[i].length;
+            if (uri_length + segment_len < buffer_size) {
+                memcpy(&uri_buffer[uri_length], message->options[i].value, segment_len);
+                uri_length += segment_len;
+                uri_buffer[uri_length] = '\0';
+            }
+        }
+    }
+    
+    // If no URI_PATH found, we already have "/" from above
+    if (uri_length == 1) {
+        return true;  // Just the root "/"
+    }
+    
+    return true;
 }

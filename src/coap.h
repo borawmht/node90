@@ -174,4 +174,7 @@ bool coap_create_udp_packet(const uint8_t *src_ip, const uint8_t *dst_ip,
                            const uint8_t *payload, uint16_t payload_length,
                            uint8_t *packet_buffer, uint16_t *packet_length);
 
+// URI parsing function
+bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t buffer_size);
+
 #endif /* COAP_H */ 
