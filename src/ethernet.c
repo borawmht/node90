@@ -7,6 +7,7 @@
 
 #include "ethernet.h"
 #include "coap_server.h"
+#include "coap.h"
 #include "definitions.h"
 #include "config/default/library/tcpip/src/tcpip_private.h"
 #include "third_party/rtos/FreeRTOS/Source/include/queue.h"
@@ -21,11 +22,9 @@ bool link_up = false;
 
 uint8_t mac_addr[6] = {0,0,0,0,0,0};
 IPV4_ADDR ip_address = {0};
-
-typedef struct {
-    TCPIP_MAC_ETHERNET_HEADER header;
-    uint8_t * payload;
-} packet_t;
+IPV4_ADDR subnet_mask = {0};
+IPV4_ADDR gateway = {0};
+IPV4_ADDR broadcast_address = {0};
 
 // Packet handler function type
 typedef bool (*ethernet_packet_handler_t)(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam);
@@ -38,50 +37,58 @@ bool ethernet_deregister_packet_handler(void);
 bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uint16_t frameType, const void* hParam) {
     // Process the incoming packet
     // frameType contains the Ethernet frame type (0x0800 for IPv4, 0x0806 for ARP, etc.)
+
+    uint8_t* packetData = (uint8_t*)rxPkt->pMacLayer;
+    uint32_t packetLen = rxPkt->totTransportLen;
+
+    ethernet_packet_t * ethernet_packet = (ethernet_packet_t *)packetData;
+    // SYS_CONSOLE_PRINT("ethernet: packet dst: %02X:%02X:%02X:%02X:%02X:%02X\r\n",
+    //     ethernet_packet->header.dst_mac[0], ethernet_packet->header.dst_mac[1], ethernet_packet->header.dst_mac[2],
+    //     ethernet_packet->header.dst_mac[3], ethernet_packet->header.dst_mac[4], ethernet_packet->header.dst_mac[5]);
+    // SYS_CONSOLE_PRINT("ethernet: packet src: %02X:%02X:%02X:%02X:%02X:%02X\r\n",
+    //     ethernet_packet->header.src_mac[0], ethernet_packet->header.src_mac[1], ethernet_packet->header.src_mac[2],
+    //     ethernet_packet->header.src_mac[3], ethernet_packet->header.src_mac[4], ethernet_packet->header.src_mac[5]);
+    // SYS_CONSOLE_PRINT("ethernet: packet type: %04x\r\n", TCPIP_Helper_ntohs(ethernet_packet->header.ethertype));
+
     
     // Example: Check if it's an IPv4 packet
     if (frameType == 0x0800) {
-        //SYS_CONSOLE_PRINT("ethernet: received IPv4 packet, length: %d\r\n", rxPkt->totTransportLen);
-        
-        // Access the packet data
-        uint8_t* packetData = (uint8_t*)rxPkt->pMacLayer;
-        uint32_t packetLen = rxPkt->totTransportLen;
-
-        packet_t * packet = (packet_t *)packetData;
-        // SYS_CONSOLE_PRINT("ethernet: packet type: %04x\r\n", TCPIP_Helper_ntohs(packet->header.Type));
-        //SYS_CONSOLE_PRINT("ethernet: packet length: %d\r\n", packetLen);
-        
-        // Parse IP header to check if it's UDP
-        if (packetLen >= 28) {  // Ethernet(14) + IP(20) + UDP(8) minimum
-            uint8_t protocol = packetData[23];  // IP protocol field
-            if (protocol == 17) {  // UDP protocol
-                // Parse UDP header
-                uint16_t src_port = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[34]));
-                uint16_t dst_port = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[36]));
-                
-                // Check if it's a CoAP packet (port 5683)
-                if (src_port == 5683 || dst_port == 5683) {
-                    //SYS_CONSOLE_PRINT("ethernet: found CoAP packet\r\n");
-                    
-                    // Extract IP addresses
-                    uint8_t src_ip[4], dst_ip[4];
-                    memcpy(src_ip, &packetData[26], 4);
-                    memcpy(dst_ip, &packetData[30], 4);
-                    
-                    // Extract UDP payload (CoAP data)
-                    uint8_t* udp_payload = &packetData[42];
-                    uint16_t udp_length = TCPIP_Helper_ntohs(*(uint16_t*)(&packetData[38])) - 8;  // UDP length - header
-                    
-                    // Queue the packet for processing instead of handling it directly
-                    if (coap_queue_packet(udp_payload, udp_length, src_ip, dst_ip, src_port, dst_port, packet->header.SourceMACAddr.v)) {
-                        //SYS_CONSOLE_PRINT("ethernet: CoAP packet queued\r\n");
-                        // Return FALSE to let TCP/IP stack also process it
-                        // This prevents double processing
-                        // return false;
-                        return true;
-                    } else {
-                        SYS_CONSOLE_PRINT("ethernet: failed to queue CoAP packet\r\n");
-                    }
+        // SYS_CONSOLE_PRINT("ethernet: found IPv4 packet\r\n");
+        ip_packet_t * ip_packet = (ip_packet_t *)packetData;        
+        // Parse IP header to check if it's UDP        
+        if (ip_packet->header.protocol == PROTO_UDP) {  // UDP protocol
+            // SYS_CONSOLE_PRINT("ethernet: found UDP packet\r\n");
+            udp_packet_t * udp_packet = (udp_packet_t *)packetData;
+            // Parse UDP header
+            uint16_t src_port = TCPIP_Helper_ntohs(udp_packet->header.src_port);
+            uint16_t dst_port = TCPIP_Helper_ntohs(udp_packet->header.dst_port);
+            
+            // Check if it's a CoAP packet (port 5683)
+            if (src_port == 5683 || dst_port == 5683) {
+                // SYS_CONSOLE_PRINT("ethernet: found CoAP packet\r\n");                            
+                // Extract UDP payload (CoAP data)  
+                uint8_t * payload = (uint8_t*)udp_packet + sizeof(udp_packet_t);
+                uint16_t payload_length = TCPIP_Helper_ntohs(udp_packet->header.length) - 8;  // UDP length - header
+                // SYS_CONSOLE_PRINT("ethernet: payload length: %d\r\n", payload_length);
+                // Queue the packet for processing instead of handling it directly
+                if (coap_queue_packet(
+                        payload, 
+                        payload_length, 
+                        udp_packet->ip.src_ip, 
+                        udp_packet->ip.dst_ip, 
+                        src_port, 
+                        dst_port, 
+                        udp_packet->eth.src_mac)
+                    ) {
+                    //SYS_CONSOLE_PRINT("ethernet: CoAP packet queued\r\n");
+                    // Return FALSE to let TCP/IP stack also process it
+                    // This prevents double processing
+                    return false;
+                    // Otherwise, we must free the packet
+                    // TCPIP_PKT_PacketFree(rxPkt);
+                    // return true;
+                } else {
+                    SYS_CONSOLE_PRINT("ethernet: failed to queue CoAP packet\r\n");
                 }
             }
         }
@@ -180,6 +187,15 @@ void ethernet_task(void *pvParameters){
             if(ip_address.Val != 0) has_ip = true;                
             SYS_CONSOLE_PRINT("ethernet: IP address changed to %d.%d.%d.%d\r\n",
                     ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
+            subnet_mask.Val = TCPIP_STACK_NetMask(netH);
+            gateway.Val = TCPIP_STACK_NetAddressGateway(netH);
+            broadcast_address.Val = TCPIP_STACK_NetAddressBcast(netH);
+            SYS_CONSOLE_PRINT("ethernet: subnet mask changed to %d.%d.%d.%d\r\n",
+                    subnet_mask.v[0],subnet_mask.v[1],subnet_mask.v[2],subnet_mask.v[3]);
+            SYS_CONSOLE_PRINT("ethernet: gateway changed to %d.%d.%d.%d\r\n",
+                    gateway.v[0],gateway.v[1],gateway.v[2],gateway.v[3]);
+            SYS_CONSOLE_PRINT("ethernet: broadcast address changed to %d.%d.%d.%d\r\n",
+                    broadcast_address.v[0],broadcast_address.v[1],broadcast_address.v[2],broadcast_address.v[3]);
             ethernet_services_init();           
         }
         vTaskDelay(333/portTICK_PERIOD_MS);
@@ -290,4 +306,42 @@ uint8_t * ethernet_getMACAddress(void){
 
 uint8_t * ethernet_getIPAddress(void){
     return ip_address.v;
+}
+
+uint8_t * ethernet_getSubnetMask(void){
+    return subnet_mask.v;
+}
+
+uint8_t * ethernet_getGateway(void){
+    return gateway.v;
+}
+
+uint8_t * ethernet_getBroadcastAddress(void){
+    return broadcast_address.v;
+}
+
+char ethernet_str[32];
+char * ethernet_getIPAddressString(void){
+    snprintf(ethernet_str,32,"%d.%d.%d.%d",ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
+    return ethernet_str;
+}
+
+char * ethernet_getMACAddressString(void){
+    snprintf(ethernet_str,32,"%02X:%02X:%02X:%02X:%02X:%02X",mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
+    return ethernet_str;
+}
+
+char * ethernet_getSubnetMaskString(void){
+    snprintf(ethernet_str,32,"%d.%d.%d.%d",subnet_mask.v[0],subnet_mask.v[1],subnet_mask.v[2],subnet_mask.v[3]);
+    return ethernet_str;
+}
+
+char * ethernet_getGatewayString(void){
+    snprintf(ethernet_str,32,"%d.%d.%d.%d",gateway.v[0],gateway.v[1],gateway.v[2],gateway.v[3]);
+    return ethernet_str;
+}
+
+char * ethernet_getBroadcastAddressString(void){
+    snprintf(ethernet_str,32,"%d.%d.%d.%d",broadcast_address.v[0],broadcast_address.v[1],broadcast_address.v[2],broadcast_address.v[3]);
+    return ethernet_str;
 }

@@ -4,7 +4,7 @@ import socket
 import time
 import random
 
-def get(ip_address,resource,timeout):
+def get(ip_address, resource, timeout):
     port = 5683
     mtype = CON
     if not resource.startswith('/'):
@@ -12,39 +12,58 @@ def get(ip_address,resource,timeout):
     uri = 'coap://'+ip_address+resource
     print(f"GET {uri}")
     request = Message(code=GET, mtype=mtype, uri=uri, mid=random.randint(0, 65535))
+    
+    # Create socket without binding to a specific port
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.settimeout(timeout)
-    sock.sendto(request.encode(), (ip_address, port))
+    
     try:
-        response = sock.recv(1024)        
-        print(response)
-        print(response.hex())
-    except Exception as e:
-        print('Exception',e)
-        response = b''
+        request_data = request.encode()
+        print(f"Sending request: {request_data.hex()}")
+        sock.sendto(request_data, (ip_address, port))
+        
+        print("Waiting for response...")
+        response_data, addr = sock.recvfrom(1024)
+        print(f"Received response from {addr}: {response_data.hex()}")
+        
+        # Parse the CoAP response
+        response_msg = Message.decode(response_data)
+        print(f"Response code: {response_msg.code}")
+        print(f"Response type: {response_msg.mtype}")
+        print(f"Message ID: {response_msg.mid}")
+        
+        if response_msg.payload:
+            try:
+                # Try to decode as text first
+                payload_text = response_msg.payload.decode('utf-8')
+                print(f"Payload (text): {payload_text}")
+                return payload_text
+            except UnicodeDecodeError:
+                # If not text, try CBOR
+                try:
+                    payload_cbor = loads(response_msg.payload)
+                    print(f"Payload (CBOR): {payload_cbor}")
+                    return payload_cbor
+                except Exception as e:
+                    print(f"Payload (raw): {response_msg.payload.hex()}")
+                    return response_msg.payload
+        else:
+            print("No payload")
+            return None
+            
+    except socket.timeout:
+        print('Timeout - no response received')
         return None
-    sock.close()
-    # print(response.decode('utf-8'))
-    # print(response.hex())
-    #print(loads(response))
-    # if len(response)>7:
-    #     payload = Message.from_binary(response).payload      
-    #     try:
-    #         data = loads(payload, str_errors='replace')['e']
-    #         return data
-    #     except Exception:
-    #         try:
-    #             payload = response[12:]
-    #             data = loads(payload, str_errors='replace')['e']
-    #             return data
-    #         except Exception:
-    #             return None
-    return response
+    except Exception as e:
+        print(f'Exception: {e}')
+        return None
+    finally:
+        sock.close()
 
-def test_error_rate(ip_address,path,timeout=1,repeats=10):
+def test_error_rate(ip_address, path, timeout=1, repeats=10):
     errors = 0
     for i in range(repeats):
-        print(f"{i+1}/{repeats} ",end='')
+        print(f"{i+1}/{repeats} ", end='')
         response = get(ip_address, path, timeout)
         if response is None:
             errors += 1
@@ -53,9 +72,14 @@ def test_error_rate(ip_address,path,timeout=1,repeats=10):
     print(f'Errors: {errors} / {repeats}')
 
 if __name__ == "__main__":
-    # time.sleep(0.25)
-    # get('192.168.1.29', '/', 1)
-    # time.sleep(0.25)
-    # get('192.168.1.29', '/status', 1)    
-    test_error_rate('192.168.1.29','/',5,1)
+    # Test single request first
+    print("Testing single request...")
+    # result = get('192.168.1.29', '/', 5)
+    result = get('192.168.1.29', '/inx/network', 5)
+    # result = get('192.168.1.206', '/inx/network', 5)
+    print(f"Result: {result}")
+    
+    # Then test error rate
+    # print("\nTesting error rate...")
+    # test_error_rate('192.168.1.29', '/', 5, 3)
     

@@ -36,12 +36,9 @@ bool coap_status_handler(const coap_message_t *request, coap_message_t *response
              ethernet_getIPAddress()[0], ethernet_getIPAddress()[1],
              ethernet_getIPAddress()[2], ethernet_getIPAddress()[3],
              ethernet_linkUp() ? "true" : "false");
-    
-    // Use a fixed buffer instead of dynamic allocation
+        
     uint8_t cbor_buffer[256];  // Fixed size buffer
     size_t encoded_size = 0;
-    
-    // Use the fixed buffer version
     CborError error = json_to_cbor(status_msg, cbor_buffer, sizeof(cbor_buffer), &encoded_size);
     if (error != CborNoError) {
         SYS_CONSOLE_PRINT("coap_server: json_to_cbor error: %d\r\n", error);
@@ -55,19 +52,13 @@ bool coap_status_handler(const coap_message_t *request, coap_message_t *response
     }
     
     response->code = COAP_CODE_CONTENT;
-    
-    // Set content format as an option (not direct field)
-    // coap_set_content_format_option(response, COAP_CONTENT_FORMAT_APPLICATION_CBOR);
     response->content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
-    
     response->payload_length = encoded_size;
     memcpy(response->payload, cbor_buffer, response->payload_length);
     
     char json_str[256];
     cbor_to_json_string(cbor_buffer, encoded_size, json_str, sizeof(json_str), &encoded_size, 0);
-    SYS_CONSOLE_PRINT("coap_server: response: %s\r\n", json_str);
-
-    // SYS_CONSOLE_PRINT("coap_server: CBOR response created, size: %d\r\n", response->payload_length);
+    SYS_CONSOLE_PRINT("coap_server: response: %s\r\n", json_str);    
     return true;
 } 
 

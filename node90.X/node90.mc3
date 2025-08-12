@@ -12878,7 +12878,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="sys_console" name="SYS_CONSOLE_PRINT_BUFFER_SIZE"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;sys_console&gt;
   &lt;sys_console dnOrder=&quot;0&quot; id=&quot;SYS_CONSOLE_PRINT_BUFFER_SIZE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;1024&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/sys_console&gt;
 &lt;/sys_console&gt;
 </value>
@@ -17212,7 +17214,7 @@
       </entry>
       <entry>
          <file>../src/config/default/configuration.h</file>
-         <hash>640e23155ccf82ef8003ee6bdfd4fcef6e95ded3578259ab552f9e889ea194b9</hash>
+         <hash>6a70d52597c08e5e3ce25a6ddbe3d9daa46a4f3f04003720271ea0e58d606e2f</hash>
       </entry>
       <entry>
          <file>../src/config/default/definitions.h</file>

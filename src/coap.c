@@ -314,21 +314,21 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         }
         
         // Add URI_PATH option to response first (lower option number)
-        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
-            // Remove leading slash for the option value
-            const char *path_segment = request_uri;
-            if (path_segment[0] == '/') {
-                path_segment++;  // Skip leading slash
-            }
+        // if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
+        //     // Remove leading slash for the option value
+        //     const char *path_segment = request_uri;
+        //     if (path_segment[0] == '/') {
+        //         path_segment++;  // Skip leading slash
+        //     }
             
-            if (strlen(path_segment) > 0) {
-                response.options[response.options_count].number = COAP_OPTION_URI_PATH;
-                response.options[response.options_count].length = strlen(path_segment);
-                response.options[response.options_count].value = (uint8_t*)path_segment;
-                response.options_count++;
-                // SYS_CONSOLE_PRINT("coap: added URI_PATH option: '%s'\r\n", path_segment);
-            }
-        }
+        //     if (strlen(path_segment) > 0) {
+        //         response.options[response.options_count].number = COAP_OPTION_URI_PATH;
+        //         response.options[response.options_count].length = strlen(path_segment);
+        //         response.options[response.options_count].value = (uint8_t*)path_segment;
+        //         response.options_count++;
+        //         // SYS_CONSOLE_PRINT("coap: added URI_PATH option: '%s'\r\n", path_segment);
+        //     }
+        // }
         
         // Add Content-Format option for text responses (higher option number)
         if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
@@ -359,7 +359,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
 }
 
 // Simple checksum calculation function
-static uint16_t coap_calculate_checksum(const uint8_t *data, uint16_t length) {
+static uint16_t calculate_ip_checksum(const uint8_t *data, uint16_t length) {
     uint32_t sum = 0;
     uint16_t i;
     
@@ -381,31 +381,68 @@ static uint16_t coap_calculate_checksum(const uint8_t *data, uint16_t length) {
     return ~sum;
 }
 
-// Calculate UDP checksum with pseudo-header
-static uint16_t coap_calculate_udp_checksum(const uint8_t *src_ip, const uint8_t *dst_ip,
-                                           const udp_header_t *udp_header, const uint8_t *payload, uint16_t payload_length) {
-    uint16_t udp_checksum = 0;
-    
-    // Create pseudo-header for UDP checksum calculation
-    uint8_t pseudo_header[12];
-    memcpy(&pseudo_header[0], src_ip, 4);      // Source IP
-    memcpy(&pseudo_header[4], dst_ip, 4);      // Destination IP
-    pseudo_header[8] = 0;                       // Zero padding
-    pseudo_header[9] = 17;                      // Protocol (UDP)
-    *(uint16_t*)(&pseudo_header[10]) = TCPIP_Helper_htons(sizeof(udp_header_t) + payload_length); // UDP Length
-    
-    // Calculate checksum over pseudo-header
-    udp_checksum = coap_calculate_checksum(pseudo_header, 12);
-    
-    // Add UDP header and data checksum
-    udp_checksum += coap_calculate_checksum((uint8_t*)udp_header, sizeof(udp_header_t) + payload_length);
-    
-    // Handle carry
-    while (udp_checksum >> 16) {
-        udp_checksum = (udp_checksum & 0xFFFF) + (udp_checksum >> 16);
+uint32_t net_checksum_add(int len, uint8_t *buf)
+{
+    uint32_t sum = 0;
+    int i;
+
+    for (i = 0; i < len; i++) {
+        if (i & 1)
+            sum += (uint32_t)buf[i];
+        else
+            sum += (uint32_t)buf[i] << 8;
     }
-    
-    return ~udp_checksum;
+    return sum;
+}
+
+uint16_t net_checksum_finish(uint32_t sum)
+{
+    while (sum>>16)
+	    sum = (sum & 0xFFFF)+(sum >> 16);
+    return ~sum;
+}
+
+uint16_t net_checksum_tcpudp(uint16_t length, uint16_t proto,
+                             uint8_t *addrs, uint8_t *buf)
+{
+    uint32_t sum = 0;
+
+    sum += net_checksum_add(length, buf);         // payload
+    sum += net_checksum_add(8, addrs);            // src + dst address
+    sum += proto + length;                        // protocol & length
+    return net_checksum_finish(sum);
+}
+
+void net_checksum_calculate(uint8_t *data, int length)
+{
+    int hlen, plen, proto, csum_offset;
+    uint16_t csum;
+
+    if ((data[14] & 0xf0) != 0x40)
+	    return; /* not IPv4 */
+    hlen  = (data[14] & 0x0f) * 4;
+    plen  = (data[16] << 8 | data[17]) - hlen;
+    proto = data[23];
+
+    switch (proto) {
+        case PROTO_TCP:
+            csum_offset = 16;
+            break;
+        case PROTO_UDP:
+            csum_offset = 6;
+            break;
+        default:
+            return;
+    }
+
+    if (plen < csum_offset+2)
+	    return;
+
+    data[14+hlen+csum_offset]   = 0;
+    data[14+hlen+csum_offset+1] = 0;
+    csum = net_checksum_tcpudp(plen, proto, data+14+12, data+14+hlen);
+    data[14+hlen+csum_offset]   = csum >> 8;
+    data[14+hlen+csum_offset+1] = csum & 0xff;
 }
 
 // Send CoAP response as raw packet
@@ -437,9 +474,10 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
     packet.ip.tos = 0x00;          // Type of Service
     packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
-    packet.ip.identification = TCPIP_Helper_htons(0x1234);  // Identification
+    //packet.ip.identification = TCPIP_Helper_htons(0x1234);  // Identification
+    packet.ip.identification = TCPIP_Helper_htons(coap_ctx.message_id_counter++);  // Identification
     packet.ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
-    packet.ip.ttl = 64;              // Time to Live
+    packet.ip.ttl = 100;              // Time to Live
     packet.ip.protocol = 17;         // Protocol (UDP)
     packet.ip.checksum = 0;          // Will be calculated
     memcpy(packet.ip.src_ip, packet_info->src_ip, 4);
@@ -455,11 +493,11 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     memcpy(packet.payload, coap_buffer, coap_length);
     
     // Calculate IP checksum
-    packet.ip.checksum = coap_calculate_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t));
-    
-    // Calculate UDP checksum using helper function
-    packet.udp.checksum = coap_calculate_udp_checksum(packet_info->src_ip, packet_info->dst_ip, 
-                                                     &packet.udp, packet.payload, coap_length);
+    packet.ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t)));
+
+    net_checksum_calculate((uint8_t*)&packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    // SYS_CONSOLE_PRINT("coap: ip.checksum: %04x\r\n", packet.ip.checksum);
+    // SYS_CONSOLE_PRINT("coap: udp.checksum: %04x\r\n", packet.udp.checksum);
     
     // Debug: Print packet structure
     // coap_debug_packet(&packet, coap_length);
@@ -526,8 +564,30 @@ bool coap_queue_packet(const uint8_t *packet_data, uint16_t packet_length,
     const uint8_t *src_ip, const uint8_t *dst_ip,
     uint16_t src_port, uint16_t dst_port, uint8_t *src_mac) {
     if (packet_length > COAP_MAX_PAYLOAD_SIZE) {
+        SYS_CONSOLE_PRINT("coap: packet too long\r\n");
         return false;
     }
+
+    if (coap_packet_ready) {
+        SYS_CONSOLE_PRINT("coap: packet already queued\r\n");
+        return false;
+    }
+
+    // SYS_CONSOLE_PRINT("coap: queueing packet\r\n");
+
+    // SYS_CONSOLE_PRINT("coap: length %d\r\n",packet_length);
+
+    // SYS_CONSOLE_PRINT("coap: src_ip %d.%d.%d.%d\r\n",src_ip[0],src_ip[1],src_ip[2],src_ip[3]);
+    // SYS_CONSOLE_PRINT("coap: dst_ip %d.%d.%d.%d\r\n",dst_ip[0],dst_ip[1],dst_ip[2],dst_ip[3]);
+    // SYS_CONSOLE_PRINT("coap: src_port %d\r\n",src_port);
+    // SYS_CONSOLE_PRINT("coap: dst_port %d\r\n",dst_port);
+    // SYS_CONSOLE_PRINT("coap: src_mac %02X:%02X:%02X:%02X:%02X:%02X\r\n",src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
+
+    // SYS_CONSOLE_PRINT("coap: packet data: ");
+    // for (int i = 0; i < packet_length; i++) {
+    //     SYS_CONSOLE_PRINT("%02X ", packet_data[i]);
+    // }
+    // SYS_CONSOLE_PRINT("\r\n");
 
     memcpy(coap_current_packet.packet_data, packet_data, packet_length);
     coap_current_packet.packet_length = packet_length;
@@ -538,6 +598,7 @@ bool coap_queue_packet(const uint8_t *packet_data, uint16_t packet_length,
     memcpy(coap_current_packet.src_mac, src_mac, 6);
 
     coap_packet_ready = true;
+    // SYS_CONSOLE_PRINT("coap: packet queued\r\n");
     return true;
 }
 
@@ -547,15 +608,15 @@ void coap_task(void *pvParameters) {
     
     while (1) {
         if (coap_packet_ready) {
-            // SYS_CONSOLE_PRINT("coap: processing packet\r\n");
-            
-            coap_packet_ready = false;
+            // SYS_CONSOLE_PRINT("coap: processing packet\r\n");                        
             
             // Process the packet
             coap_handle_packet(coap_current_packet.packet_data, coap_current_packet.packet_length,
                              coap_current_packet.src_ip, coap_current_packet.dst_ip, 
                              coap_current_packet.src_port, coap_current_packet.dst_port,
                              coap_current_packet.src_mac);
+
+            coap_packet_ready = false;
             
             // SYS_CONSOLE_PRINT("coap: packet processed\r\n");
         }
@@ -568,7 +629,7 @@ void coap_task(void *pvParameters) {
 void coap_init(void) {
     SYS_CONSOLE_PRINT("coap: init\r\n");
 
-    coap_packet_ready = false;
+    coap_packet_ready = false;    
     
     // Create CoAP task
     (void) xTaskCreate(
@@ -598,6 +659,11 @@ bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t bu
     // Look for URI_PATH options
     for (int i = 0; i < message->options_count; i++) {
         if (message->options[i].number == COAP_OPTION_URI_PATH) {
+            if(uri_length>1){
+                uri_buffer[uri_length] = '/';
+                uri_length++;
+                uri_buffer[uri_length] = '\0';
+            }
             // Add path segment
             uint16_t segment_len = message->options[i].length;
             if (uri_length + segment_len < buffer_size) {
@@ -705,4 +771,29 @@ void coap_debug_packet(const coap_packet_t *packet, uint16_t payload_length) {
     SYS_CONSOLE_PRINT("\r\n");
     
     SYS_CONSOLE_PRINT("=== End Debug ===\r\n");
+}
+
+// Debug function to test UDP checksum calculation
+void debug_udp_checksum(void) {
+    SYS_CONSOLE_PRINT("=== UDP Checksum Debug ===\r\n");
+    
+    // Test packet data from your example (this includes Ethernet + IP + UDP)
+    uint8_t test_packet[] = {
+        0xfc, 0x0f, 0xe7, 0xc1, 0xda, 0xf0, 0x00, 0xe0, 0x4c, 0x68, 0x00, 0x5a, 0x08, 0x00, 0x45, 0x00,
+        0x00, 0x2c, 0x2d, 0x4e, 0x40, 0x00, 0x40, 0x11, 0x89, 0xc1, 0xc0, 0xa8, 0x01, 0x44, 0xc0, 0xa8,
+        0x01, 0x1d, 0xde, 0x80, 0x16, 0x33, 0x00, 0x18, 0x83, 0xdb, 0x40, 0x01, 0x32, 0xe5, 0xb3, 0x69,
+        0x6e, 0x78, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b
+    };
+
+    coap_packet_t *packet = (coap_packet_t *)test_packet;
+
+    SYS_CONSOLE_PRINT("coap: udp.checksum: %04x\r\n", packet->udp.checksum);
+
+    packet->udp.checksum = 0;
+
+    net_checksum_calculate(test_packet, sizeof(test_packet));
+
+    SYS_CONSOLE_PRINT("coap: udp.checksum: %04x\r\n", packet->udp.checksum);
+    
+    SYS_CONSOLE_PRINT("=== End UDP Checksum Debug ===\r\n");
 }

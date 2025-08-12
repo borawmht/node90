@@ -182,5 +182,6 @@ coap_content_format_t coap_get_content_format_option(const coap_message_t *messa
 
 // Debug function
 void coap_debug_packet(const coap_packet_t *packet, uint16_t payload_length);
+void debug_udp_checksum(void);
 
 #endif /* COAP_H */ 
