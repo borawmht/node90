@@ -143,7 +143,10 @@ bool ethernet_deregister_packet_handler(void) {
     return result;
 }
 
+bool ethernet_services_initialized = false;
 void ethernet_services_init(void){
+    if(ethernet_services_initialized) return;
+    ethernet_services_initialized = true;
     // Initialize the services
     SYS_CONSOLE_PRINT("ethernet: services init\r\n");
     coap_server_init(); // Initialize CoAP server
