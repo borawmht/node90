@@ -77,7 +77,8 @@ bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uin
                         //SYS_CONSOLE_PRINT("ethernet: CoAP packet queued\r\n");
                         // Return FALSE to let TCP/IP stack also process it
                         // This prevents double processing
-                        return false;
+                        // return false;
+                        return true;
                     } else {
                         SYS_CONSOLE_PRINT("ethernet: failed to queue CoAP packet\r\n");
                     }
@@ -140,6 +141,7 @@ void ethernet_services_init(void){
     // Initialize the services
     SYS_CONSOLE_PRINT("ethernet: services init\r\n");
     coap_server_init(); // Initialize CoAP server
+    SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
 }
 
 void ethernet_task(void *pvParameters){
@@ -180,7 +182,7 @@ void ethernet_task(void *pvParameters){
                     ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
             ethernet_services_init();           
         }
-        vTaskDelay(100/portTICK_PERIOD_MS);
+        vTaskDelay(333/portTICK_PERIOD_MS);
     }
 }
 

@@ -11,6 +11,40 @@
 #include "stdbool.h"
 #include "stdint.h"
 
+// Packet layer structs for clear packet construction
+#pragma pack(push, 1)  // Ensure no padding between struct members
+
+// Ethernet header (14 bytes)
+typedef struct {
+    uint8_t dst_mac[6];      // Destination MAC address
+    uint8_t src_mac[6];      // Source MAC address
+    uint16_t ethertype;      // EtherType (0x0800 for IPv4)
+} ethernet_header_t;
+
+// IP header (20 bytes)
+typedef struct {
+    uint8_t version_ihl;     // Version (4 bits) + Header Length (4 bits)
+    uint8_t tos;             // Type of Service
+    uint16_t total_length;   // Total packet length
+    uint16_t identification; // Identification
+    uint16_t flags_offset;   // Flags (3 bits) + Fragment Offset (13 bits)
+    uint8_t ttl;             // Time to Live
+    uint8_t protocol;        // Protocol (17 for UDP)
+    uint16_t checksum;       // IP header checksum
+    uint8_t src_ip[4];       // Source IP address
+    uint8_t dst_ip[4];       // Destination IP address
+} ip_header_t;
+
+// UDP header (8 bytes)
+typedef struct {
+    uint16_t src_port;       // Source port
+    uint16_t dst_port;       // Destination port
+    uint16_t length;         // UDP packet length (header + data)
+    uint16_t checksum;       // UDP checksum
+} udp_header_t;
+
+#pragma pack(pop)  // Restore default packing
+
 void ethernet_init();
 bool ethernet_hasIP(void);
 bool ethernet_linkUp(void);

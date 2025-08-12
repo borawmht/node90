@@ -210,41 +210,40 @@ bool coap_create_udp_packet(const uint8_t *src_ip, const uint8_t *dst_ip,
         return false;
     }
     
-    uint16_t offset = 0;
+    // Create packet using structs for clarity
+    coap_packet_t packet = {0};
     
-    // Ethernet header (14 bytes) - will be filled by ethernet_send_to
-    offset += 14;
+    // Fill Ethernet header (will be filled by ethernet_send_to, but we can set ethertype)
+    packet.eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
     
-    // IP header (20 bytes)
-    packet_buffer[offset] = 0x45;  // Version 4, header length 5 words
-    packet_buffer[offset + 1] = 0x00;  // Type of Service
-    *(uint16_t*)(&packet_buffer[offset + 2]) = TCPIP_Helper_htons(20 + 8 + payload_length);  // Total length
-    *(uint16_t*)(&packet_buffer[offset + 4]) = 0;  // Identification
-    *(uint16_t*)(&packet_buffer[offset + 6]) = 0x4000;  // Flags, Fragment offset
-    packet_buffer[offset + 8] = 64;  // TTL
-    packet_buffer[offset + 9] = 17;  // Protocol (UDP)
-    *(uint16_t*)(&packet_buffer[offset + 10]) = 0;  // Checksum (will be calculated)
+    // Fill IP header
+    packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
+    packet.ip.tos = 0x00;          // Type of Service
+    packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + payload_length);
+    packet.ip.identification = 0;   // Identification
+    packet.ip.flags_offset = 0x4000;  // Flags, Fragment offset
+    packet.ip.ttl = 64;              // Time to Live
+    packet.ip.protocol = 17;         // Protocol (UDP)
+    packet.ip.checksum = 0;          // Checksum (optional for IPv4)
+    memcpy(packet.ip.src_ip, src_ip, 4);
+    memcpy(packet.ip.dst_ip, dst_ip, 4);
     
-    // Source IP
-    memcpy(&packet_buffer[offset + 12], src_ip, 4);
-    // Destination IP
-    memcpy(&packet_buffer[offset + 16], dst_ip, 4);
+    // Fill UDP header
+    packet.udp.src_port = TCPIP_Helper_htons(src_port);
+    packet.udp.dst_port = TCPIP_Helper_htons(dst_port);
+    packet.udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + payload_length);
+    packet.udp.checksum = 0;  // Checksum (optional for IPv4)
     
-    offset += 20;
+    // Copy payload
+    memcpy(packet.payload, payload, payload_length);
     
-    // UDP header (8 bytes)
-    *(uint16_t*)(&packet_buffer[offset]) = TCPIP_Helper_htons(src_port);
-    *(uint16_t*)(&packet_buffer[offset + 2]) = TCPIP_Helper_htons(dst_port);
-    *(uint16_t*)(&packet_buffer[offset + 4]) = TCPIP_Helper_htons(8 + payload_length);
-    *(uint16_t*)(&packet_buffer[offset + 6]) = 0;  // Checksum (optional for IPv4)
+    // Copy the packet to the buffer (skip Ethernet header as it's filled by ethernet_send_to)
+    memcpy(packet_buffer, (uint8_t*)&packet.eth, sizeof(ethernet_header_t));
+    memcpy(packet_buffer + sizeof(ethernet_header_t), (uint8_t*)&packet.ip, sizeof(ip_header_t));
+    memcpy(packet_buffer + sizeof(ethernet_header_t) + sizeof(ip_header_t), (uint8_t*)&packet.udp, sizeof(udp_header_t));
+    memcpy(packet_buffer + sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t), payload, payload_length);
     
-    offset += 8;
-    
-    // Payload
-    memcpy(&packet_buffer[offset], payload, payload_length);
-    offset += payload_length;
-    
-    *packet_length = offset;
+    *packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + payload_length;
     return true;
 }
 
@@ -359,6 +358,56 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
     return true;
 }
 
+// Simple checksum calculation function
+static uint16_t coap_calculate_checksum(const uint8_t *data, uint16_t length) {
+    uint32_t sum = 0;
+    uint16_t i;
+    
+    // Sum 16-bit words
+    for (i = 0; i < length - 1; i += 2) {
+        sum += (data[i] << 8) | data[i + 1];
+    }
+    
+    // Handle odd byte if present
+    if (i < length) {
+        sum += data[i] << 8;
+    }
+    
+    // Add carry and take one's complement
+    while (sum >> 16) {
+        sum = (sum & 0xFFFF) + (sum >> 16);
+    }
+    
+    return ~sum;
+}
+
+// Calculate UDP checksum with pseudo-header
+static uint16_t coap_calculate_udp_checksum(const uint8_t *src_ip, const uint8_t *dst_ip,
+                                           const udp_header_t *udp_header, const uint8_t *payload, uint16_t payload_length) {
+    uint16_t udp_checksum = 0;
+    
+    // Create pseudo-header for UDP checksum calculation
+    uint8_t pseudo_header[12];
+    memcpy(&pseudo_header[0], src_ip, 4);      // Source IP
+    memcpy(&pseudo_header[4], dst_ip, 4);      // Destination IP
+    pseudo_header[8] = 0;                       // Zero padding
+    pseudo_header[9] = 17;                      // Protocol (UDP)
+    *(uint16_t*)(&pseudo_header[10]) = TCPIP_Helper_htons(sizeof(udp_header_t) + payload_length); // UDP Length
+    
+    // Calculate checksum over pseudo-header
+    udp_checksum = coap_calculate_checksum(pseudo_header, 12);
+    
+    // Add UDP header and data checksum
+    udp_checksum += coap_calculate_checksum((uint8_t*)udp_header, sizeof(udp_header_t) + payload_length);
+    
+    // Handle carry
+    while (udp_checksum >> 16) {
+        udp_checksum = (udp_checksum & 0xFFFF) + (udp_checksum >> 16);
+    }
+    
+    return ~udp_checksum;
+}
+
 // Send CoAP response as raw packet
 bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packet_info, 
                               const coap_message_t *response) {
@@ -376,49 +425,50 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     
     // SYS_CONSOLE_PRINT("coap: response built, len: %d\r\n", coap_length);
     
-    // Create UDP packet (IP + UDP headers + CoAP payload)
-    uint8_t udp_packet[1518];
-    uint16_t udp_packet_length = 0;
+    // Create packet using structs for clarity
+    coap_packet_t packet = {0};
     
-    // IP header (20 bytes)
-    udp_packet[udp_packet_length++] = 0x45;  // Version 4, header length 5 words
-    udp_packet[udp_packet_length++] = 0x00;  // Type of Service
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = TCPIP_Helper_htons(20 + 8 + coap_length);  // Total length
-    udp_packet_length += 2;
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = TCPIP_Helper_htons(0x1234);  // Identification (non-zero)
-    udp_packet_length += 2;
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = 0x0000;  // Flags: Don't Fragment, Fragment Offset: 0
-    udp_packet_length += 2;
-    udp_packet[udp_packet_length++] = 64;  // TTL
-    udp_packet[udp_packet_length++] = 17;  // Protocol (UDP)
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = 0;  // Checksum (will be calculated)
-    udp_packet_length += 2;
+    // Fill Ethernet header (will be filled by ethernet_send_to, but we can set ethertype)
+    memcpy(packet.eth.dst_mac,src_mac,6);
+    memcpy(packet.eth.src_mac,ethernet_getMACAddress(),6);
+    packet.eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
     
-    // Source IP (our IP)
-    memcpy(&udp_packet[udp_packet_length], packet_info->src_ip, 4);
-    udp_packet_length += 4;
-    // Destination IP
-    memcpy(&udp_packet[udp_packet_length], packet_info->dst_ip, 4);
-    udp_packet_length += 4;
+    // Fill IP header
+    packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
+    packet.ip.tos = 0x00;          // Type of Service
+    packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    packet.ip.identification = TCPIP_Helper_htons(0x1234);  // Identification
+    packet.ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
+    packet.ip.ttl = 64;              // Time to Live
+    packet.ip.protocol = 17;         // Protocol (UDP)
+    packet.ip.checksum = 0;          // Will be calculated
+    memcpy(packet.ip.src_ip, packet_info->src_ip, 4);
+    memcpy(packet.ip.dst_ip, packet_info->dst_ip, 4);
     
-    // UDP header (8 bytes)
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = TCPIP_Helper_htons(packet_info->src_port);
-    udp_packet_length += 2;
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = TCPIP_Helper_htons(packet_info->dst_port);
-    udp_packet_length += 2;
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = TCPIP_Helper_htons(8 + coap_length);
-    udp_packet_length += 2;
-    *(uint16_t*)(&udp_packet[udp_packet_length]) = 0;  // Checksum (optional for IPv4)
-    udp_packet_length += 2;
+    // Fill UDP header
+    packet.udp.src_port = TCPIP_Helper_htons(packet_info->src_port);
+    packet.udp.dst_port = TCPIP_Helper_htons(packet_info->dst_port);
+    packet.udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
+    packet.udp.checksum = 0;  // Will be calculated
     
-    // CoAP payload
-    memcpy(&udp_packet[udp_packet_length], coap_buffer, coap_length);
-    udp_packet_length += coap_length;
+    // Copy CoAP payload
+    memcpy(packet.payload, coap_buffer, coap_length);
     
-    // SYS_CONSOLE_PRINT("coap: UDP packet created, length: %d\r\n", udp_packet_length);
+    // Calculate IP checksum
+    packet.ip.checksum = coap_calculate_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t));
     
-    // Send the packet
-    if (!ethernet_send_to(src_mac, udp_packet, udp_packet_length, 0x0800)) {
+    // Calculate UDP checksum using helper function
+    packet.udp.checksum = coap_calculate_udp_checksum(packet_info->src_ip, packet_info->dst_ip, 
+                                                     &packet.udp, packet.payload, coap_length);
+    
+    // Debug: Print packet structure
+    // coap_debug_packet(&packet, coap_length);
+    
+    // SYS_CONSOLE_PRINT("coap: packet created, total length: %d\r\n", sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    
+    // Send the packet (skip Ethernet header as it's filled by ethernet_send_to)
+    size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;
+    if (!ethernet_send((uint8_t*)&packet, packet_length)) {
         SYS_CONSOLE_PRINT("coap: failed to send packet\r\n");
         return false;
     }
@@ -608,4 +658,51 @@ coap_content_format_t coap_get_content_format_option(const coap_message_t *messa
     }
     
     return COAP_CONTENT_FORMAT_TEXT_PLAIN; // Default if not found
+}
+
+// Debug function to print packet structure
+void coap_debug_packet(const coap_packet_t *packet, uint16_t payload_length) {
+    SYS_CONSOLE_PRINT("=== CoAP Packet Debug ===\r\n");
+    
+    // Print Ethernet header
+    SYS_CONSOLE_PRINT("Ethernet: dst_mac=%02x:%02x:%02x:%02x:%02x:%02x, src_mac=%02x:%02x:%02x:%02x:%02x:%02x, ethertype=0x%04x\r\n",
+                      packet->eth.dst_mac[0], packet->eth.dst_mac[1], packet->eth.dst_mac[2],
+                      packet->eth.dst_mac[3], packet->eth.dst_mac[4], packet->eth.dst_mac[5],
+                      packet->eth.src_mac[0], packet->eth.src_mac[1], packet->eth.src_mac[2],
+                      packet->eth.src_mac[3], packet->eth.src_mac[4], packet->eth.src_mac[5],
+                      TCPIP_Helper_ntohs(packet->eth.ethertype));
+    
+    // Print IP header
+    SYS_CONSOLE_PRINT("IP: version_ihl=0x%02x, tos=0x%02x, total_length=%d, id=0x%04x\r\n",
+                      packet->ip.version_ihl, packet->ip.tos, 
+                      TCPIP_Helper_ntohs(packet->ip.total_length),
+                      TCPIP_Helper_ntohs(packet->ip.identification));
+    SYS_CONSOLE_PRINT("IP: flags_offset=0x%04x, ttl=%d, protocol=%d, checksum=0x%04x\r\n",
+                      packet->ip.flags_offset, packet->ip.ttl, packet->ip.protocol,
+                      packet->ip.checksum);
+    SYS_CONSOLE_PRINT("IP: src_ip=%d.%d.%d.%d, dst_ip=%d.%d.%d.%d\r\n",
+                      packet->ip.src_ip[0], packet->ip.src_ip[1], packet->ip.src_ip[2], packet->ip.src_ip[3],
+                      packet->ip.dst_ip[0], packet->ip.dst_ip[1], packet->ip.dst_ip[2], packet->ip.dst_ip[3]);
+    
+    // Print UDP header
+    SYS_CONSOLE_PRINT("UDP: src_port=%d, dst_port=%d, length=%d, checksum=0x%04x\r\n",
+                      TCPIP_Helper_ntohs(packet->udp.src_port),
+                      TCPIP_Helper_ntohs(packet->udp.dst_port),
+                      TCPIP_Helper_ntohs(packet->udp.length),
+                      packet->udp.checksum);
+    
+    // Print payload length
+    SYS_CONSOLE_PRINT("Payload: length=%d\r\n", payload_length);
+    
+    // Print first few bytes of payload
+    SYS_CONSOLE_PRINT("Payload data: ");
+    for (int i = 0; i < (payload_length > 16 ? 16 : payload_length); i++) {
+        SYS_CONSOLE_PRINT("%02x ", packet->payload[i]);
+    }
+    if (payload_length > 16) {
+        SYS_CONSOLE_PRINT("...");
+    }
+    SYS_CONSOLE_PRINT("\r\n");
+    
+    SYS_CONSOLE_PRINT("=== End Debug ===\r\n");
 }

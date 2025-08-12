@@ -128,15 +128,13 @@ typedef struct {
     coap_message_t last_message;
 } coap_context_t;
 
-// Add queue structures for packet processing
-// typedef struct {
-//     uint8_t packet_data[COAP_MAX_PAYLOAD_SIZE];
-//     uint16_t packet_length;
-//     uint8_t src_ip[4];
-//     uint8_t dst_ip[4];
-//     uint16_t src_port;
-//     uint16_t dst_port;
-// } coap_packet_queue_item_t;
+// Complete packet structure (Ethernet + IP + UDP + payload)
+typedef struct {
+    ethernet_header_t eth;
+    ip_header_t ip;
+    udp_header_t udp;
+    uint8_t payload[COAP_MAX_PAYLOAD_SIZE];  // CoAP payload
+} coap_packet_t;
 
 // Function prototypes
 void coap_init(void);
@@ -181,5 +179,8 @@ bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t bu
 // Add helper function to set content format option
 bool coap_set_content_format_option(coap_message_t *message, coap_content_format_t format);
 coap_content_format_t coap_get_content_format_option(const coap_message_t *message);
+
+// Debug function
+void coap_debug_packet(const coap_packet_t *packet, uint16_t payload_length);
 
 #endif /* COAP_H */ 
