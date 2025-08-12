@@ -18,7 +18,7 @@ typedef struct {
     coap_resource_handler_t coap_server_handler;
 } resource_t;
 
-// Declare the array as extern (no definition)
+extern char resource_json_str[];
 extern const resource_t resources[];
 
 void resources_init(void);

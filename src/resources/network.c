@@ -6,6 +6,7 @@
 */
 
 #include "network.h"
+#include "resources.h"
 #include "ethernet.h"
 #include "cJSON.h"
 #include "jsoncbor.h"
@@ -25,7 +26,7 @@ void network_init(void) {
     storage_loadStr(network_ns, "inx_ip", network.inx_ip, "192.168.1.68", &network_set_inx_ip);
 }
 
-char network_json_str[1024];
+char * network_json_str = resource_json_str;
 char * network_get_json_str(void) {    
     cJSON * root = cJSON_CreateObject();
     cJSON_AddStringToObject(root,"tag",network.tag);

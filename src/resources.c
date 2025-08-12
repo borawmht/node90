@@ -7,6 +7,8 @@
 #include "resources.h"
 #include "definitions.h"
 
+char resource_json_str[1024];
+
 // Define the array here
 const resource_t resources[] = {
     {"/inx/network", &network_init, &network_coap_handler},
