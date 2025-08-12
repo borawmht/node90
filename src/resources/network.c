@@ -77,23 +77,35 @@ bool network_coap_get_handler(coap_message_t *response){
 
 bool network_set_tag(char *tag){
     // TODO: validate tag and save to eeprom
+    bool changed = strncmp(network.tag,tag,16) != 0;
     strncpy(network.tag,tag,16);
     SYS_CONSOLE_PRINT("network: tag: %s\r\n", network.tag);
-    return storage_setStr(network_ns, "tag", network.tag);
+    if(changed){
+        return storage_setStr(network_ns, "tag", network.tag);
+    }
+    return true;
 }
 
 bool network_set_inx_ip(char *inx_ip){
     // TODO: validate inx_ip and save to eeprom
+    bool changed = strncmp(network.inx_ip,inx_ip,20) != 0;
     strncpy(network.inx_ip,inx_ip,20);
     SYS_CONSOLE_PRINT("network: inx_ip: %s\r\n", network.inx_ip);
-    return storage_setStr(network_ns, "inx_ip", network.inx_ip);
+    if(changed){
+        return storage_setStr(network_ns, "inx_ip", network.inx_ip);
+    }
+    return true;
 }
 
 bool network_set_serial_number(char *serial_number){
     // TODO: validate serial_number and save to eeprom
+    bool changed = strncmp(network.serial_number,serial_number,16) != 0;
     strncpy(network.serial_number,serial_number,16);
     SYS_CONSOLE_PRINT("network: serial_number: %s\r\n", network.serial_number);
-    return storage_setStr(network_ns, "serial_number", network.serial_number);
+    if(changed){
+        return storage_setStr(network_ns, "serial_number", network.serial_number);
+    }
+    return true;
 }
 
 bool network_put_json_str(char * json_str){
