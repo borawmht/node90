@@ -6,7 +6,6 @@
 */
 
 #include "ethernet.h"
-#include "coap_server.h"
 #include "coap.h"
 #include "definitions.h"
 #include "config/default/library/tcpip/src/tcpip_private.h"
@@ -122,7 +121,7 @@ bool ethernet_register_packet_handler(ethernet_packet_handler_t handler, const v
         return false;
     }
     
-    SYS_CONSOLE_PRINT("ethernet: packet handler registered successfully\r\n");
+    // SYS_CONSOLE_PRINT("ethernet: packet handler registered successfully\r\n");
     return true;
 }
 

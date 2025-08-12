@@ -184,18 +184,18 @@ void eeprom_init(void) {
     // Check if EEPROM is initialized with magic number
     uint32_t current_magic = eeprom_get_magic();
     if (current_magic != EEPROM_MAGIC_NUMBER) {
-        SYS_CONSOLE_PRINT("eeprom: initializing with magic number\r\n");
+        // SYS_CONSOLE_PRINT("eeprom: initializing with magic number\r\n");
         if (!eeprom_set_magic(EEPROM_MAGIC_NUMBER)) {
             SYS_CONSOLE_PRINT("eeprom: failed to set magic number!\r\n");
             eeprom_initialized = false;
             return;
         }
-        SYS_CONSOLE_PRINT("eeprom: magic number set successfully\r\n");
+        //SYS_CONSOLE_PRINT("eeprom: magic number set successfully\r\n");
     } else {
-        SYS_CONSOLE_PRINT("eeprom: magic number already valid\r\n");
+        //SYS_CONSOLE_PRINT("eeprom: magic number already valid\r\n");
     }
     
-    SYS_CONSOLE_PRINT("eeprom: init complete\r\n");
+    // SYS_CONSOLE_PRINT("eeprom: init complete\r\n");
 }
 
 bool eeprom_write(uint32_t address, const uint8_t *data, uint16_t length) {
@@ -308,14 +308,14 @@ bool eeprom_is_initialized(void) {
 
 uint32_t eeprom_get_magic(void) {
     uint32_t magic = 0;
-    SYS_CONSOLE_PRINT("eeprom: reading magic number\r\n");
+    // SYS_CONSOLE_PRINT("eeprom: reading magic number\r\n");
     
     if (!eeprom_read(EEPROM_MAGIC_OFFSET, (uint8_t*)&magic, sizeof(magic))) {
         SYS_CONSOLE_PRINT("eeprom: magic read failed\r\n");
         return 0;
     }
     
-    SYS_CONSOLE_PRINT("eeprom: magic=0x%08lx\r\n", magic);
+    // SYS_CONSOLE_PRINT("eeprom: magic=0x%08lx\r\n", magic);
     return magic;
 }
 

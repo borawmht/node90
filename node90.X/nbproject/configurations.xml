@@ -290,7 +290,6 @@
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/ethernet.h</itemPath>
       <itemPath>../src/coap.h</itemPath>
-      <itemPath>../src/coap_server.h</itemPath>
       <itemPath>../src/cJSON.h</itemPath>
       <itemPath>../src/resources.h</itemPath>
       <itemPath>../src/jsoncbor.h</itemPath>
@@ -471,7 +470,6 @@
       <itemPath>../src/app.c</itemPath>
       <itemPath>../src/ethernet.c</itemPath>
       <itemPath>../src/coap.c</itemPath>
-      <itemPath>../src/coap_server.c</itemPath>
       <itemPath>../src/cJSON.c</itemPath>
       <itemPath>../src/jsoncbor.c</itemPath>
       <itemPath>../src/cborjson.c</itemPath>

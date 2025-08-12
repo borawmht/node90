@@ -140,6 +140,7 @@ typedef struct {
 void coap_init(void);
 bool coap_server_start(uint16_t port);
 bool coap_client_init(void);
+void coap_server_init(void);
 
 // Task-based processing
 void coap_task(void *pvParameters);
