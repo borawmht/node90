@@ -156,7 +156,7 @@ void ethernet_task(void *pvParameters){
         if(!is_stack_ready ){
             SYS_STATUS stack_status = TCPIP_STACK_Status(sysObj.tcpip);
             if(stack_status == SYS_STATUS_READY){
-                SYS_CONSOLE_PRINT("ethernet: stack is ready\r\n");
+                // SYS_CONSOLE_PRINT("ethernet: stack is ready\r\n");
                 netH = TCPIP_STACK_IndexToNet(0);                  
                 is_stack_ready = true;
                 // Register the packet handler (equivalent to esp_eth_update_input_path)
@@ -166,7 +166,7 @@ void ethernet_task(void *pvParameters){
             }
         }
         if(!is_ready && TCPIP_STACK_NetIsReady(netH)){
-            SYS_CONSOLE_PRINT("ethernet: is ready\r\n");
+            // SYS_CONSOLE_PRINT("ethernet: is ready\r\n");
             is_ready = true;            
             TCPIP_STACK_NetAddressMac(netH);
             memcpy(mac_addr, (uint8_t*)TCPIP_STACK_NetAddressMac(netH), 6);

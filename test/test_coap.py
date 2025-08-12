@@ -109,7 +109,7 @@ if __name__ == "__main__":
     print("Testing single request...")    
     result = get('192.168.1.29', '/inx/network', 5)    
     print(f"Result: {result}")
-    result = "confirmed" if put('192.168.1.29', '/inx/network', 'tag', '1', confirm=True) else "not confirmed"
+    result = "confirmed" if put('192.168.1.29', '/inx/network', 'tag', '2', confirm=True) else "not confirmed"
     print(f"Result: {result}")
     result = get('192.168.1.29', '/inx/network', 5)
     print(f"Result: {result}")

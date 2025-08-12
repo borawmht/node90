@@ -573,7 +573,7 @@ bool coap_register_resource(const char *path, coap_resource_handler_t handler) {
     coap_resources[coap_resource_count].handler = handler;
     coap_resource_count++;
     
-    SYS_CONSOLE_PRINT("coap: registered resource %s\r\n", path);
+    // SYS_CONSOLE_PRINT("coap: registered resource %s\r\n", path);
     return true;
 }
 
@@ -622,7 +622,7 @@ bool coap_queue_packet(const uint8_t *packet_data, uint16_t packet_length,
 
 // CoAP task function
 void coap_task(void *pvParameters) {
-    SYS_CONSOLE_PRINT("coap: task start\r\n");
+    SYS_CONSOLE_PRINT("coap: start task\r\n");
     
     while (1) {
         if (coap_packet_ready) {

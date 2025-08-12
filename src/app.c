@@ -95,7 +95,7 @@ void APP_Initialize ( void )
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
-    SYS_CONSOLE_PRINT("Initialize Application\r\n");    
+    SYS_CONSOLE_PRINT("app: init tasks\r\n");    
     ethernet_init();    
     coap_init();   
 }
@@ -128,6 +128,7 @@ void APP_Tasks ( void )
         /* Application's initial state. */
         case APP_STATE_INIT:
         {            
+            SYS_CONSOLE_PRINT("app: init\r\n");    
             eeprom_init();
             resources_init();
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
