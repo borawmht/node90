@@ -11,15 +11,18 @@
 #include "jsoncbor.h"
 #include "cborjson.h"
 #include "definitions.h"
+#include "storage.h"
 
 network_t network;
 
+const char * network_ns = "network";
+
 void network_init(void) {
     SYS_CONSOLE_PRINT("network: init\r\n");
-    // TODO: load data from eeprom
-    strncpy(network.serial_number,"12345",16);
-    strncpy(network.tag,"0",16);
-    strncpy(network.inx_ip,"192.168.1.68",20);
+    // Load configuration using storage API with namespaces
+    storage_loadStr(network_ns, "serial_number", network.serial_number, "12345", &network_set_serial_number);    
+    storage_loadStr(network_ns, "tag", network.tag, "0", &network_set_tag);    
+    storage_loadStr(network_ns, "inx_ip", network.inx_ip, "192.168.1.68", &network_set_inx_ip);
 }
 
 char network_json_str[1024];
@@ -71,25 +74,25 @@ bool network_coap_get_handler(coap_message_t *response){
     return true;
 }
 
-bool network_set_tag(char * tag){
+bool network_set_tag(char *tag){
     // TODO: validate tag and save to eeprom
     strncpy(network.tag,tag,16);
     SYS_CONSOLE_PRINT("network: tag: %s\r\n", network.tag);
-    return true;
+    return storage_setStr(network_ns, "tag", network.tag);
 }
 
-bool network_set_inx_ip(char * inx_ip){
+bool network_set_inx_ip(char *inx_ip){
     // TODO: validate inx_ip and save to eeprom
     strncpy(network.inx_ip,inx_ip,20);
     SYS_CONSOLE_PRINT("network: inx_ip: %s\r\n", network.inx_ip);
-    return true;
+    return storage_setStr(network_ns, "inx_ip", network.inx_ip);
 }
 
-bool network_set_serial_number(char * serial_number){
+bool network_set_serial_number(char *serial_number){
     // TODO: validate serial_number and save to eeprom
     strncpy(network.serial_number,serial_number,16);
     SYS_CONSOLE_PRINT("network: serial_number: %s\r\n", network.serial_number);
-    return true;
+    return storage_setStr(network_ns, "serial_number", network.serial_number);
 }
 
 bool network_put_json_str(char * json_str){

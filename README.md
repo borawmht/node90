@@ -4,6 +4,8 @@ MCU: PIC32MX795F512H
 
 PHY: LAN8720A
 
+EEPROM: 25LC1024
+
 # Project
 
 Setup using Code Configurator v5.5.1 and Harmony 3 1.5.5. 

@@ -13,9 +13,9 @@
 #include "stddef.h"
 
 typedef struct {
-    const char *path;
-    coap_resource_handler_t coap_server_handler;
+    const char *path;    
     void (*init)(void);
+    coap_resource_handler_t coap_server_handler;
 } resource_t;
 
 // Declare the array as extern (no definition)

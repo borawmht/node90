@@ -28,6 +28,7 @@
 // *****************************************************************************
 
 #include "app.h"
+#include "eeprom.h"
 #include "resources.h"
 #include "ethernet.h"
 #include "coap.h"
@@ -94,10 +95,9 @@ void APP_Initialize ( void )
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
-    SYS_CONSOLE_PRINT("Initialize Application\r\n");
-    resources_init();
+    SYS_CONSOLE_PRINT("Initialize Application\r\n");    
     ethernet_init();    
-    coap_init();     
+    coap_init();   
 }
 
 
@@ -128,6 +128,8 @@ void APP_Tasks ( void )
         /* Application's initial state. */
         case APP_STATE_INIT:
         {            
+            eeprom_init();
+            resources_init();
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
             appData.state = APP_STATE_SERVICE_TASKS;
             break;

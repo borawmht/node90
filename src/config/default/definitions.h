@@ -54,6 +54,7 @@
 #include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
+#include "peripheral/spi/spi_master/plib_spi2_master.h"
 #include "library/tcpip/tcpip.h"
 #include "system/sys_time_h2_adapter.h"
 #include "system/sys_random_h2_adapter.h"

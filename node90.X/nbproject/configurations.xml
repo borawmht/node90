@@ -190,6 +190,12 @@
             <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
               <itemPath>../src/config/default/peripheral/gpio/plib_gpio.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="spi" displayName="spi" projectFiles="true">
+              <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.h</itemPath>
+              </logicalFolder>
+            </logicalFolder>
             <logicalFolder name="uart" displayName="uart" projectFiles="true">
               <itemPath>../src/config/default/peripheral/uart/plib_uart_common.h</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart2.h</itemPath>
@@ -289,6 +295,8 @@
       <itemPath>../src/resources.h</itemPath>
       <itemPath>../src/jsoncbor.h</itemPath>
       <itemPath>../src/cborjson.h</itemPath>
+      <itemPath>../src/storage.h</itemPath>
+      <itemPath>../src/eeprom.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -378,6 +386,11 @@
             <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
               <itemPath>../src/config/default/peripheral/gpio/plib_gpio.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="spi" displayName="spi" projectFiles="true">
+              <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.c</itemPath>
+              </logicalFolder>
+            </logicalFolder>
             <logicalFolder name="uart" displayName="uart" projectFiles="true">
               <itemPath>../src/config/default/peripheral/uart/plib_uart2.c</itemPath>
               <itemPath>../src/config/default/peripheral/uart/plib_uart1.c</itemPath>
@@ -463,6 +476,8 @@
       <itemPath>../src/jsoncbor.c</itemPath>
       <itemPath>../src/cborjson.c</itemPath>
       <itemPath>../src/resources.c</itemPath>
+      <itemPath>../src/storage.c</itemPath>
+      <itemPath>../src/eeprom.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
