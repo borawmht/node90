@@ -7,6 +7,8 @@
 #include "resources.h"
 #include "definitions.h"
 
+#include "resources/network.h"
+
 char resource_json_str[1024];
 
 // Define the array here

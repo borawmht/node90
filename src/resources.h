@@ -8,9 +8,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "resources/network.h"
 #include "coap.h"
-#include "stddef.h"
 
 typedef struct {
     const char *path;    
