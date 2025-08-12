@@ -270,10 +270,25 @@
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="resources" displayName="resources" projectFiles="true">
+        <itemPath>../src/resources/network.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
+        <itemPath>../src/tinycbor/utf8_p.h</itemPath>
+        <itemPath>../src/tinycbor/cbor.h</itemPath>
+        <itemPath>../src/tinycbor/cborinternal_p.h</itemPath>
+        <itemPath>../src/tinycbor/cborjson.h</itemPath>
+        <itemPath>../src/tinycbor/compilersupport_p.h</itemPath>
+        <itemPath>../src/tinycbor/tinycbor-version.h</itemPath>
+      </logicalFolder>
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/ethernet.h</itemPath>
       <itemPath>../src/coap.h</itemPath>
       <itemPath>../src/coap_server.h</itemPath>
+      <itemPath>../src/cJSON.h</itemPath>
+      <itemPath>../src/resources.h</itemPath>
+      <itemPath>../src/jsoncbor.h</itemPath>
+      <itemPath>../src/cborjson.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -423,11 +438,30 @@
           <itemPath>../src/third_party/rtos/FreeRTOS/Source/croutine.c</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="resources" displayName="resources" projectFiles="true">
+        <itemPath>../src/resources/network.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
+        <itemPath>../src/tinycbor/cborencoder_float.c</itemPath>
+        <itemPath>../src/tinycbor/cborvalidation.c</itemPath>
+        <itemPath>../src/tinycbor/cborparser_float.c</itemPath>
+        <itemPath>../src/tinycbor/cborpretty_stdio.c</itemPath>
+        <itemPath>../src/tinycbor/cborencoder.c</itemPath>
+        <itemPath>../src/tinycbor/cborparser_dup_string.c</itemPath>
+        <itemPath>../src/tinycbor/cborpretty.c</itemPath>
+        <itemPath>../src/tinycbor/cborerrorstrings.c</itemPath>
+        <itemPath>../src/tinycbor/cborparser.c</itemPath>
+        <itemPath>../src/tinycbor/cborencoder_close_container_checked.c</itemPath>
+        <itemPath>../src/tinycbor/cbortojson.c</itemPath>
+      </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
       <itemPath>../src/ethernet.c</itemPath>
       <itemPath>../src/coap.c</itemPath>
       <itemPath>../src/coap_server.c</itemPath>
+      <itemPath>../src/cJSON.c</itemPath>
+      <itemPath>../src/jsoncbor.c</itemPath>
+      <itemPath>../src/cborjson.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

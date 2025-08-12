@@ -21,7 +21,7 @@ def get(ip_address,resource,timeout):
     except Exception:
         response = b''
     sock.close()
-    print(response)
+    print(response.decode('utf-8'))
     #print(response.hex())
     #print(loads(response))
     # if len(response)>7:
@@ -40,7 +40,8 @@ def get(ip_address,resource,timeout):
 
 
 if __name__ == "__main__":
-    get('192.168.1.29', '/', 1)
+    # time.sleep(0.25)
+    # get('192.168.1.29', '/', 1)
     time.sleep(0.25)
     get('192.168.1.29', '/status', 1)    
     

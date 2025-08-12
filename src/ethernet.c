@@ -48,7 +48,7 @@ bool ethernet_packet_handler(TCPIP_NET_HANDLE hNet, TCPIP_MAC_PACKET* rxPkt, uin
         uint32_t packetLen = rxPkt->totTransportLen;
 
         packet_t * packet = (packet_t *)packetData;
-        //SYS_CONSOLE_PRINT("ethernet: packet type: %04x\r\n", TCPIP_Helper_ntohs(packet->header.Type));
+        // SYS_CONSOLE_PRINT("ethernet: packet type: %04x\r\n", TCPIP_Helper_ntohs(packet->header.Type));
         //SYS_CONSOLE_PRINT("ethernet: packet length: %d\r\n", packetLen);
         
         // Parse IP header to check if it's UDP

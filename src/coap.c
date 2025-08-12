@@ -2,7 +2,7 @@
 * CoAP (Constrained Application Protocol) implementation
 * coap.c
 * created by: Brad Oraw
-* created on: 2025-01-XX
+* created on: 2025-08-11
 */
 
 #include "coap.h"
@@ -284,6 +284,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         response.message_id = request.message_id;
         response.token_length = request.token_length;
         memcpy(response.token, request.token, request.token_length);
+        response.content_format = COAP_CONTENT_FORMAT_TEXT_PLAIN;
         response.options_count = 0;
         
         // Parse the URI from the request
@@ -334,7 +335,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
             response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
             response.options[response.options_count].length = 1;
-            response.options[response.options_count].value = (uint8_t*)&(uint8_t){COAP_CONTENT_FORMAT_TEXT_PLAIN};
+            response.options[response.options_count].value = (uint8_t*)&(uint8_t){response.content_format};
             response.options_count++;
             // SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
         }
@@ -563,4 +564,48 @@ bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t bu
     }
     
     return true;
+}
+
+// Add these functions to your coap.c implementation
+
+bool coap_set_content_format_option(coap_message_t *message, coap_content_format_t format) {
+    if (!message || message->options_count >= COAP_MAX_OPTIONS) {
+        return false;
+    }
+    
+    // Find if content format option already exists
+    for (int i = 0; i < message->options_count; i++) {
+        if (message->options[i].number == COAP_OPTION_CONTENT_FORMAT) {
+            // Update existing option
+            uint16_t format_value = format;
+            message->options[i].length = 2;
+            message->options[i].value = (uint8_t*)&format_value;
+            return true;
+        }
+    }
+    
+    // Add new content format option
+    uint16_t format_value = format;
+    message->options[message->options_count].number = COAP_OPTION_CONTENT_FORMAT;
+    message->options[message->options_count].length = 2;
+    message->options[message->options_count].value = (uint8_t*)&format_value;
+    message->options_count++;
+    
+    return true;
+}
+
+coap_content_format_t coap_get_content_format_option(const coap_message_t *message) {
+    if (!message) {
+        return COAP_CONTENT_FORMAT_TEXT_PLAIN; // Default
+    }
+    
+    for (int i = 0; i < message->options_count; i++) {
+        if (message->options[i].number == COAP_OPTION_CONTENT_FORMAT) {
+            if (message->options[i].length == 2) {
+                return (coap_content_format_t)*(uint16_t*)message->options[i].value;
+            }
+        }
+    }
+    
+    return COAP_CONTENT_FORMAT_TEXT_PLAIN; // Default if not found
 }

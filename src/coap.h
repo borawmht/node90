@@ -99,6 +99,7 @@ typedef struct {
     coap_code_t code;
     uint16_t message_id;
     uint8_t token[COAP_MAX_TOKEN_LENGTH];
+    coap_content_format_t content_format;
     uint8_t payload[COAP_MAX_PAYLOAD_SIZE];
     uint16_t payload_length;
     uint8_t options_count;
@@ -176,5 +177,9 @@ bool coap_create_udp_packet(const uint8_t *src_ip, const uint8_t *dst_ip,
 
 // URI parsing function
 bool coap_parse_uri(const coap_message_t *message, char *uri_buffer, uint16_t buffer_size);
+
+// Add helper function to set content format option
+bool coap_set_content_format_option(coap_message_t *message, coap_content_format_t format);
+coap_content_format_t coap_get_content_format_option(const coap_message_t *message);
 
 #endif /* COAP_H */ 
