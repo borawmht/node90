@@ -15,11 +15,12 @@
 typedef struct {
     const char *path;
     coap_resource_handler_t coap_server_handler;
+    void (*init)(void);
 } resource_t;
 
-const resource_t resources[] = {
-    {"/inx/network", &network_coap_handler},
-    {NULL, false}
-};
+// Declare the array as extern (no definition)
+extern const resource_t resources[];
+
+void resources_init(void);
 
 #endif /* RESOURCES_H */

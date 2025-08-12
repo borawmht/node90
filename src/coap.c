@@ -274,7 +274,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
     // SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
     
     // Handle the request
-    if (coap_ctx.is_server) {
+    if (coap_ctx.is_server && request.type == COAP_TYPE_CON) {
         // SYS_CONSOLE_PRINT("coap: creating response\r\n");
         
         coap_message_t response = {0};
@@ -297,12 +297,14 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         
         // Find matching resource
         bool resource_found = false;
+        bool resource_result = false;
         for (int i = 0; i < coap_resource_count; i++) {
             // SYS_CONSOLE_PRINT("coap: checking resource '%s' against '%s'\r\n", coap_resources[i].path, request_uri);
             if (strcmp(coap_resources[i].path, request_uri) == 0) {
                 // SYS_CONSOLE_PRINT("coap: calling resource handler\r\n");
                 SYS_CONSOLE_PRINT("coap: resource handler: %s\r\n", coap_resources[i].path);
-                resource_found = coap_resources[i].handler(&request, &response);
+                resource_found = true;
+                resource_result = coap_resources[i].handler(&request, &response);
                 // SYS_CONSOLE_PRINT("coap: resource handler returned: %d\r\n", resource_found);
                 break;
             }
@@ -331,12 +333,25 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         // }
         
         // Add Content-Format option for text responses (higher option number)
-        if (resource_found && response.options_count < COAP_MAX_OPTIONS) {
-            response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
-            response.options[response.options_count].length = 1;
-            response.options[response.options_count].value = (uint8_t*)&(uint8_t){response.content_format};
-            response.options_count++;
-            // SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
+        if(resource_found && request.code == COAP_CODE_GET){
+            if (resource_result && response.options_count < COAP_MAX_OPTIONS) {
+                response.options[response.options_count].number = COAP_OPTION_CONTENT_FORMAT;
+                response.options[response.options_count].length = 1;
+                response.options[response.options_count].value = (uint8_t*)&(uint8_t){response.content_format};
+                response.options_count++;
+                // SYS_CONSOLE_PRINT("coap: added Content-Format option\r\n");
+            }
+            else if(!resource_result){
+                response.code = COAP_CODE_NOT_FOUND;
+            }
+        }
+        else if(request.code == COAP_CODE_PUT){
+            if(resource_found){
+                response.code = COAP_CODE_CHANGED;
+            }
+            else{
+                response.code = COAP_CODE_BAD_REQUEST;
+            }
         }
         
         // SYS_CONSOLE_PRINT("coap: calling send_packet_response\r\n");

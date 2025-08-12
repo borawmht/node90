@@ -462,6 +462,7 @@
       <itemPath>../src/cJSON.c</itemPath>
       <itemPath>../src/jsoncbor.c</itemPath>
       <itemPath>../src/cborjson.c</itemPath>
+      <itemPath>../src/resources.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

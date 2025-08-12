@@ -28,6 +28,7 @@
 // *****************************************************************************
 
 #include "app.h"
+#include "resources.h"
 #include "ethernet.h"
 #include "coap.h"
 
@@ -94,8 +95,9 @@ void APP_Initialize ( void )
     appData.state = APP_STATE_INIT;
 
     SYS_CONSOLE_PRINT("Initialize Application\r\n");
+    resources_init();
     ethernet_init();    
-    coap_init();    
+    coap_init();     
 }
 
 
