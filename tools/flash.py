@@ -42,17 +42,24 @@ class FlashManager:
             sys.exit(1)
             
         # Using MPLAB X IPE command line
-        cmd = [
-            "ipe.sh",  # or "ipe.bat" on Windows
-            "-T", self.device,
-            "-P", self.programmer,
-            "-F", hex_file,
-            "-M",  # Program memory
-            "-R", address_range  # Address range
-        ]
+        # cmd = [
+        #     "ipe.sh",  # or "ipe.bat" on Windows
+        #     "-T", self.device,
+        #     "-P", self.programmer,
+        #     "-F", hex_file,
+        #     "-M",  # Program memory
+        #     "-R", address_range  # Address range
+        # ]
+
+        preserve_NVM = ' -OP1D07F000-1D07FFFF'
+        preserve_none = ''
+        preserve = preserve_none
+
+        program_cmd = 'java -jar /opt/microchip/mplabx/v6.25/mplab_platform/mplab_ipe/ipecmd.jar -P32MX795F512H -F'+hex_file+' -MC -MB -MP1D000000,1D07FFFF'+preserve+' -TPICD4 -OL'
+        split_program_cmd = program_cmd.split(' ');
         
         print(f"Flashing {hex_file} to {address_range}...")
-        subprocess.run(cmd, check=True)
+        subprocess.run(split_program_cmd, check=True)
         print("Flash completed successfully!")
     
     def list_releases(self):

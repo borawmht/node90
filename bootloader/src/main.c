@@ -25,12 +25,13 @@ typedef void (*app_function_t)(void);
 bool check_application_valid(void) {
     // Check if application has valid signature
     uint32_t *app_signature = (uint32_t*)(APP_START_ADDRESS + 0x1000);
+    printf("Application signature: %08X\r\n", *app_signature);
     return (*app_signature == APP_VALID_SIGNATURE);
 }
 
 void jump_to_application(void) {
     printf("Load application\r\n");
-    app_function_t app_main = (app_function_t)(APP_START_ADDRESS + 0x1000);
+    app_function_t app_main = (app_function_t)APP_START_ADDRESS;
     
     // Disable interrupts
     __builtin_disable_interrupts();
@@ -64,6 +65,7 @@ int main ( void )
 //        bootloader_main();
 //    }
     
+    check_application_valid();
     jump_to_application();
     
     return EXIT_FAILURE;

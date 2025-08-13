@@ -104,7 +104,7 @@ PROVIDE(_ebase_address = 0x9D010000);  /* Application starts at 0x9D010000 */
 _RESET_ADDR                    = 0x9D010000;  /* Application entry point */
 _BEV_EXCPT_ADDR                = 0x9D010000;  /* Not used by application */
 _DBG_EXCPT_ADDR                = 0x9D010000;  /* Not used by application */
-_DBG_CODE_ADDR                 = 0xBFC02000;
+_DBG_CODE_ADDR                 = 0x9D010000;
 _DBG_CODE_SIZE                 = 0xFF0;
 _GEN_EXCPT_ADDR                = 0x9D010000;
 
@@ -135,6 +135,21 @@ MEMORY
  *************************************************************************/
 SECTIONS
 {
+  /* Application signature at fixed offset 0x1000 from start */
+  .app_signature 0x9D011000 :
+  {
+    KEEP(*(.app_signature))
+    . = ALIGN(4);
+  } >kseg0_program_mem
+
+  /* Application name and version info */
+  .app_info :
+  {
+    KEEP(*(.app_name))
+    KEEP(*(.app_version))
+    . = ALIGN(4);
+  } >kseg0_program_mem
+  
   /* Application code - starts at 0x9D010000 */
   .text :
   {

@@ -110,7 +110,6 @@
         <archiverTool>
         </archiverTool>
         <loading>
-          <loadableFile>../../node90.X/dist/default/production/node90.X.production.hex</loadableFile>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -302,7 +301,7 @@
       </C32Global>
       <ICD4Tool>
         <property key="ADC 1" value="true"/>
-        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="AutoSelectMemRanges" value="manual"/>
         <property key="CAN1" value="true"/>
         <property key="CAN2" value="true"/>
         <property key="CHANGE NOTICE" value="true"/>
@@ -407,7 +406,7 @@
       </ICD4Tool>
       <Tool>
         <property key="ADC 1" value="true"/>
-        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="AutoSelectMemRanges" value="manual"/>
         <property key="CAN1" value="true"/>
         <property key="CAN2" value="true"/>
         <property key="CHANGE NOTICE" value="true"/>

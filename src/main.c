@@ -6,6 +6,7 @@
 
 #include <stddef.h>                     // Defines NULL
 #include <stdbool.h>                    // Defines true
+#include <stdint.h>
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 #include "project_version.h"
@@ -13,6 +14,7 @@
 
 // Application signature for bootloader validation
 __attribute__((section(".app_signature")))
+__attribute__((aligned(4)))
 const uint32_t app_signature = 0x12345678;
 
 __attribute__((section(".app_name")))

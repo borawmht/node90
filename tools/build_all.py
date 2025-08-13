@@ -7,7 +7,7 @@ import shutil
 class BuildManager:
     def __init__(self):
         self.bootloader_dir = "bootloader/node90_bootloader.X"
-        self.app_dir = "application/node90.X"
+        self.app_dir = "node90.X"
         self.merged_dir = "merged/node90_merged.X"
         
     def build_bootloader(self):
@@ -26,8 +26,8 @@ class BuildManager:
         """Build merged firmware"""
         print("Building merged firmware...")
         # First build both components
-        self.build_bootloader()
-        self.build_application()
+        # self.build_bootloader()
+        # self.build_application()
         
         # Then merge them
         self.merge_hex_files()
