@@ -6,11 +6,19 @@ PHY: LAN8720A
 
 EEPROM: 25LC1024
 
+FLASH: SST26VF064B
+
 # Project
 
 Setup using Code Configurator v5.5.1 and Harmony 3 1.5.5. 
 
 Build with XC32 4.60.
+
+## Structure
+
+Bootloader (0x9D000000 - 0x9D00FFFF) ← 64KB for bootloader
+
+Application (0x9D010000 - 0x9D07FFFF) ← 448KB for your app
 
 ## Modules
 - core 3.15.3
@@ -21,3 +29,28 @@ Build with XC32 4.60.
 - wolfssl 5.4.0 (build errors if using 5.7.0)
 - crypto 3.8.2
 
+# Tools
+
+```
+# Create releases
+python tools/create_release.py patch          # 1.0.0 -> 1.0.1
+python tools/create_release.py minor          # 1.0.0 -> 1.1.0
+python tools/create_release.py major          # 1.0.0 -> 2.0.0
+
+# Create releases for specific components
+python tools/create_release.py bootloader patch
+python tools/create_release.py application minor
+
+# Flash releases
+python tools/flash.py bootloader 1.2.3
+python tools/flash.py application 1.2.3
+python tools/flash.py merged release 1.2.3
+
+# List available releases
+python tools/flash.py list
+
+# Using make targets
+make release-patch
+make flash-merged release 1.2.3
+make list-releases
+```

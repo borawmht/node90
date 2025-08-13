@@ -1,38 +1,25 @@
-/*******************************************************************************
-  Main Source File
-
-  Company:
-    Microchip Technology Inc.
-
-  File Name:
-    main.c
-
-  Summary:
-    This file contains the "main" function for a project.
-
-  Description:
-    This file contains the "main" function for a project.  The
-    "main" function calls the "SYS_Initialize" function to initialize the state
-    machines of all modules in the system
- *******************************************************************************/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
+/*
+* main.c
+* created by: Brad Oraw
+* created on: 2025-08-11
+*/
 
 #include <stddef.h>                     // Defines NULL
 #include <stdbool.h>                    // Defines true
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
+#include "project_version.h"
 
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Main Entry Point
-// *****************************************************************************
-// *****************************************************************************
+// Application signature for bootloader validation
+__attribute__((section(".app_signature")))
+const uint32_t app_signature = 0x12345678;
+
+__attribute__((section(".app_name")))
+const char app_name[] = PROJECT_NAME;
+
+__attribute__((section(".app_version")))
+const char app_version[] = PROJECT_VERSION;
 
 int main ( void )
 {
