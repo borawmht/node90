@@ -427,29 +427,6 @@ static const SYS_DEBUG_INIT debugInit =
 // *****************************************************************************
 // *****************************************************************************
 
-/*******************************************************************************
-  Function:
-    void STDIO_BufferModeSet ( void )
-
-  Summary:
-    Sets the buffering mode for stdin and stdout
-
-  Remarks:
- ********************************************************************************/
-static void STDIO_BufferModeSet(void)
-{
-    /* MISRAC 2012 deviation block start */
-    /* MISRA C-2012 Rule 21.6 deviated 2 times in this file.  Deviation record ID -  H3_MISRAC_2012_R_21_6_DR_3 */
-
-    /* Make stdin unbuffered */
-    setbuf(stdin, NULL);
-
-    /* Make stdout unbuffered */
-    setbuf(stdout, NULL);
-    /* MISRAC 2012 deviation block end */
-}
-
-
 /* MISRAC 2012 deviation block end */
 
 /*******************************************************************************
@@ -471,8 +448,7 @@ void SYS_Initialize ( void* data )
     /* Start out with interrupts disabled before configuring any modules */
     (void)__builtin_disable_interrupts();
 
-    STDIO_BufferModeSet();
-
+  
     CLK_Initialize();
 
     /* Configure KSEG0 as cacheable memory. This is needed for Prefetch Buffer */
@@ -488,6 +464,8 @@ void SYS_Initialize ( void* data )
     /* Configure Debug Data Port */
     DDPCONbits.JTAGEN = 0;
 
+
+
 	GPIO_Initialize();
 
     CORETIMER_Initialize();
@@ -497,13 +475,16 @@ void SYS_Initialize ( void* data )
 
 	SPI2_Initialize();
 
+
     /* MISRAC 2012 deviation block start */
     /* Following MISRA-C rules deviated in this block  */
     /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
     /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
 
-    /* Initialize the MIIM Driver Instance 0*/
-    sysObj.drvMiim_0 = DRV_MIIM_OBJECT_BASE_Default.miim_Initialize(DRV_MIIM_DRIVER_INDEX_0, (const SYS_MODULE_INIT *) &drvMiimInitData_0); 
+
+   /* Initialize the MIIM Driver Instance 0*/
+   sysObj.drvMiim_0 = DRV_MIIM_OBJECT_BASE_Default.miim_Initialize(DRV_MIIM_DRIVER_INDEX_0, (const SYS_MODULE_INIT *) &drvMiimInitData_0); 
+
 
     /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
     H3_MISRAC_2012_R_11_3_DR_1 & H3_MISRAC_2012_R_11_8_DR_1*/
@@ -513,8 +494,8 @@ void SYS_Initialize ( void* data )
     /* MISRAC 2012 deviation block end */
     /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
      H3_MISRAC_2012_R_11_3_DR_1 & H3_MISRAC_2012_R_11_8_DR_1*/
-    sysObj.sysConsole0 = SYS_CONSOLE_Initialize(SYS_CONSOLE_INDEX_0, (SYS_MODULE_INIT *)&sysConsole0Init);
-    /* MISRAC 2012 deviation block end */
+        sysObj.sysConsole0 = SYS_CONSOLE_Initialize(SYS_CONSOLE_INDEX_0, (SYS_MODULE_INIT *)&sysConsole0Init);
+   /* MISRAC 2012 deviation block end */
     sysObj.sysCommand = (uint32_t) SYS_CMD_Initialize((SYS_MODULE_INIT*)&sysCmdInit);
 
     /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
@@ -522,19 +503,25 @@ void SYS_Initialize ( void* data )
         
     sysObj.sysDebug = SYS_DEBUG_Initialize(SYS_DEBUG_INDEX_0, (SYS_MODULE_INIT*)&debugInit);
 
-    /* MISRAC 2012 deviation block end */  
-    
-    sysObj.tcpip = TCPIP_STACK_Init();
-    SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
+    /* MISRAC 2012 deviation block end */
 
-    /* MISRAC 2012 deviation block end */ 
-    
+
+   /* TCPIP Stack Initialization */
+   sysObj.tcpip = TCPIP_STACK_Init();
+   SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
+
+
+
+    /* MISRAC 2012 deviation block end */
     APP_Initialize();
+
 
     EVIC_Initialize();
 
     /* Enable global interrupts */
     (void)__builtin_enable_interrupts();
+
+
 
     /* MISRAC 2012 deviation block end */
 }
