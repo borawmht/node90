@@ -23,6 +23,9 @@ const char app_name[] = PROJECT_NAME;
 __attribute__((section(".app_version")))
 const char app_version[] = PROJECT_VERSION;
 
+__attribute__((section(".trigger_pattern")))
+uint32_t trigger_pattern = 0x12345678;
+
 int main ( void )
 {
     /* Initialize all modules */

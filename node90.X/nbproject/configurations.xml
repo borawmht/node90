@@ -308,7 +308,7 @@
                    projectFiles="true">
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
-          <itemPath>../src/config/default/p32MX795F512H.ld</itemPath>
+          <itemPath>../src/config/default/app_mx.ld</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -765,7 +765,7 @@
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>
-        <property key="memories.configurationmemory" value="false"/>
+        <property key="memories.configurationmemory" value="true"/>
         <property key="memories.configurationmemory2" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>
@@ -870,7 +870,7 @@
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>
-        <property key="memories.configurationmemory" value="false"/>
+        <property key="memories.configurationmemory" value="true"/>
         <property key="memories.configurationmemory2" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>

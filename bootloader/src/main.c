@@ -16,8 +16,11 @@ const char bootloader_name[] = PROJECT_NAME;
 __attribute__((section(".bootloader_version")))
 const char bootloader_version[] = PROJECT_VERSION;
 
+__attribute__((section(".trigger_pattern")))
+uint32_t trigger_pattern;
+
 // Application entry point
-#define APP_START_ADDRESS    0x9D010000
+#define APP_START_ADDRESS    0x9D004000
 #define APP_VALID_SIGNATURE  0x12345678
 
 typedef void (*app_function_t)(void);
@@ -51,7 +54,15 @@ int main ( void )
     /* Initialize all modules */
     SYS_Initialize ( NULL );
     
+    LED_STAT_Set();
+    
     printf("Starting bootloader\r\n");
+
+    printf("Bootloader version: %s\r\n", bootloader_version);
+    printf("Bootloader name: %s\r\n", bootloader_name);
+    printf("Trigger pattern: %08X\r\n", trigger_pattern);
+    
+//    while(1);
 
     // Check for bootloader trigger (e.g., button press)
 //    if (GPIO_PinRead(GPIO_PIN_RB0) == 0) {
