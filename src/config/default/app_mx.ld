@@ -152,7 +152,7 @@ SECTIONS
   } >kseg0_program_mem
 
   /* Add a section for the trigger pattern */
-  .trigger_pattern 0xA0000000 (NOLOAD) :
+  .trigger_pattern 0xA0000000 :
   {
     KEEP(*(.trigger_pattern))
   } > kseg1_data_mem 

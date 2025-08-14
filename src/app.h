@@ -13,6 +13,12 @@
 #include <stdlib.h>
 #include "configuration.h"
 #include "definitions.h"
+#include "project_version.h"
+
+extern uint32_t trigger_pattern;
+extern const uint32_t app_signature;
+extern const char app_name[];
+extern const char app_version[];
 
 typedef enum{
     APP_STATE_INIT=0,

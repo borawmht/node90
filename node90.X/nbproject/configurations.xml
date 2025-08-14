@@ -296,6 +296,7 @@
       <itemPath>../src/cborjson.h</itemPath>
       <itemPath>../src/storage.h</itemPath>
       <itemPath>../src/eeprom.h</itemPath>
+      <itemPath>../src/commands.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -476,6 +477,7 @@
       <itemPath>../src/resources.c</itemPath>
       <itemPath>../src/storage.c</itemPath>
       <itemPath>../src/eeprom.c</itemPath>
+      <itemPath>../src/commands.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -777,6 +779,8 @@
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d07ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmerToGoFilePath"
+                  value="/home/brado/Desktop/node90/node90.X/debug/default/node90_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.ledbrightness" value="5"/>

@@ -9,6 +9,22 @@
 #include "resources.h"
 #include "ethernet.h"
 #include "coap.h"
+#include "commands.h"
+
+// Application signature for bootloader validation
+__attribute__((section(".app_signature")))
+__attribute__((aligned(4)))
+const uint32_t app_signature = 0x12345678;
+
+__attribute__((section(".app_name")))
+const char app_name[] = PROJECT_NAME;
+
+__attribute__((section(".app_version")))
+const char app_version[] = PROJECT_VERSION;
+
+__attribute__((section(".trigger_pattern")))
+uint32_t trigger_pattern;
+#define TRIGGER_PATTERN_ADDRESS 0xA0000000
 
 APP_DATA appData;
 
@@ -20,7 +36,11 @@ uint8_t led_stat_period = FAST_LED_PERIOD; // led status period
 
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
-void APP_Initialize ( void ){    
+void APP_Initialize ( void ){
+    // trigger pattern is always 0 when the app is started
+    // trigger_pattern = *(uint32_t*)TRIGGER_PATTERN_ADDRESS;
+    // SYS_CONSOLE_PRINT("Trigger pattern: 0x%08X\r\n", trigger_pattern);
+
     SYS_CONSOLE_PRINT("app: init tasks\r\n");    
     ethernet_init(); // start ethernet task 
     coap_init(); // start coap task
@@ -48,6 +68,7 @@ void APP_Tasks ( void ){
             SYS_CONSOLE_PRINT("app: init\r\n");    
             eeprom_init();
             resources_init();
+            commands_init();
             led_stat_period = SLOW_LED_PERIOD;
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
             appData.state = APP_STATE_RUN;

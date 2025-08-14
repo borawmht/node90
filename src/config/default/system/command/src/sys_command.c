@@ -225,7 +225,8 @@ static const SYS_CMD_API sysConsoleApi =
 // built-in command table
 static const SYS_CMD_DESCRIPTOR    builtinCmdTbl[]=
 {
-    {"reset",   CommandReset,   ": Reset host"},
+   // {"reset",   CommandReset,   ": Reset host"},
+    {"restart",   CommandReset,   ": Restart host"},
     {"q",       CommandQuit,    ": quit command processor"},
     {"help",    CommandHelp,    ": help"},
 };
