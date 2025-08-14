@@ -187,16 +187,16 @@ void ethernet_task(void *pvParameters){
         if(ip_address.Val != TCPIP_STACK_NetAddress(netH)){
             ip_address.Val = TCPIP_STACK_NetAddress(netH);
             if(ip_address.Val != 0) has_ip = true;                
-            SYS_CONSOLE_PRINT("ethernet: IP address changed to %d.%d.%d.%d\r\n",
+            SYS_CONSOLE_PRINT("ethernet: IP address:  %d.%d.%d.%d\r\n",
                     ip_address.v[0],ip_address.v[1],ip_address.v[2],ip_address.v[3]);
             subnet_mask.Val = TCPIP_STACK_NetMask(netH);
             gateway.Val = TCPIP_STACK_NetAddressGateway(netH);
             broadcast_address.Val = TCPIP_STACK_NetAddressBcast(netH);
-            SYS_CONSOLE_PRINT("ethernet: subnet mask changed to %d.%d.%d.%d\r\n",
+            SYS_CONSOLE_PRINT("ethernet: subnet mask: %d.%d.%d.%d\r\n",
                     subnet_mask.v[0],subnet_mask.v[1],subnet_mask.v[2],subnet_mask.v[3]);
-            SYS_CONSOLE_PRINT("ethernet: gateway changed to %d.%d.%d.%d\r\n",
+            SYS_CONSOLE_PRINT("ethernet: gateway:     %d.%d.%d.%d\r\n",
                     gateway.v[0],gateway.v[1],gateway.v[2],gateway.v[3]);
-            SYS_CONSOLE_PRINT("ethernet: broadcast address changed to %d.%d.%d.%d\r\n",
+            SYS_CONSOLE_PRINT("ethernet: broadcast:   %d.%d.%d.%d\r\n",
                     broadcast_address.v[0],broadcast_address.v[1],broadcast_address.v[2],broadcast_address.v[3]);
             ethernet_services_init();           
         }
