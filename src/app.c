@@ -41,7 +41,7 @@ void APP_Initialize ( void ){
     // trigger_pattern = *(uint32_t*)TRIGGER_PATTERN_ADDRESS;
     // SYS_CONSOLE_PRINT("Trigger pattern: 0x%08X\r\n", trigger_pattern);
 
-    SYS_CONSOLE_PRINT("app: init tasks\r\n");    
+    // SYS_CONSOLE_PRINT("app: init tasks\r\n");    
     ethernet_init(); // start ethernet task 
     coap_init(); // start coap task
     appData.state = APP_STATE_INIT; // start app task in init state
@@ -65,7 +65,7 @@ void APP_Tasks ( void ){
     {        
         case APP_STATE_INIT:
         {            
-            SYS_CONSOLE_PRINT("app: init\r\n");    
+            // SYS_CONSOLE_PRINT("app: init\r\n");    
             eeprom_init();
             resources_init();
             commands_init();

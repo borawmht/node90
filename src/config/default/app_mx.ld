@@ -143,10 +143,14 @@ SECTIONS
     . = ALIGN(4);
   } >kseg0_program_mem
 
-  /* Application name and version info */
-  .app_info :
+  .app_name 0x9D005020 :
   {
     KEEP(*(.app_name))
+    . = ALIGN(4);
+  } >kseg0_program_mem
+
+  .app_version 0x9D005040 :
+  {
     KEEP(*(.app_version))
     . = ALIGN(4);
   } >kseg0_program_mem

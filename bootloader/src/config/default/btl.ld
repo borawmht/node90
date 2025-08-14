@@ -138,11 +138,15 @@ SECTIONS
 }
 SECTIONS
 {
-  /* Application name and version info */
-  .app_info :
+  .bootloader_name 0x9D000000 :
   {
-    KEEP(*(.app_name))
-    KEEP(*(.app_version))
+    KEEP(*(.bootloader_name))
+    . = ALIGN(4);
+  } >kseg0_program_mem
+
+  .bootloader_version 0x9D000020 :
+  {
+    KEEP(*(.bootloader_version))
     . = ALIGN(4);
   } >kseg0_program_mem
 

@@ -505,6 +505,9 @@ void SYS_Initialize ( void* data )
 
     /* MISRAC 2012 deviation block end */
 
+    SYS_CONSOLE_PRINT("app: starting\r\n");
+    SYS_CONSOLE_PRINT("app: name: %s\r\n", app_name);
+    SYS_CONSOLE_PRINT("app: version: %s\r\n", app_version);
 
    /* TCPIP Stack Initialization */
    sysObj.tcpip = TCPIP_STACK_Init();
