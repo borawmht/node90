@@ -110,8 +110,7 @@ int main ( void )
     LED_STAT_Set();
     
     printf("bootloader: starting\r\n");
-    printf("bootloader: name: %s\r\n", bootloader_name);
-    printf("bootloader: version: %s\r\n", bootloader_version);
+    printf("bootloader: %s %s\r\n", bootloader_name, bootloader_version);
     
     check_reset_source();
     
