@@ -485,6 +485,8 @@ void SYS_Initialize ( void* data )
 
 	GPIO_Initialize();
 
+    NVM_Initialize();
+
     CORETIMER_Initialize();
 	UART1_Initialize();
 

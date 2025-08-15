@@ -70,6 +70,7 @@
 void CORE_TIMER_Handler (void);
 void SPI_2_Handler (void);
 void UART_2_Handler (void);
+void FCE_Handler (void);
 void ETH_Handler (void);
 
 
@@ -93,6 +94,11 @@ void __attribute__((used)) SPI_2_Handler (void)
 void __attribute__((used)) UART_2_Handler (void)
 {
     UART_2_InterruptHandler();
+}
+
+void __attribute__((used)) FCE_Handler (void)
+{
+    NVM_InterruptHandler();
 }
 
 void __attribute__((used)) ETH_Handler (void)

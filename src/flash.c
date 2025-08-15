@@ -7,6 +7,7 @@
 #include "flash.h"
 #include "definitions.h"
 #include <string.h>
+#include "spi_coordinator.h"
 
 static bool flash_initialized = false;
 static DRV_HANDLE flash_handle = DRV_HANDLE_INVALID;
@@ -47,6 +48,9 @@ void flash_init(void) {
         SYS_CONSOLE_PRINT("flash: already initialized\r\n");
         return;
     }
+    
+    // Initialize SPI coordinator if not already done
+    spi_coordinator_init();
     
     // Check if SST26 driver is ready
     // SYS_CONSOLE_PRINT("flash: checking SST26 driver status\r\n");
@@ -118,6 +122,12 @@ bool flash_read(uint32_t address, uint8_t *data, uint16_t length) {
         return false;
     }
     
+    // Acquire SPI2 for flash use
+    if (!spi_coordinator_acquire(SPI_DEVICE_FLASH)) {
+        SYS_CONSOLE_PRINT("flash: failed to acquire SPI2\r\n");
+        return false;
+    }
+    
     // SYS_CONSOLE_PRINT("flash: read addr=0x%08lx len=%d\r\n", address, length);
     
     // Clear the buffer first to see if we're actually getting data
@@ -126,6 +136,7 @@ bool flash_read(uint32_t address, uint8_t *data, uint16_t length) {
     // Perform blocking read operation
     if (!DRV_SST26_Read(flash_handle, data, length, address)) {
         SYS_CONSOLE_PRINT("flash: read operation failed\r\n");
+        spi_coordinator_release(); // Release on error
         return false;
     }
 
@@ -133,17 +144,29 @@ bool flash_read(uint32_t address, uint8_t *data, uint16_t length) {
         // Wait for completion
     }
     
-    // Debug: Print the first few bytes we read
-    // SYS_CONSOLE_PRINT("flash: read data (first 4 bytes): 0x%02x 0x%02x 0x%02x 0x%02x\r\n", 
-    //                 data[0], data[1], data[2], data[3]);
+    bool success = (DRV_SST26_TransferStatusGet(flash_handle) == DRV_SST26_TRANSFER_COMPLETED);
     
-    // SYS_CONSOLE_PRINT("flash: read completed successfully\r\n");
-    return true;
+    // Release SPI2
+    spi_coordinator_release();
+    
+    if (success) {
+        // SYS_CONSOLE_PRINT("flash: read completed successfully\r\n");
+        return true;
+    } else {
+        SYS_CONSOLE_PRINT("flash: read transfer failed\r\n");
+        return false;
+    }
 }
 
 bool flash_write(uint32_t address, const uint8_t *data, uint16_t length) {
     if (!flash_is_initialized() || data == NULL) {
         SYS_CONSOLE_PRINT("flash: write failed - not initialized or invalid params\r\n");
+        return false;
+    }
+    
+    // Acquire SPI2 for flash use
+    if (!spi_coordinator_acquire(SPI_DEVICE_FLASH)) {
+        SYS_CONSOLE_PRINT("flash: failed to acquire SPI2\r\n");
         return false;
     }
     
@@ -167,6 +190,7 @@ bool flash_write(uint32_t address, const uint8_t *data, uint16_t length) {
         // Perform page write operation
         if (!DRV_SST26_PageWrite(flash_handle, (void*)current_data, current_addr)) {
             SYS_CONSOLE_PRINT("flash: page write failed\r\n");
+            spi_coordinator_release(); // Release on error
             return false;
         }
         
@@ -177,6 +201,7 @@ bool flash_write(uint32_t address, const uint8_t *data, uint16_t length) {
         
         if (DRV_SST26_TransferStatusGet(flash_handle) != DRV_SST26_TRANSFER_COMPLETED) {
             SYS_CONSOLE_PRINT("flash: write transfer failed\r\n");
+            spi_coordinator_release(); // Release on error
             return false;
         }
         
@@ -184,6 +209,9 @@ bool flash_write(uint32_t address, const uint8_t *data, uint16_t length) {
         current_data += bytes_in_page;
         remaining -= bytes_in_page;
     }
+    
+    // Release SPI2
+    spi_coordinator_release();
     
     // SYS_CONSOLE_PRINT("flash: write completed successfully\r\n");
     return true;
@@ -195,11 +223,18 @@ bool flash_erase_sector(uint32_t address) {
         return false;
     }
     
+    // Acquire SPI2 for flash use
+    if (!spi_coordinator_acquire(SPI_DEVICE_FLASH)) {
+        SYS_CONSOLE_PRINT("flash: failed to acquire SPI2\r\n");
+        return false;
+    }
+    
     // SYS_CONSOLE_PRINT("flash: erasing sector at 0x%08lx\r\n", address);
     
     // Perform sector erase (4KB sectors)
     if (!DRV_SST26_SectorErase(flash_handle, address)) {
         SYS_CONSOLE_PRINT("flash: sector erase failed\r\n");
+        spi_coordinator_release(); // Release on error
         return false;
     }
     
@@ -208,13 +243,18 @@ bool flash_erase_sector(uint32_t address) {
         // Wait for completion
     }
     
-    if (DRV_SST26_TransferStatusGet(flash_handle) != DRV_SST26_TRANSFER_COMPLETED) {
+    bool success = (DRV_SST26_TransferStatusGet(flash_handle) == DRV_SST26_TRANSFER_COMPLETED);
+    
+    // Release SPI2
+    spi_coordinator_release();
+    
+    if (success) {
+        // SYS_CONSOLE_PRINT("flash: sector erase completed successfully\r\n");
+        return true;
+    } else {
         SYS_CONSOLE_PRINT("flash: sector erase transfer failed\r\n");
         return false;
     }
-    
-    // SYS_CONSOLE_PRINT("flash: sector erase completed successfully\r\n");
-    return true;
 }
 
 bool flash_erase_chip(void) {
@@ -223,11 +263,18 @@ bool flash_erase_chip(void) {
         return false;
     }
     
+    // Acquire SPI2 for flash use
+    if (!spi_coordinator_acquire(SPI_DEVICE_FLASH)) {
+        SYS_CONSOLE_PRINT("flash: failed to acquire SPI2\r\n");
+        return false;
+    }
+    
     SYS_CONSOLE_PRINT("flash: erasing entire chip\r\n");
     
     // Perform chip erase
     if (!DRV_SST26_ChipErase(flash_handle)) {
         SYS_CONSOLE_PRINT("flash: chip erase failed\r\n");
+        spi_coordinator_release(); // Release on error
         return false;
     }
     
@@ -236,13 +283,18 @@ bool flash_erase_chip(void) {
         // Wait for completion
     }
     
-    if (DRV_SST26_TransferStatusGet(flash_handle) != DRV_SST26_TRANSFER_COMPLETED) {
+    bool success = (DRV_SST26_TransferStatusGet(flash_handle) == DRV_SST26_TRANSFER_COMPLETED);
+    
+    // Release SPI2
+    spi_coordinator_release();
+    
+    if (success) {
+        SYS_CONSOLE_PRINT("flash: chip erase completed successfully\r\n");
+        return true;
+    } else {
         SYS_CONSOLE_PRINT("flash: chip erase transfer failed\r\n");
         return false;
     }
-    
-    SYS_CONSOLE_PRINT("flash: chip erase completed successfully\r\n");
-    return true;
 }
 
 uint32_t flash_get_magic(void) {

@@ -15,6 +15,10 @@
 #define FLASH_MAGIC_OFFSET    0x00000000
 #define FLASH_TEST_OFFSET     0x00001000  // 4KB offset for test data
 #define FLASH_TEST_SIZE       256         // Test data size
+#define FLASH_INFO_OFFSET     0x00002000  // 8KB offset for info data
+#define FLASH_INFO_SIZE       4096        // 4KB info data size
+#define FLASH_BINARY_OFFSET   0x00003000  // 12KB offset for binary data
+#define FLASH_BINARY_SIZE     512*1024    // 500KB binary data size
 
 // Function prototypes
 void flash_init(void);

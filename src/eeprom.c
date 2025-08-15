@@ -7,6 +7,7 @@
 #include "eeprom.h"
 #include "definitions.h"
 #include <string.h>
+#include "spi_coordinator.h"
 
 // 25LC1024 SPI Commands
 #define EEPROM_CMD_READ    0x03
@@ -24,15 +25,11 @@
 static bool eeprom_initialized = false;
 
 static void eeprom_cs_low(void) {
-    CS_EEPROM_Clear();
-    // Add a small delay to ensure the pin state has settled
-    for (volatile int i = 0; i < 1000; i++);
+    spi_coordinator_cs_eeprom_low();
 }
 
 static void eeprom_cs_high(void) {
-    CS_EEPROM_Set();
-    // Add a small delay to ensure the pin state has settled
-    for (volatile int i = 0; i < 1000; i++);
+    spi_coordinator_cs_eeprom_high();
 }
 
 static uint8_t eeprom_spi_transfer(uint8_t data) {
@@ -172,6 +169,9 @@ void eeprom_init(void) {
         return;
     }
     
+    // Initialize SPI coordinator if not already done
+    spi_coordinator_init();
+    
     eeprom_initialized = true;
     
     // Test basic communication (write/read cycle)
@@ -201,6 +201,12 @@ void eeprom_init(void) {
 bool eeprom_write(uint32_t address, const uint8_t *data, uint16_t length) {
     if (!eeprom_initialized || address + length > EEPROM_SIZE) {
         SYS_CONSOLE_PRINT("eeprom: write failed - invalid params\r\n");
+        return false;
+    }
+    
+    // Acquire SPI2 for EEPROM use
+    if (!spi_coordinator_acquire(SPI_DEVICE_EEPROM)) {
+        SYS_CONSOLE_PRINT("eeprom: failed to acquire SPI2\r\n");
         return false;
     }
     
@@ -260,12 +266,20 @@ bool eeprom_write(uint32_t address, const uint8_t *data, uint16_t length) {
     }
     
     // SYS_CONSOLE_PRINT("eeprom: write finished successfully\r\n");
+    // Release SPI2 when done
+    spi_coordinator_release();
     return true;
 }
 
 bool eeprom_read(uint32_t address, uint8_t *data, uint16_t length) {
     if (!eeprom_initialized || address + length > EEPROM_SIZE) {
         SYS_CONSOLE_PRINT("eeprom: read failed - invalid params\r\n");
+        return false;
+    }
+    
+    // Acquire SPI2 for EEPROM use
+    if (!spi_coordinator_acquire(SPI_DEVICE_EEPROM)) {
+        SYS_CONSOLE_PRINT("eeprom: failed to acquire SPI2\r\n");
         return false;
     }
     
@@ -282,6 +296,8 @@ bool eeprom_read(uint32_t address, uint8_t *data, uint16_t length) {
     }
     eeprom_cs_high();
     
+    // Release SPI2 when done
+    spi_coordinator_release();
     return true;
 }
 

@@ -145,6 +145,37 @@ _UART_2_Handler:
     nop
     portRESTORE_CONTEXT
     .end    _UART_2_Handler
+   .extern  FCE_Handler
+
+   .section .vector_44,code, keep
+   .equ     __vector_dispatch_44, IntVectorFCE_Handler
+   .global  __vector_dispatch_44
+   .set     nomicromips
+   .set     noreorder
+   .set     nomips16
+   .set     noat
+   .ent  IntVectorFCE_Handler
+
+IntVectorFCE_Handler:
+    la    $26,  _FCE_Handler
+    jr    $26
+    nop
+    .end    IntVectorFCE_Handler
+
+   .section .FCE_Handler_vector_text, code, keep
+   .set     nomicromips
+   .set     noreorder
+   .set     nomips16
+   .set     noat
+   .ent  _FCE_Handler
+
+_FCE_Handler:
+    portSAVE_CONTEXT
+    la    s6,  FCE_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end    _FCE_Handler
    .extern  ETH_Handler
 
    .section .vector_48,code, keep

@@ -59,6 +59,7 @@
 void CORE_TIMER_InterruptHandler( void );
 void SPI_2_InterruptHandler( void );
 void UART_2_InterruptHandler( void );
+void NVM_InterruptHandler( void );
 void ETHERNET_InterruptHandler( void );
 
 
