@@ -30,7 +30,6 @@ void network_init(void) {
     storage_loadStr(network_ns, "inx_ip", network.inx_ip, "192.168.1.68", &network_set_inx_ip);
 }
 
-char * network_json_str = resource_json_str;
 char * network_get_json_str(void) {    
     cJSON * root = cJSON_CreateObject();
     cJSON_AddStringToObject(root,"tag",network.tag);
@@ -44,20 +43,17 @@ char * network_get_json_str(void) {
     cJSON_AddStringToObject(root,"inx_ip",network.inx_ip);
     cJSON_AddStringToObject(root,"inxip",network.inx_ip); 
     char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(network_json_str,print_str,1024);
+    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
     cJSON_free(print_str);
     cJSON_Delete(root);
-    return network_json_str;
+    return resource_json_str;
 }
 
 bool network_coap_get_handler(coap_message_t *response){
     SYS_CONSOLE_PRINT("network: coap get handler\r\n");
-    char * json_str = network_get_json_str();
-    char e_json_str[RESOURCE_JSON_STR_SIZE+10];    
-    snprintf(e_json_str,RESOURCE_JSON_STR_SIZE,"{\"e\":%s}",json_str);
-    uint8_t cbor_buffer[RESOURCE_JSON_STR_SIZE];  // Fixed size buffer
+    snprintf(resource_e_json_str,RESOURCE_E_JSON_STR_SIZE,"{\"e\":%s}",network_get_json_str());
     size_t encoded_size = 0;
-    CborError error = json_to_cbor(e_json_str, cbor_buffer, sizeof(cbor_buffer), &encoded_size);
+    CborError error = json_to_cbor(resource_e_json_str, resource_cbor_buffer, RESOURCE_CBOR_BUFFER_SIZE, &encoded_size);
     if (error != CborNoError) {
         SYS_CONSOLE_PRINT("network: json_to_cbor error: %d\r\n", error);
         return false;      
@@ -66,21 +62,21 @@ bool network_coap_get_handler(coap_message_t *response){
     response->code = COAP_CODE_CONTENT;
     response->content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
     response->payload_length = encoded_size;
-    memcpy(response->payload, cbor_buffer, response->payload_length);
+    memcpy(response->payload, resource_cbor_buffer, response->payload_length);
 
-    // SYS_CONSOLE_PRINT("network: response: %s\r\n", e_json_str);
+    // SYS_CONSOLE_PRINT("network: response: %s\r\n", resource_e_json_str);
     // break long print into parts, split on characters
     SYS_CONSOLE_PRINT("network: response: ");
-    int len = strlen(e_json_str);
+    int len = strlen(resource_e_json_str);
     for(int i = 0; i < len; i++){
-        SYS_CONSOLE_PRINT("%c", e_json_str[i]);
+        SYS_CONSOLE_PRINT("%c", resource_e_json_str[i]);
     }    
     SYS_CONSOLE_PRINT("\r\n");
     return true;
 }
 
 bool network_set_tag(char *tag){
-    // TODO: validate tag and save to eeprom
+    // TODO: validate tag
     bool changed = strncmp(network.tag,tag,16) != 0;
     strncpy(network.tag,tag,16);
     SYS_CONSOLE_PRINT("network: tag: %s\r\n", network.tag);
@@ -91,7 +87,7 @@ bool network_set_tag(char *tag){
 }
 
 bool network_set_inx_ip(char *inx_ip){
-    // TODO: validate inx_ip and save to eeprom
+    // TODO: validate inx_ip
     bool changed = strncmp(network.inx_ip,inx_ip,20) != 0;
     strncpy(network.inx_ip,inx_ip,20);
     SYS_CONSOLE_PRINT("network: inx_ip: %s\r\n", network.inx_ip);
@@ -102,7 +98,7 @@ bool network_set_inx_ip(char *inx_ip){
 }
 
 bool network_set_serial_number(char *serial_number){
-    // TODO: validate serial_number and save to eeprom
+    // TODO: validate serial_number
     bool changed = strncmp(network.serial_number,serial_number,16) != 0;
     strncpy(network.serial_number,serial_number,16);
     SYS_CONSOLE_PRINT("network: serial_number: %s\r\n", network.serial_number);
@@ -147,8 +143,8 @@ bool network_coap_put_handler(const coap_message_t *request, coap_message_t *res
     SYS_CONSOLE_PRINT("network: coap put handler\r\n");
     // cbor to json
     size_t encoded_size = request->payload_length;
-    cbor_to_json_string(request->payload, encoded_size, network_json_str, RESOURCE_JSON_STR_SIZE, &encoded_size, 0);        
-    return network_put_json_str(network_json_str);
+    cbor_to_json_string(request->payload, encoded_size, resource_json_str, RESOURCE_JSON_STR_SIZE, &encoded_size, 0);        
+    return network_put_json_str(resource_json_str);
 }
 
 bool network_coap_handler(const coap_message_t *request, coap_message_t *response) {

@@ -10,6 +10,8 @@
 #include "resources/network.h"
 
 char resource_json_str[RESOURCE_JSON_STR_SIZE];
+char resource_e_json_str[RESOURCE_E_JSON_STR_SIZE];
+uint8_t resource_cbor_buffer[RESOURCE_CBOR_BUFFER_SIZE];
 
 // Define the array here
 const resource_t resources[] = {
