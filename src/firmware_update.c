@@ -734,13 +734,13 @@ bool firmware_update_get_internal_latest(void) {
     // Get external version
     char *external_version = firmware_update_get_external_version();
     if (!external_version || strcmp(external_version, "none") == 0) {
-        SYS_CONSOLE_PRINT("firmware_update: no valid external version available\r\n");
+        // SYS_CONSOLE_PRINT("firmware_update: no valid external version available\r\n");
         return true; // If no external version, internal is considered latest
     }
     
     // Check if external firmware is valid
     if (!firmware_update_get_external_valid()) {
-        SYS_CONSOLE_PRINT("firmware_update: external firmware is not valid\r\n");
+        // SYS_CONSOLE_PRINT("firmware_update: external firmware is not valid\r\n");
         return true; // If external is invalid, internal is considered latest
     }
     
