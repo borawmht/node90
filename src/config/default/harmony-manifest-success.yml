@@ -4,7 +4,7 @@
 
 
 project: node90
-creation_date: 2025-08-15T07:03:42.485-04:00[America/New_York]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2025-08-15T09:43:01.445-04:00[America/New_York]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Linux
 mcc_mode: IDE            # [IDE|Standalone|Headless]
 mcc_version: v5.5.2
@@ -16,8 +16,11 @@ compiler: XC32 4.60
 modules:
     - {name: "core", version: "v3.15.3"}
     - {name: "csp", version: "v3.22.6"}
+    - {name: "zlib", version: "v1.3.1"}
     - {name: "FreeRTOS-Kernel", version: "V10.5.1"}
+    - {name: "wolfssl", version: "v5.4.0"}
     - {name: "net", version: "v3.14.2"}
+    - {name: "crypto", version: "v3.8.2"}
 
 packs:
     - {name: "PIC32MX_DFP", version: "1.6.369"}

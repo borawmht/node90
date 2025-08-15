@@ -2,7 +2,7 @@
 
 manifest_file_version: 1.0.0
 project: node90
-creation_date: 2025-08-15T07:03:42.455-04:00[America/New_York]
+creation_date: 2025-08-15T09:43:01.391-04:00[America/New_York]
 operating_system: Linux
 mcc_mode: IDE
 mcc_mode_version: v6.25
@@ -20,5 +20,8 @@ packs: {name: PIC32MX_DFP, version: 1.6.369}
 modules:
 - {name: core, type: HARMONY, version: v3.15.3}
 - {name: csp, type: HARMONY, version: v3.22.6}
+- {name: zlib, type: HARMONY, version: v1.3.1}
 - {name: FreeRTOS-Kernel, type: HARMONY, version: V10.5.1}
+- {name: wolfssl, type: HARMONY, version: v5.4.0}
 - {name: net, type: HARMONY, version: v3.14.2}
+- {name: crypto, type: HARMONY, version: v3.8.2}

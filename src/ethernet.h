@@ -10,6 +10,7 @@
 
 #include "stdbool.h"
 #include "stdint.h"
+#include "config/default/library/tcpip/tcpip.h"
 
 #define PROTO_TCP  6
 #define PROTO_UDP 17
@@ -69,6 +70,8 @@ typedef struct {
 void ethernet_init();
 bool ethernet_hasIP(void);
 bool ethernet_linkUp(void);
+bool ethernet_is_ready(void);
+TCPIP_NET_HANDLE ethernet_get_net_handle(void);
 uint8_t * ethernet_getIPAddress(void);
 uint8_t * ethernet_getMACAddress(void);
 uint8_t * ethernet_getSubnetMask(void);

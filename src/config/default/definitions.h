@@ -48,6 +48,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include "crypto/crypto.h"
 #include "driver/ethmac/drv_ethmac.h"
 #include "system/time/sys_time.h"
 #include "peripheral/nvm/plib_nvm.h"
@@ -71,6 +72,11 @@
 #include "driver/sst26/drv_sst26.h"
 #include "driver/ethphy/drv_ethphy.h"
 #include "driver/ethphy/drv_extphy_lan8720.h"
+#include "wolfssl/wolfcrypt/port/pic32/crypt_wolfcryptcb.h"
+#include "net_pres/pres/net_pres.h"
+#include "net_pres/pres/net_pres_encryptionproviderapi.h"
+#include "net_pres/pres/net_pres_transportapi.h"
+#include "net_pres/pres/net_pres_socketapi.h"
 #include "system/console/sys_console.h"
 #include "system/console/src/sys_console_uart_definitions.h"
 #include "FreeRTOS.h"
@@ -218,6 +224,8 @@ typedef struct
 
     SYS_MODULE_OBJ  drvSST26;
     SYS_MODULE_OBJ  sysDebug;
+
+    SYS_MODULE_OBJ  netPres;
 
 
 } SYSTEM_OBJECTS;

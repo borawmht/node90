@@ -7,6 +7,7 @@
 
 #include "ethernet.h"
 #include "coap.h"
+#include "http.h"
 #include "definitions.h"
 #include "config/default/library/tcpip/src/tcpip_private.h"
 #include "third_party/rtos/FreeRTOS/Source/include/queue.h"
@@ -150,6 +151,7 @@ void ethernet_services_init(void){
     // Initialize the services
     SYS_CONSOLE_PRINT("ethernet: services init\r\n");
     coap_server_init(); // Initialize CoAP server
+    http_init(); // Initialize HTTP
     SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
 }
 
@@ -346,4 +348,14 @@ char * ethernet_getGatewayString(void){
 char * ethernet_getBroadcastAddressString(void){
     snprintf(ethernet_str,32,"%d.%d.%d.%d",broadcast_address.v[0],broadcast_address.v[1],broadcast_address.v[2],broadcast_address.v[3]);
     return ethernet_str;
+}
+
+// Add these functions at the end of the file, before the last closing brace
+
+bool ethernet_is_ready(void) {
+    return is_ready && link_up && has_ip;
+}
+
+TCPIP_NET_HANDLE ethernet_get_net_handle(void) {
+    return netH;
 }
