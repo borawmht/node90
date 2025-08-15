@@ -561,20 +561,36 @@ char * firmware_update_get_internal_version(void) {
     return app_version;
 }
 
+// Helper function to check if a string contains valid printable characters
+static bool is_valid_string(const char *str, size_t max_len) {
+    if (!str) return false;
+    
+    for (size_t i = 0; i < max_len; i++) {
+        if (str[i] == '\0') break;
+        if (str[i] < 32 || str[i] > 126) { // Check for printable ASCII
+            return false;
+        }
+    }
+    return true;
+}
+
 char * firmware_update_get_external_name(void) {
     static char app_name[APPLICATION_NAME_SIZE];
     
     // Check if flash is initialized
     if (!flash_is_initialized()) {
-        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
-        return NULL;
+        return "none";
     }
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
-        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
-        return NULL;
+        return "none";
+    }
+    
+    // Check if the firmware info is valid (has valid strings and valid flag)
+    if (!external_fw_info.valid || !is_valid_string(external_fw_info.app_name, APPLICATION_NAME_SIZE)) {
+        return "none";
     }
     
     // Copy the app name
@@ -589,15 +605,18 @@ char * firmware_update_get_external_version(void) {
     
     // Check if flash is initialized
     if (!flash_is_initialized()) {
-        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
-        return NULL;
+        return "none";
     }
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
-        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
-        return NULL;
+        return "none";
+    }
+    
+    // Check if the firmware info is valid (has valid strings and valid flag)
+    if (!external_fw_info.valid || !is_valid_string(external_fw_info.app_version, APPLICATION_VERSION_SIZE)) {
+        return "none";
     }
     
     // Copy the app version
@@ -610,18 +629,36 @@ char * firmware_update_get_external_version(void) {
 bool firmware_update_get_external_valid(void) {
     // Check if flash is initialized
     if (!flash_is_initialized()) {
-        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
         return false;
     }
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
-        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
         return false;
     }
     
-    return external_fw_info.valid;
+    // Check if the firmware info is valid (has valid strings and valid flag)
+    if (!external_fw_info.valid || 
+        !is_valid_string(external_fw_info.app_name, APPLICATION_NAME_SIZE) ||
+        !is_valid_string(external_fw_info.app_version, APPLICATION_VERSION_SIZE)) {
+        return false;
+    }
+    
+    // Get internal app name for comparison
+    char *internal_name = firmware_update_get_internal_name();
+    if (!internal_name) {
+        return false;
+    }
+    
+    // Check if app names match
+    if (strncmp(internal_name, external_fw_info.app_name, APPLICATION_NAME_SIZE) != 0) {
+        SYS_CONSOLE_PRINT("firmware_update: app name mismatch - internal: %s, external: %s\r\n", 
+                          internal_name, external_fw_info.app_name);
+        return false;
+    }
+    
+    return true;
 }
 
 // Helper function to parse semantic version components
@@ -696,8 +733,8 @@ bool firmware_update_get_internal_latest(void) {
     
     // Get external version
     char *external_version = firmware_update_get_external_version();
-    if (!external_version) {
-        SYS_CONSOLE_PRINT("firmware_update: failed to get external version\r\n");
+    if (!external_version || strcmp(external_version, "none") == 0) {
+        SYS_CONSOLE_PRINT("firmware_update: no valid external version available\r\n");
         return true; // If no external version, internal is considered latest
     }
     
