@@ -106,12 +106,13 @@ def test_error_rate(ip_address, path, timeout=1, repeats=10):
 
 if __name__ == "__main__":
     # Test single request first
+    node_ip = '192.168.1.229'
     print("Testing single request...")    
-    result = get('192.168.1.29', '/inx/network', 5)    
+    result = get(node_ip, '/inx/network', 5)    
     print(f"Result: {result}")
-    result = "confirmed" if put('192.168.1.29', '/inx/network', 'tag', '3', confirm=True) else "not confirmed"
+    result = "confirmed" if put(node_ip, '/inx/network', 'tag', '3', confirm=True) else "not confirmed"
     print(f"Result: {result}")
-    result = get('192.168.1.29', '/inx/network', 5)
+    result = get(node_ip, '/inx/network', 5)
     print(f"Result: {result}")
     
     # Then test error rate

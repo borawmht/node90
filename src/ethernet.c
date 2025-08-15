@@ -151,7 +151,7 @@ void ethernet_services_init(void){
     // Initialize the services
     SYS_CONSOLE_PRINT("ethernet: services init\r\n");
     coap_server_init(); // Initialize CoAP server
-    http_init(); // Initialize HTTP
+    http_server_init(); // Initialize HTTP
     SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
 }
 

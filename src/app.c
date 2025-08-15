@@ -9,6 +9,7 @@
 #include "resources.h"
 #include "ethernet.h"
 #include "coap.h"
+#include "http.h"
 #include "commands.h"
 #include "flash.h"
 #include "firmware_update.h"
@@ -35,6 +36,8 @@ APP_DATA appData;
 
 uint8_t led_stat_counter = 0; // led status counter
 uint8_t led_stat_period = FAST_LED_PERIOD; // led status period
+
+uint16_t app_test_counter = 0;
 
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
@@ -81,7 +84,15 @@ void APP_Tasks ( void ){
 
         case APP_STATE_RUN:
         {            
-            // TODO: add main application logic here            
+            // TODO: add main application logic here    
+            if(app_test_counter<60){
+                app_test_counter++;
+            }
+            else if(ethernet_linkUp() && ethernet_hasIP() && app_test_counter==60){
+                app_test_counter++;                
+                http_client_get_url("http://httpbin.org/get", NULL, 0);
+                http_client_get_url("http://192.168.1.1", NULL, 0);
+            }        
             break;
         }
 
