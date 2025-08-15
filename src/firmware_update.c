@@ -747,8 +747,8 @@ bool firmware_update_get_internal_latest(void) {
     // Compare versions
     int comparison = compare_semantic_versions(internal_version, external_version);
     
-    SYS_CONSOLE_PRINT("firmware_update: version comparison - internal: %s, external: %s, result: %d\r\n", 
-                      internal_version, external_version, comparison);
+    // SYS_CONSOLE_PRINT("firmware_update: version comparison - internal: %s, external: %s, result: %d\r\n", 
+    //                   internal_version, external_version, comparison);
     
     // Return true if internal version is greater than or equal to external
     return (comparison >= 0);
