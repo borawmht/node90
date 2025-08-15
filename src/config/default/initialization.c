@@ -111,6 +111,23 @@ const TCPIP_MODULE_MAC_PIC32INT_CONFIG tcpipMACPIC32INTInitData;
 /* Forward declaration of MIIM 0 initialization data */
 static const DRV_MIIM_INIT drvMiimInitData_0;
 
+// <editor-fold defaultstate="collapsed" desc="DRV_SST26 Initialization Data">
+
+static const DRV_SST26_PLIB_INTERFACE drvSST26PlibAPI = {
+    .writeRead          = (DRV_SST26_PLIB_WRITE_READ)SPI2_WriteRead,
+    .write_t              = (DRV_SST26_PLIB_WRITE)SPI2_Write,
+    .read_t               = (DRV_SST26_PLIB_READ)SPI2_Read,
+    .isBusy             = (DRV_SST26_PLIB_IS_BUSY)SPI2_IsBusy,
+    .callbackRegister   = (DRV_SST26_PLIB_CALLBACK_REGISTER)SPI2_CallbackRegister,
+};
+
+static const DRV_SST26_INIT drvSST26InitData =
+{
+    .sst26Plib      = &drvSST26PlibAPI,
+    .chipSelectPin  = DRV_SST26_CHIP_SELECT_PIN,
+};
+// </editor-fold>
+
 /* Forward declaration of PHY initialization data */
 const DRV_ETHPHY_INIT tcpipPhyInitData_LAN8720;
 
@@ -485,6 +502,8 @@ void SYS_Initialize ( void* data )
    /* Initialize the MIIM Driver Instance 0*/
    sysObj.drvMiim_0 = DRV_MIIM_OBJECT_BASE_Default.miim_Initialize(DRV_MIIM_DRIVER_INDEX_0, (const SYS_MODULE_INIT *) &drvMiimInitData_0); 
 
+    sysObj.drvSST26 = DRV_SST26_Initialize((SYS_MODULE_INDEX)DRV_SST26_INDEX, (SYS_MODULE_INIT *)&drvSST26InitData);
+
 
     /* MISRA C-2012 Rule 11.3, 11.8 deviated below. Deviation record ID -  
     H3_MISRAC_2012_R_11_3_DR_1 & H3_MISRAC_2012_R_11_8_DR_1*/
@@ -505,9 +524,6 @@ void SYS_Initialize ( void* data )
 
     /* MISRAC 2012 deviation block end */
 
-    SYS_CONSOLE_PRINT("app: starting\r\n");
-    SYS_CONSOLE_PRINT("app: name: %s\r\n", app_name);
-    SYS_CONSOLE_PRINT("app: version: %s\r\n", app_version);
 
    /* TCPIP Stack Initialization */
    sysObj.tcpip = TCPIP_STACK_Init();

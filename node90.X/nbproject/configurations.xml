@@ -38,6 +38,12 @@
               </logicalFolder>
               <itemPath>../src/config/default/driver/miim/drv_miim.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="sst26" displayName="sst26" projectFiles="true">
+              <itemPath>../src/config/default/driver/sst26/drv_sst26.h</itemPath>
+              <itemPath>../src/config/default/driver/sst26/src/drv_sst26_spi_interface.h</itemPath>
+              <itemPath>../src/config/default/driver/sst26/src/drv_sst26_local.h</itemPath>
+              <itemPath>../src/config/default/driver/sst26/drv_sst26_definitions.h</itemPath>
+            </logicalFolder>
             <itemPath>../src/config/default/driver/driver.h</itemPath>
             <itemPath>../src/config/default/driver/driver_common.h</itemPath>
           </logicalFolder>
@@ -220,6 +226,10 @@
               <itemPath>../src/config/default/system/int/sys_int.h</itemPath>
               <itemPath>../src/config/default/system/int/sys_int_mapping.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="ports" displayName="ports" projectFiles="true">
+              <itemPath>../src/config/default/system/ports/sys_ports.h</itemPath>
+              <itemPath>../src/config/default/system/ports/sys_ports_mapping.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="reset" displayName="reset" projectFiles="true">
               <itemPath>../src/config/default/system/reset/sys_reset.h</itemPath>
             </logicalFolder>
@@ -297,6 +307,7 @@
       <itemPath>../src/storage.h</itemPath>
       <itemPath>../src/eeprom.h</itemPath>
       <itemPath>../src/commands.h</itemPath>
+      <itemPath>../src/flash.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -310,6 +321,7 @@
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
           <itemPath>../src/config/default/app_mx.ld</itemPath>
+          <itemPath>../src/config/default/p32MX795F512H.ld</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -343,6 +355,10 @@
                   <itemPath>../src/config/default/driver/miim/src/dynamic/drv_miim.c</itemPath>
                 </logicalFolder>
               </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="sst26" displayName="sst26" projectFiles="true">
+              <itemPath>../src/config/default/driver/sst26/src/drv_sst26_spi_interface.c</itemPath>
+              <itemPath>../src/config/default/driver/sst26/src/drv_sst26.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="library" displayName="library" projectFiles="true">
@@ -478,6 +494,7 @@
       <itemPath>../src/storage.c</itemPath>
       <itemPath>../src/eeprom.c</itemPath>
       <itemPath>../src/commands.c</itemPath>
+      <itemPath>../src/flash.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -529,6 +546,7 @@
       <C32>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -577,6 +595,7 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
+        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -609,6 +628,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -627,7 +647,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="74000"/>
+        <property key="heap-size" value="42000"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -642,7 +662,7 @@
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value="-O1"/>
         <property key="preprocessor-macros"
-                  value="ROM_LENGTH=0x70000;ROM_ORIGIN=0x1d010000"/>
+                  value="ROM_LENGTH=0x7c000;ROM_ORIGIN=0x1d004000"/>
         <property key="remove-unused-sections" value="true"/>
         <property key="report-memory-usage" value="false"/>
         <property key="serial-length" value=""/>
@@ -655,6 +675,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>

@@ -138,6 +138,14 @@ extern "C" {
 #define DRV_MIIM_RTOS_TASK_PRIORITY             1
 
 
+/* SST26 Driver Instance Configuration */
+#define DRV_SST26_INDEX                 (0U)
+#define DRV_SST26_CLIENTS_NUMBER        (1U)
+#define DRV_SST26_START_ADDRESS         (0x0U)
+#define DRV_SST26_PAGE_SIZE             (256U)
+#define DRV_SST26_ERASE_BUFFER_SIZE     (4096U)
+#define DRV_SST26_CHIP_SELECT_PIN       SYS_PORT_PIN_RD5
+
 
 
 // *****************************************************************************

@@ -9,7 +9,7 @@
 
 #include "resources/network.h"
 
-char resource_json_str[1024];
+char resource_json_str[RESOURCE_JSON_STR_SIZE];
 
 // Define the array here
 const resource_t resources[] = {

@@ -16,6 +16,7 @@ typedef struct {
     coap_resource_handler_t coap_server_handler;
 } resource_t;
 
+#define RESOURCE_JSON_STR_SIZE 2048
 extern char resource_json_str[];
 extern const resource_t resources[];
 

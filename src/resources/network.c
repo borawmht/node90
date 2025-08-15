@@ -18,6 +18,10 @@ network_t network;
 
 const char * network_ns = "network";
 
+#ifndef MIN
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 void network_init(void) {
     SYS_CONSOLE_PRINT("network: init\r\n");
     // Load configuration using storage API with namespaces
@@ -49,9 +53,9 @@ char * network_get_json_str(void) {
 bool network_coap_get_handler(coap_message_t *response){
     SYS_CONSOLE_PRINT("network: coap get handler\r\n");
     char * json_str = network_get_json_str();
-    char e_json_str[1030];    
-    snprintf(e_json_str,1024,"{\"e\":%s}",json_str);
-    uint8_t cbor_buffer[1024];  // Fixed size buffer
+    char e_json_str[RESOURCE_JSON_STR_SIZE+10];    
+    snprintf(e_json_str,RESOURCE_JSON_STR_SIZE,"{\"e\":%s}",json_str);
+    uint8_t cbor_buffer[RESOURCE_JSON_STR_SIZE];  // Fixed size buffer
     size_t encoded_size = 0;
     CborError error = json_to_cbor(e_json_str, cbor_buffer, sizeof(cbor_buffer), &encoded_size);
     if (error != CborNoError) {
@@ -65,11 +69,11 @@ bool network_coap_get_handler(coap_message_t *response){
     memcpy(response->payload, cbor_buffer, response->payload_length);
 
     // SYS_CONSOLE_PRINT("network: response: %s\r\n", e_json_str);
-    // break long print into parts, split on 100 characters
+    // break long print into parts, split on characters
     SYS_CONSOLE_PRINT("network: response: ");
     int len = strlen(e_json_str);
-    for(int i = 0; i < len; i += 100){
-        SYS_CONSOLE_PRINT("%s", e_json_str + i);
+    for(int i = 0; i < len; i++){
+        SYS_CONSOLE_PRINT("%c", e_json_str[i]);
     }    
     SYS_CONSOLE_PRINT("\r\n");
     return true;
@@ -143,7 +147,7 @@ bool network_coap_put_handler(const coap_message_t *request, coap_message_t *res
     SYS_CONSOLE_PRINT("network: coap put handler\r\n");
     // cbor to json
     size_t encoded_size = request->payload_length;
-    cbor_to_json_string(request->payload, encoded_size, network_json_str, sizeof(network_json_str), &encoded_size, 0);        
+    cbor_to_json_string(request->payload, encoded_size, network_json_str, RESOURCE_JSON_STR_SIZE, &encoded_size, 0);        
     return network_put_json_str(network_json_str);
 }
 

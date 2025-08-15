@@ -58,6 +58,7 @@
 #include "system/sys_time_h2_adapter.h"
 #include "system/sys_random_h2_adapter.h"
 #include "system/int/sys_int.h"
+#include "system/ports/sys_ports.h"
 #include "system/reset/sys_reset.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
@@ -66,6 +67,7 @@
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
 #include "driver/miim/drv_miim.h"
+#include "driver/sst26/drv_sst26.h"
 #include "driver/ethphy/drv_ethphy.h"
 #include "driver/ethphy/drv_extphy_lan8720.h"
 #include "system/console/sys_console.h"
@@ -213,6 +215,7 @@ typedef struct
 
    SYS_MODULE_OBJ  drvMiim_0;
 
+    SYS_MODULE_OBJ  drvSST26;
     SYS_MODULE_OBJ  sysDebug;
 
 

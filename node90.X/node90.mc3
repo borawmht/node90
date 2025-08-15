@@ -62,6 +62,10 @@
          <string>class com.microchip.mcc.harmony.HarmonyModule</string>
       </entry>
       <entry>
+         <string>drv_sst26</string>
+         <string>class com.microchip.mcc.harmony.HarmonyModule</string>
+      </entry>
+      <entry>
          <string>spi2</string>
          <string>class com.microchip.mcc.harmony.HarmonyModule</string>
       </entry>
@@ -1304,11 +1308,11 @@
   &lt;HarmonyCore dnOrder=&quot;0&quot; id=&quot;ENABLE_SYS_PORTS&quot;&gt;
     &lt;Attributes dnOrder=&quot;0&quot;&gt;
       &lt;Boolean dnOrder=&quot;0&quot; id=&quot;readOnly&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
       &lt;/Boolean&gt;
     &lt;/Attributes&gt;
     &lt;Values dnOrder=&quot;1&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;HarmonyCore&quot; value=&quot;false&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;HarmonyCore&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/HarmonyCore&gt;
 &lt;/HarmonyCore&gt;
@@ -10101,7 +10105,7 @@
   &lt;HarmonyCore dnOrder=&quot;0&quot; id=&quot;PORTS_DEF&quot;&gt;
     &lt;Attributes dnOrder=&quot;0&quot;&gt;
       &lt;Boolean dnOrder=&quot;0&quot; id=&quot;enabled&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
       &lt;/Boolean&gt;
     &lt;/Attributes&gt;
   &lt;/HarmonyCore&gt;
@@ -10114,7 +10118,7 @@
   &lt;HarmonyCore dnOrder=&quot;0&quot; id=&quot;PORTS_HEADER&quot;&gt;
     &lt;Attributes dnOrder=&quot;0&quot;&gt;
       &lt;Boolean dnOrder=&quot;0&quot; id=&quot;enabled&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
       &lt;/Boolean&gt;
     &lt;/Attributes&gt;
   &lt;/HarmonyCore&gt;
@@ -10127,7 +10131,7 @@
   &lt;HarmonyCore dnOrder=&quot;0&quot; id=&quot;PORTS_MAPPING&quot;&gt;
     &lt;Attributes dnOrder=&quot;0&quot;&gt;
       &lt;Boolean dnOrder=&quot;0&quot; id=&quot;enabled&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
       &lt;/Boolean&gt;
     &lt;/Attributes&gt;
   &lt;/HarmonyCore&gt;
@@ -10346,7 +10350,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="!@#harmonyUserData"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;UserData&gt;
   &lt;UserData dnOrder=&quot;0&quot;&gt;
-    &lt;GraphSettings canvasHeight=&quot;470&quot; canvasWidth=&quot;514&quot; dnOrder=&quot;0&quot;/&gt;
+    &lt;GraphSettings canvasHeight=&quot;462&quot; canvasWidth=&quot;514&quot; dnOrder=&quot;0&quot;/&gt;
     &lt;PowerProfiles dnOrder=&quot;1&quot;&gt;
       &lt;Profile dnOrder=&quot;0&quot; id=&quot;profile0&quot; name=&quot;Main&quot;/&gt;
     &lt;/PowerProfiles&gt;
@@ -10400,13 +10404,14 @@
         &lt;ElementPosition dnOrder=&quot;3&quot; id=&quot;core&quot; x=&quot;240&quot; y=&quot;20&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;4&quot; id=&quot;core_timer&quot; x=&quot;18&quot; y=&quot;278&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;5&quot; id=&quot;dfp&quot; x=&quot;20&quot; y=&quot;20&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;6&quot; id=&quot;spi2&quot; x=&quot;149&quot; y=&quot;352&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;7&quot; id=&quot;sys_command&quot; x=&quot;351&quot; y=&quot;53&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;8&quot; id=&quot;sys_console&quot; x=&quot;187&quot; y=&quot;53&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;9&quot; id=&quot;sys_debug&quot; x=&quot;373&quot; y=&quot;169&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;sys_time&quot; x=&quot;194&quot; y=&quot;235&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;uart1&quot; x=&quot;19&quot; y=&quot;352&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;uart2&quot; x=&quot;16&quot; y=&quot;205&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;6&quot; id=&quot;drv_sst26&quot; x=&quot;371&quot; y=&quot;350&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;7&quot; id=&quot;spi2&quot; x=&quot;203&quot; y=&quot;360&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;8&quot; id=&quot;sys_command&quot; x=&quot;351&quot; y=&quot;53&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;9&quot; id=&quot;sys_console&quot; x=&quot;187&quot; y=&quot;53&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;sys_debug&quot; x=&quot;373&quot; y=&quot;169&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;sys_time&quot; x=&quot;194&quot; y=&quot;235&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;uart1&quot; x=&quot;19&quot; y=&quot;352&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;uart2&quot; x=&quot;16&quot; y=&quot;205&quot;/&gt;
       &lt;/ElementPositions&gt;
     &lt;/ComponentGraph&gt;
   &lt;/UserData&gt;
@@ -10422,7 +10427,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;APP_START_ADDRESS&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;1d010000&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;1d004000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11627,6 +11632,28 @@
 </value>
       </entry>
       <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="DMA_CH_NEEDED_FOR_SPI2_Receive"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
+  &lt;core dnOrder=&quot;0&quot; id=&quot;DMA_CH_NEEDED_FOR_SPI2_Receive&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/core&gt;
+&lt;/core&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="DMA_CH_NEEDED_FOR_SPI2_Transmit"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
+  &lt;core dnOrder=&quot;0&quot; id=&quot;DMA_CH_NEEDED_FOR_SPI2_Transmit&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/core&gt;
+&lt;/core&gt;
+</value>
+      </entry>
+      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="ETH_CLOCK_ENABLE"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;ETH_CLOCK_ENABLE&quot;&gt;
@@ -11851,7 +11878,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;EVIC_31_1_ENABLE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;false&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11862,7 +11889,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;EVIC_31_1_HANDLER_LOCK&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;false&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11873,7 +11900,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;EVIC_31_1_INTERRUPT_HANDLER&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;SPI_2_Handler&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;SPI_2_InterruptHandler&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -12207,7 +12234,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;SPI_2_INTERRUPT_ENABLE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;false&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -12218,7 +12245,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;SPI_2_INTERRUPT_ENABLE_UPDATE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;true&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -12229,7 +12256,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;SPI_2_INTERRUPT_HANDLER&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;SPI_2_Handler&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;SPI_2_InterruptHandler&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -12240,7 +12267,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;SPI_2_INTERRUPT_HANDLER_LOCK&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;false&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -12573,7 +12600,8 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;XC32_HEAP_SIZE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;74000&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;1024&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;42000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -13591,9 +13619,253 @@
 </value>
       </entry>
       <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="!@#harmonyAttachmentState"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot;&gt;
+    &lt;Attachments dnOrder=&quot;0&quot;&gt;
+      &lt;DirectDependency dnOrder=&quot;0&quot; id=&quot;drv_sst26_DRV_SPI_dependency&quot;&gt;
+        &lt;Attributes dnOrder=&quot;0&quot;&gt;
+          &lt;Boolean dnOrder=&quot;0&quot; id=&quot;enabled&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
+          &lt;/Boolean&gt;
+        &lt;/Attributes&gt;
+      &lt;/DirectDependency&gt;
+      &lt;DirectDependency dnOrder=&quot;1&quot; id=&quot;drv_sst26_SPI_dependency&quot;&gt;
+        &lt;Attributes dnOrder=&quot;0&quot;&gt;
+          &lt;String dnOrder=&quot;0&quot; id=&quot;targetComponentID&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;spi2&lt;/Value&gt;
+          &lt;/String&gt;
+          &lt;String dnOrder=&quot;1&quot; id=&quot;targetAttachmentID&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;SPI2_SPI&lt;/Value&gt;
+          &lt;/String&gt;
+          &lt;Boolean dnOrder=&quot;2&quot; id=&quot;enabled&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
+          &lt;/Boolean&gt;
+        &lt;/Attributes&gt;
+      &lt;/DirectDependency&gt;
+    &lt;/Attachments&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="#&amp;__MCC_Group_Parrent_id"/>
+         <value>__ROOTVIEW</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="CHIP_SELECT"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;CHIP_SELECT&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_MEMORY_CONNECTED"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_MEMORY_CONNECTED&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_HEADER_DEF"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_HEADER_DEF&quot;&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;String dnOrder=&quot;0&quot; id=&quot;source&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;driver/sqi_flash/sst26/templates/drv_sst26_qspi_spi_definitions.h.ftl&lt;/Value&gt;
+      &lt;/String&gt;
+    &lt;/Attributes&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_INTERFACE_TYPE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_INTERFACE_TYPE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;drv_sst26&quot; value=&quot;SPI_PLIB&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_NUM_BUFFER_DESC"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_NUM_BUFFER_DESC&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_NUM_CLIENTS"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_NUM_CLIENTS&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_PLIB"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_PLIB&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;drv_sst26&quot; value=&quot;SPI2&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_PROTOCOL"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_PROTOCOL&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;drv_sst26&quot; value=&quot;SPI&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_RX_DMA_CHANNEL"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_RX_DMA_CHANNEL&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_SOURCE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_SOURCE&quot;&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Boolean dnOrder=&quot;0&quot; id=&quot;markup&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
+      &lt;/Boolean&gt;
+      &lt;String dnOrder=&quot;1&quot; id=&quot;source&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;driver/sqi_flash/sst26/src/drv_sst26_qspi_spi.c.ftl&lt;/Value&gt;
+      &lt;/String&gt;
+    &lt;/Attributes&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_SPI_DRIVER_INSTANCE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_SPI_DRIVER_INSTANCE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_TX_DMA_CHANNEL"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_TX_DMA_CHANNEL&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="DRV_SST26_TX_RX_DMA"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;DRV_SST26_TX_RX_DMA&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="ERASE_BUFFER_SIZE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;ERASE_BUFFER_SIZE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="ERASE_ENABLE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;ERASE_ENABLE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="INTERRUPT_ENABLE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;INTERRUPT_ENABLE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;drv_sst26&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="LANE_MODE"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;LANE_MODE&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="SPI_CHIP_SELECT_PIN"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;SPI_CHIP_SELECT_PIN&quot;&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Boolean dnOrder=&quot;0&quot; id=&quot;visible&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
+      &lt;/Boolean&gt;
+    &lt;/Attributes&gt;
+    &lt;Values dnOrder=&quot;1&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;25&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="drv_sst26" name="START_ADDRESS"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;drv_sst26&gt;
+  &lt;drv_sst26 dnOrder=&quot;0&quot; id=&quot;START_ADDRESS&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
+  &lt;/drv_sst26&gt;
+&lt;/drv_sst26&gt;
+</value>
+      </entry>
+      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="spi2" name="!@#harmonyAttachmentState"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;spi2&gt;
-  &lt;spi2 dnOrder=&quot;0&quot;/&gt;
+  &lt;spi2 dnOrder=&quot;0&quot;&gt;
+    &lt;Attachments dnOrder=&quot;0&quot;&gt;
+      &lt;DirectCapability dnOrder=&quot;0&quot; id=&quot;SPI2_SPI&quot;&gt;
+        &lt;Attributes dnOrder=&quot;0&quot;&gt;
+          &lt;String dnOrder=&quot;0&quot; id=&quot;targetComponentID&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;drv_sst26&lt;/Value&gt;
+          &lt;/String&gt;
+          &lt;String dnOrder=&quot;1&quot; id=&quot;targetAttachmentID&quot;&gt;
+            &lt;Value dnOrder=&quot;0&quot;&gt;drv_sst26_SPI_dependency&lt;/Value&gt;
+          &lt;/String&gt;
+        &lt;/Attributes&gt;
+      &lt;/DirectCapability&gt;
+    &lt;/Attachments&gt;
+  &lt;/spi2&gt;
 &lt;/spi2&gt;
 </value>
       </entry>
@@ -13832,14 +14104,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="spi2" name="SPI_INTERRUPT_MODE"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;spi2&gt;
   &lt;spi2 dnOrder=&quot;0&quot; id=&quot;SPI_INTERRUPT_MODE&quot;&gt;
-    &lt;Attributes dnOrder=&quot;0&quot;&gt;
-      &lt;Boolean dnOrder=&quot;0&quot; id=&quot;readOnly&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;false&lt;/Value&gt;
-      &lt;/Boolean&gt;
-    &lt;/Attributes&gt;
-    &lt;Values dnOrder=&quot;1&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;spi2&quot; value=&quot;true&quot;/&gt;
-      &lt;User dnOrder=&quot;1&quot; value=&quot;false&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/spi2&gt;
 &lt;/spi2&gt;
@@ -13915,7 +14182,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;spi2&gt;
   &lt;spi2 dnOrder=&quot;0&quot; id=&quot;SPI_SPICON_CLK_PH&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;1&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;0&quot;/&gt;
     &lt;/Values&gt;
   &lt;/spi2&gt;
 &lt;/spi2&gt;
@@ -13959,7 +14226,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="spi2" name="SPI_SPICON_SMP"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;spi2&gt;
   &lt;spi2 dnOrder=&quot;0&quot; id=&quot;SPI_SPICON_SMP&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;0&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/spi2&gt;
 &lt;/spi2&gt;
 </value>
@@ -18528,11 +18797,11 @@
       </entry>
       <entry>
          <file>../src/config/default/configuration.h</file>
-         <hash>6a70d52597c08e5e3ce25a6ddbe3d9daa46a4f3f04003720271ea0e58d606e2f</hash>
+         <hash>6d66a4580a333b06fef4ce117094f0f30110e551e92be673c05c8e7e749d87aa</hash>
       </entry>
       <entry>
          <file>../src/config/default/definitions.h</file>
-         <hash>ade84e6e32cadc3dd2de5d6a30113c743c8a4b2107537f92afdaa4def7c9b522</hash>
+         <hash>91473326fc3c8ef23dadfb93e154cd1499281fb8b43514c4ca286f1bdde517bf</hash>
       </entry>
       <entry>
          <file>../src/config/default/device.h</file>
@@ -18627,6 +18896,30 @@
          <hash>d4fd9b64f3b3ebe44b49ece88bc2b7dfa6174598ebe9ed4bd541aa5e8de599c7</hash>
       </entry>
       <entry>
+         <file>../src/config/default/driver/sst26/drv_sst26.h</file>
+         <hash>f11f50198610ebfb0697699a3e8d3a5fa52d5e3982a5d5dbd05a88e638b6031e</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/driver/sst26/drv_sst26_definitions.h</file>
+         <hash>3d0b7e20c162c0d239cc4cfb18604e3dcbe98eccd02e8247066918cb3208c6e4</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/driver/sst26/src/drv_sst26.c</file>
+         <hash>8a0a903061f86adb455f66c1909ebe056f066aa1f7a37285fd2baab299fcee67</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/driver/sst26/src/drv_sst26_local.h</file>
+         <hash>542a096c07bbf56b145b73c05cf8904420ab9471ee8f5eb3b68732db40aadecd</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/driver/sst26/src/drv_sst26_spi_interface.c</file>
+         <hash>a568b90352a4d86c0707aaeec2881bca0c21699b1bffff0c9c71f1cdf158d37e</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/driver/sst26/src/drv_sst26_spi_interface.h</file>
+         <hash>1f9acab797cdfe7d5efbcbec82487b9023dc5806c020b833c548ffdf4cddc2d5</hash>
+      </entry>
+      <entry>
          <file>../src/config/default/exceptions.c</file>
          <hash>ed8f326d4f1abc2e74c1743119304a2f613522e3baacdd8df59fdda14c44619e</hash>
       </entry>
@@ -18636,19 +18929,19 @@
       </entry>
       <entry>
          <file>../src/config/default/initialization.c</file>
-         <hash>f6f4a685d9898de572a112ec34d213096ddf9bab57c9e8f2c9df2f080ed8d1fb</hash>
+         <hash>b004c39e6994dea9b8ceba0b8a8e038ee3be95dafe43ab9740e5bff9ca2908e8</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.c</file>
-         <hash>b1a09da62a5771538db6f7167a4a539d5f68c82ae176a99aee0d566eae403fd8</hash>
+         <hash>921e721b048fdc3fb6b84f56b2e4886a0583360401500aa9e5e21554b537a86a</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.h</file>
-         <hash>e4b88d9301945d45d385590abc652c21722890b364d48a8f035e9a822a77db6f</hash>
+         <hash>09fba191b9a116ecec69cbe71b436d20ca26d593dd84906b2e8afb820bd494ac</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts_a.S</file>
-         <hash>52bb05408d8e23bf6f6f963ac73131a01fde3e099b6f2fa70afd7a2bf4353b04</hash>
+         <hash>b17fb4b267b3686d2b5c070684fcae7d2db08325364c8041351586d514b9532f</hash>
       </entry>
       <entry>
          <file>../src/config/default/library/tcpip/arp.h</file>
@@ -19232,7 +19525,7 @@
       </entry>
       <entry>
          <file>../src/config/default/peripheral/evic/plib_evic.c</file>
-         <hash>055a4f32eff3d9fc663f2c232d73330dcaf41e2ab0d896159e298f44bb36ad8d</hash>
+         <hash>7f063c77f2ee04b64a1b43d50ce877df306ab8fc04e8e6944ba3f86ec60c0324</hash>
       </entry>
       <entry>
          <file>../src/config/default/peripheral/evic/plib_evic.h</file>
@@ -19248,11 +19541,11 @@
       </entry>
       <entry>
          <file>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.c</file>
-         <hash>31480f20919e88eb235c2e88e87ea1fc16d0231800af1e08969b29119c83d2cc</hash>
+         <hash>dce7570c9005b4abe99628124b90883d93ca854250f062bd2fa44881e4106020</hash>
       </entry>
       <entry>
          <file>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.h</file>
-         <hash>1e6470640bead49b6050d7221654e480015df4d8a6ffa22494aa97e9711717c8</hash>
+         <hash>5e78a42e59de34629f92f7916be364a44ed98f1fbaecd993eb121c485092d7d1</hash>
       </entry>
       <entry>
          <file>../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h</file>
@@ -19341,6 +19634,14 @@
       <entry>
          <file>../src/config/default/system/int/sys_int_mapping.h</file>
          <hash>a2dcf05575becc98aa212af1d220eda07487bd645d82c4d7a980aa3a22384cf3</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/system/ports/sys_ports.h</file>
+         <hash>b1d025001e16e2b3fabd3ad87f4211b3185f60c47bdb1c14bcaac6e5c94eae30</hash>
+      </entry>
+      <entry>
+         <file>../src/config/default/system/ports/sys_ports_mapping.h</file>
+         <hash>97195d4a7a99942def4f84b563b6590ee56ecb79c39f0defdc163c548e8f85ab</hash>
       </entry>
       <entry>
          <file>../src/config/default/system/reset/sys_reset.c</file>
