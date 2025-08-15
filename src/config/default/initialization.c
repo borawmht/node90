@@ -225,11 +225,6 @@ const TCPIP_ICMP_MODULE_CONFIG tcpipICMPInitData =
     0
 };
 
-/*** NBNS Server Initialization Data ***/
-const TCPIP_NBNS_MODULE_CONFIG tcpipNBNSInitData =
-{ 
-    0
-};
 
 
 
@@ -241,16 +236,6 @@ const TCPIP_NBNS_MODULE_CONFIG tcpipNBNSInitData =
 
 
 
-/*** DNS Client Initialization Data ***/
-const TCPIP_DNS_CLIENT_MODULE_CONFIG tcpipDNSClientInitData =
-{
-    .deleteOldLease         = TCPIP_DNS_CLIENT_DELETE_OLD_ENTRIES,
-    .cacheEntries           = TCPIP_DNS_CLIENT_CACHE_ENTRIES,
-    .entrySolvedTmo         = TCPIP_DNS_CLIENT_CACHE_ENTRY_TMO,    
-    .nIPv4Entries  = TCPIP_DNS_CLIENT_CACHE_PER_IPV4_ADDRESS,
-    .ipAddressType       = TCPIP_DNS_CLIENT_ADDRESS_TYPE,
-    .nIPv6Entries  = TCPIP_DNS_CLIENT_CACHE_PER_IPV6_ADDRESS,
-};
 
 
 
@@ -309,8 +294,6 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] =
     {TCPIP_MODULE_UDP,              &tcpipUDPInitData},             // TCPIP_MODULE_UDP
     {TCPIP_MODULE_TCP,              &tcpipTCPInitData},             // TCPIP_MODULE_TCP
     {TCPIP_MODULE_DHCP_CLIENT,      &tcpipDHCPInitData},            // TCPIP_MODULE_DHCP_CLIENT
-    {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
-    {TCPIP_MODULE_NBNS,             &tcpipNBNSInitData},            // TCPIP_MODULE_NBNS
 
     {TCPIP_MODULE_COMMAND,          0},                             // TCPIP_MODULE_COMMAND,
     { TCPIP_MODULE_MANAGER,         &tcpipHeapConfig },             // TCPIP_MODULE_MANAGER

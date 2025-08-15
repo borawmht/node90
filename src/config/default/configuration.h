@@ -154,35 +154,9 @@ extern "C" {
 // *****************************************************************************
 // *****************************************************************************
 
-
-/*** DNS Client Configuration ***/
-#define TCPIP_STACK_USE_DNS
-#define TCPIP_DNS_CLIENT_SERVER_TMO					60
-#define TCPIP_DNS_CLIENT_TASK_PROCESS_RATE			200
-#define TCPIP_DNS_CLIENT_CACHE_ENTRIES				5
-#define TCPIP_DNS_CLIENT_CACHE_ENTRY_TMO			0
-#define TCPIP_DNS_CLIENT_CACHE_PER_IPV4_ADDRESS		5
-#define TCPIP_DNS_CLIENT_CACHE_PER_IPV6_ADDRESS		1
-#define TCPIP_DNS_CLIENT_ADDRESS_TYPE			    IP_ADDRESS_TYPE_IPV4
-#define TCPIP_DNS_CLIENT_CACHE_DEFAULT_TTL_VAL		1200
-#define TCPIP_DNS_CLIENT_LOOKUP_RETRY_TMO			2
-#define TCPIP_DNS_CLIENT_MAX_HOSTNAME_LEN			64
-#define TCPIP_DNS_CLIENT_MAX_SELECT_INTERFACES		4
-#define TCPIP_DNS_CLIENT_DELETE_OLD_ENTRIES			true
-#define TCPIP_DNS_CLIENT_CONSOLE_CMD               	true
-#define TCPIP_DNS_CLIENT_USER_NOTIFICATION   false
-
-
-
 /*** ICMPv4 Server Configuration ***/
 #define TCPIP_STACK_USE_ICMP_SERVER
 #define TCPIP_ICMP_ECHO_ALLOW_BROADCASTS    false
-
-
-
-/*** NBNS Configuration ***/
-#define TCPIP_STACK_USE_NBNS
-#define TCPIP_NBNS_TASK_TICK_RATE   110
 
 
 /*** TCPIP MAC Configuration ***/
@@ -226,30 +200,6 @@ extern "C" {
 #define TCPIP_EMAC_FLOW_CONTROL_FULL_WMARK          2
 #define TCPIP_EMAC_FLOW_CONTROL_EMPTY_WMARK         0
 
-
-/******************************************************************************/
-/*wolfSSL TLS Layer Configuration*/
-/******************************************************************************/
-
-#define WOLFSSL_ALT_NAMES
-#define WOLFSSL_DER_LOAD
-#define KEEP_OUR_CERT
-#define KEEP_PEER_CERT
-#define HAVE_CRL_IO
-#define HAVE_IO_TIMEOUT
-#define TFM_NO_ASM
-#define WOLFSSL_NO_ASM
-#define SIZEOF_LONG_LONG 8
-#define WOLFSSL_USER_IO
-#define NO_WRITEV
-#define MICROCHIP_TCPIP
-#define NO_PWDBASED
-#define HAVE_TLS_EXTENSIONS
-#define HAVE_SUPPORTED_CURVES
-#define NO_ERROR_STRINGS
-#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
-#define NO_OLD_TLS
-#define NO_WOLFSSL_SERVER
 
 
 /*** TCP Configuration ***/
@@ -450,6 +400,7 @@ extern "C" {
 #define NO_PWDBASED
 #define HAVE_MCAPI
 #define WOLF_CRYPTO_CB  // provide call-back support
+#define WOLFCRYPT_ONLY
 #if (__XC32_VERSION > 100000000)
 #define WOLFSSL_HAVE_MIN
 #define WOLFSSL_HAVE_MAX
@@ -471,12 +422,6 @@ extern "C" {
 #define NO_HC128
 #define NO_RABBIT
 #define HAVE_ECC
-#define ECC_USER_CURVES
-#define HAVE_ECC192
-#define HAVE_ECC224
-#define NO_ECC256
-#define NO_ECC384
-#define NO_ECC521
 #define NO_DH
 #define NO_DSA
 #define FP_MAX_BITS 4096
@@ -489,7 +434,6 @@ extern "C" {
 #define NO_ERROR_STRINGS
 #define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
 #define NO_WOLFSSL_MEMORY
-#define NO_ZLIB
 // ---------- FUNCTIONAL CONFIGURATION END ----------
 
 #define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1

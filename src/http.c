@@ -12,19 +12,18 @@
 #include "config/default/net_pres/pres/net_pres_socketapi.h"
 #include "config/default/net_pres/pres/net_pres_socketapiconversion.h"
 #include "ethernet.h"
-#include "third_party/wolfssl/wolfssl/ssl.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 // Simple time function for WolfSSL (replaces missing SNTP function)
-uint32_t TCPIP_SNTP_UTCSecondsGet(void) {
-    // Return a simple timestamp - this is just for WolfSSL initialization
-    // In a real application, you might want to implement a proper time source
-    static uint32_t time_counter = 0;
-    time_counter += 1000; // Increment by 1 second (assuming 1ms tick)
-    return time_counter;
-}
+//uint32_t TCPIP_SNTP_UTCSecondsGet(void) {
+//    // Return a simple timestamp - this is just for WolfSSL initialization
+//    // In a real application, you might want to implement a proper time source
+//    static uint32_t time_counter = 0;
+//    time_counter += 1000; // Increment by 1 second (assuming 1ms tick)
+//    return time_counter;
+//}
 
 bool http_server_initialized = false;
 
@@ -274,7 +273,7 @@ static bool resolve_hostname(const char *hostname, IPV4_ADDR *ip_addr) {
         return string_to_ipv4(hostname, ip_addr);
     }
     
-    SYS_CONSOLE_PRINT("http_client: resolving hostname %s\r\n", hostname);
+    // SYS_CONSOLE_PRINT("http_client: resolving hostname %s\r\n", hostname);
     
     // Start DNS resolution
     TCPIP_DNS_RESULT dns_result = TCPIP_DNS_Resolve(hostname, TCPIP_DNS_TYPE_A);
@@ -333,6 +332,8 @@ void http_server_init(void) {
     SYS_CONSOLE_PRINT("http_server: init\r\n");
 }
 
+char request[512];
+uint8_t response_buffer[1024];
 bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     if (!url) {
         SYS_CONSOLE_PRINT("http_client: invalid URL\r\n");
@@ -352,8 +353,8 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: hostname=%s, port=%d, path=%s, https=%s\r\n", 
-                     hostname, port, path, is_https ? "yes" : "no");
+    // SYS_CONSOLE_PRINT("http_client: hostname=%s, port=%d, path=%s, https=%s\r\n", 
+    //                  hostname, port, path, is_https ? "yes" : "no");
     
     // Check if we have network connectivity
     if (!ethernet_is_ready()) {
@@ -374,8 +375,8 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: connecting to %d.%d.%d.%d:%d\r\n", 
-                     server_ip.v[0], server_ip.v[1], server_ip.v[2], server_ip.v[3], port);
+    // SYS_CONSOLE_PRINT("http_client: connecting to %d.%d.%d.%d:%d\r\n", 
+    //                  server_ip.v[0], server_ip.v[1], server_ip.v[2], server_ip.v[3], port);
     
     // Create direct TCP socket
     TCP_SOCKET tcp_socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, port, NULL);
@@ -384,7 +385,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: direct TCP socket created: %d\r\n", tcp_socket);
+    // SYS_CONSOLE_PRINT("http_client: direct TCP socket created: %d\r\n", tcp_socket);
     
     // Bind remote address
     IP_MULTI_ADDRESS remote_addr;
@@ -396,7 +397,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: remote address bound successfully\r\n");
+    // SYS_CONSOLE_PRINT("http_client: remote address bound successfully\r\n");
     
     // Connect using direct TCP
     if (!TCPIP_TCP_Connect(tcp_socket)) {
@@ -405,12 +406,13 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: direct TCP connect successful\r\n");
+    // SYS_CONSOLE_PRINT("http_client: direct TCP connect successful\r\n");
     
     // Wait for connection to be established
     uint32_t connect_timeout = 0;
-    while (!TCPIP_TCP_IsConnected(tcp_socket) && connect_timeout < 10000) {
-        for (volatile int i = 0; i < 10000; i++);
+    while (!TCPIP_TCP_IsConnected(tcp_socket) && connect_timeout < 3000) {
+        // for (volatile int i = 0; i < 10000; i++);
+        vTaskDelay(1);
         connect_timeout++;
         
         if (connect_timeout % 1000 == 0) {
@@ -424,10 +426,10 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    SYS_CONSOLE_PRINT("http_client: TCP connection established!\r\n");
+    // SYS_CONSOLE_PRINT("http_client: TCP connection established!\r\n");
     
     // Build HTTP request
-    char request[512];
+    // char request[512];
     if (data && data_size > 0) {
         // POST request
         snprintf(request, sizeof(request),
@@ -449,7 +451,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
                 path, hostname);
     }
     
-    SYS_CONSOLE_PRINT("http_client: sending request:\r\n%s\r\n", request);
+    // SYS_CONSOLE_PRINT("http_client: sending request:\r\n%s\r\n", request);
     
     // Send HTTP request in chunks if needed
     const char *request_ptr = request;
@@ -480,21 +482,23 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         SYS_CONSOLE_PRINT("http_client: sent chunk %d bytes, total %d/%d\r\n", sent, sent_total, request_len);
         
         // Small delay to allow TCP stack to process
-        for (volatile int i = 0; i < 1000; i++);
+        // for (volatile int i = 0; i < 1000; i++);
+        vTaskDelay(1);
     }
     
-    SYS_CONSOLE_PRINT("http_client: request sent completely\r\n");
+    // SYS_CONSOLE_PRINT("http_client: request sent completely\r\n");
     
     // Wait a moment for data to be transmitted
-    for (volatile int i = 0; i < 50000; i++);
+    // for (volatile int i = 0; i < 50000; i++);
+    vTaskDelay(10);
     
     // Receive response with better completion detection
-    uint8_t response_buffer[1024]; // Increased buffer size
+    // uint8_t response_buffer[1024]; // Increased buffer size
     uint16_t received = 0;
     uint32_t receive_timeout = 0;
     bool response_complete = false;
     
-    while (receive_timeout < 15000 && !response_complete) { // 15 second timeout
+    while (receive_timeout < 5000 && !response_complete) { // 5 second timeout
         uint16_t available = TCPIP_TCP_GetIsReady(tcp_socket);
         if (available > 0) {
             uint16_t to_read = (available > sizeof(response_buffer) - received - 1) ? 
@@ -512,7 +516,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
             // Check if response is complete
             response_buffer[received] = '\0';
             if (is_http_response_complete((char*)response_buffer, received)) {
-                SYS_CONSOLE_PRINT("http_client: response appears complete\r\n");
+                // SYS_CONSOLE_PRINT("http_client: response appears complete\r\n");
                 response_complete = true;
                 break;
             }
@@ -525,7 +529,8 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         }
         
         // Wait a bit before checking again
-        for (volatile int i = 0; i < 10000; i++);
+        // for (volatile int i = 0; i < 10000; i++);
+        vTaskDelay(1);
         receive_timeout++;
         
         if (receive_timeout % 2000 == 0) {
@@ -533,12 +538,12 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         }
     }
     
-    if (receive_timeout >= 15000) {
+    if (receive_timeout >= 5000) {
         SYS_CONSOLE_PRINT("http_client: response timeout after %d seconds\r\n", receive_timeout / 1000);
     }
     
     // Debug: show first part of response for troubleshooting
-    SYS_CONSOLE_PRINT("http_client: raw response start:\r\n%.200s\r\n", response_buffer);
+    // SYS_CONSOLE_PRINT("http_client: raw response start:\r\n%.200s\r\n", response_buffer);
     
     // Parse and display response information
     int status_code = 0;
@@ -551,21 +556,21 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     const char *body = get_response_body((char*)response_buffer);
     if (body) {
         size_t body_len = strlen(body);
-        SYS_CONSOLE_PRINT("http_client: response body (%d bytes):\r\n", body_len);
+        SYS_CONSOLE_PRINT("http_client: response body: %d bytes\r\n", body_len);
         
         // Display body in chunks to avoid console truncation
-        const char *body_ptr = body;
-        while (body_ptr < body + body_len) {
-            size_t chunk_size = (body_len - (body_ptr - body) > 200) ? 200 : (body_len - (body_ptr - body));
-            char temp[201];
-            strncpy(temp, body_ptr, chunk_size);
-            temp[chunk_size] = '\0';
-            SYS_CONSOLE_PRINT("%s", temp);
-            body_ptr += chunk_size;
-        }
-        SYS_CONSOLE_PRINT("\r\n");
+        // const char *body_ptr = body;
+        // while (body_ptr < body + body_len) {
+        //     size_t chunk_size = (body_len - (body_ptr - body) > 200) ? 200 : (body_len - (body_ptr - body));
+        //     char temp[201];
+        //     strncpy(temp, body_ptr, chunk_size);
+        //     temp[chunk_size] = '\0';
+        //     SYS_CONSOLE_PRINT("%s", temp);
+        //     body_ptr += chunk_size;
+        // }
+        // SYS_CONSOLE_PRINT("\r\n");
     } else {
-        SYS_CONSOLE_PRINT("http_client: received %d bytes (no body found):\r\n%s\r\n", received, response_buffer);
+        SYS_CONSOLE_PRINT("http_client: received: %d bytes (no body found)\r\n", received);
     }
     
     // Close socket
@@ -574,13 +579,13 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     SYS_CONSOLE_PRINT("http_client: request completed\r\n");
     
     // Add delay to ensure socket cleanup (with progress feedback)
-    SYS_CONSOLE_PRINT("http_client: waiting for socket cleanup...\r\n");
-    for (volatile int i = 0; i < 50000; i++) {
-        if (i % 10000 == 0) {
-            SYS_CONSOLE_PRINT("http_client: cleanup progress... %d%%\r\n", (i * 100) / 50000);
-        }
-    }
-    SYS_CONSOLE_PRINT("http_client: socket cleanup complete\r\n");
+    // SYS_CONSOLE_PRINT("http_client: waiting for socket cleanup...\r\n");
+    // for (volatile int i = 0; i < 50000; i++) {
+    //     if (i % 10000 == 0) {
+    //         SYS_CONSOLE_PRINT("http_client: cleanup progress... %d%%\r\n", (i * 100) / 50000);
+    //     }
+    // }
+    // SYS_CONSOLE_PRINT("http_client: socket cleanup complete\r\n");
     
     return true;
 }

@@ -176,9 +176,16 @@
           </logicalFolder>
           <logicalFolder name="net_pres" displayName="net_pres" projectFiles="true">
             <logicalFolder name="pres" displayName="pres" projectFiles="true">
+              <logicalFolder name="src" displayName="src" projectFiles="true">
+                <itemPath>../src/config/default/net_pres/pres/src/net_pres_local.h</itemPath>
+              </logicalFolder>
               <itemPath>../src/config/default/net_pres/pres/net_pres.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapiconversion.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapi.h</itemPath>
+              <itemPath>../src/config/default/net_pres/pres/net_pres_encryptionproviderapi.h</itemPath>
+              <itemPath>../src/config/default/net_pres/pres/net_pres_transportapi.h</itemPath>
+              <itemPath>../src/config/default/net_pres/pres/net_pres_enc_glue.h</itemPath>
+              <itemPath>../src/config/default/net_pres/pres/net_pres_certstore.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="osal" displayName="osal" projectFiles="true">
@@ -448,20 +455,6 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/pwdbased.h</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/rc2.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="wolfssl" displayName="wolfssl" projectFiles="true">
-        <itemPath>../src/third_party/wolfssl/wolfssl/sniffer.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/callbacks.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/internal.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/openssl/compat_types.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/wolfio.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/crl.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/version.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/ocsp.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/sniffer_error.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/error-ssl.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/test.h</itemPath>
-        <itemPath>../src/third_party/wolfssl/wolfssl/ssl.h</itemPath>
-      </logicalFolder>
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/ethernet.h</itemPath>
       <itemPath>../src/coap.h</itemPath>
@@ -555,7 +548,6 @@
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_heap_alloc.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcpip_manager.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/tcp.c</itemPath>
-                <itemPath>../src/config/default/library/tcpip/src/nbns.c</itemPath>
               </logicalFolder>
             </logicalFolder>
           </logicalFolder>
@@ -758,22 +750,6 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/ecc.c</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/curve25519.c</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/wc_pkcs11.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="wolfssl" displayName="wolfssl" projectFiles="true">
-        <itemPath>../src/third_party/wolfssl/src/x509_str.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/keys.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/wolfio.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/pk.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/ocsp.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/conf.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/tls.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/crl.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/dtls13.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/internal.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/x509.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/tls13.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/sniffer.c</itemPath>
-        <itemPath>../src/third_party/wolfssl/src/ssl.c</itemPath>
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
