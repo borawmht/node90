@@ -23,6 +23,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void);
 bool firmware_update_download_binary_to_external_flash(const char * url);
 char * firmware_update_get_internal_name(void);
 char * firmware_update_get_internal_version(void);
+bool firmware_update_get_internal_latest(void);
 char * firmware_update_get_external_name(void);
 char * firmware_update_get_external_version(void);
 bool firmware_update_get_external_valid(void);

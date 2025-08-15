@@ -55,8 +55,10 @@ void firmware_update_init(void) {
     // firmware_update_copy_internal_flash_to_external_flash();
     // firmware_update_compare_internal_flash_to_external_flash();
     // firmware_update_debug_checksum_calculation();
-    SYS_CONSOLE_PRINT("firmware_update: internal: %s %s\r\n", 
-        firmware_update_get_internal_name(), firmware_update_get_internal_version());
+    SYS_CONSOLE_PRINT("firmware_update: internal: %s %s %s\r\n", 
+        firmware_update_get_internal_name(), 
+        firmware_update_get_internal_version(),
+        firmware_update_get_internal_latest() ? "latest ✓" : "not latest ✗");
     SYS_CONSOLE_PRINT("firmware_update: external: %s %s %s\r\n", 
         firmware_update_get_external_name(), 
         firmware_update_get_external_version(), 
@@ -620,4 +622,97 @@ bool firmware_update_get_external_valid(void) {
     }
     
     return external_fw_info.valid;
+}
+
+// Helper function to parse semantic version components
+static bool parse_semantic_version(const char *version, int *major, int *minor, int *patch) {
+    if (!version || !major || !minor || !patch) {
+        return false;
+    }
+    
+    // Initialize to 0
+    *major = 0;
+    *minor = 0;
+    *patch = 0;
+    
+    // Parse major.minor.patch format
+    if (sscanf(version, "%d.%d.%d", major, minor, patch) == 3) {
+        return true;
+    }
+    
+    // Try major.minor format
+    if (sscanf(version, "%d.%d", major, minor) == 2) {
+        *patch = 0;
+        return true;
+    }
+    
+    // Try just major format
+    if (sscanf(version, "%d", major) == 1) {
+        *minor = 0;
+        *patch = 0;
+        return true;
+    }
+    
+    return false;
+}
+
+// Helper function to compare semantic versions
+static int compare_semantic_versions(const char *version1, const char *version2) {
+    int major1, minor1, patch1;
+    int major2, minor2, patch2;
+    
+    // Parse both versions
+    if (!parse_semantic_version(version1, &major1, &minor1, &patch1)) {
+        return -1; // version1 is invalid
+    }
+    
+    if (!parse_semantic_version(version2, &major2, &minor2, &patch2)) {
+        return 1; // version2 is invalid
+    }
+    
+    // Compare major version
+    if (major1 > major2) return 1;
+    if (major1 < major2) return -1;
+    
+    // Major versions are equal, compare minor version
+    if (minor1 > minor2) return 1;
+    if (minor1 < minor2) return -1;
+    
+    // Minor versions are equal, compare patch version
+    if (patch1 > patch2) return 1;
+    if (patch1 < patch2) return -1;
+    
+    // All components are equal
+    return 0;
+}
+
+bool firmware_update_get_internal_latest(void) {
+    // Get internal version
+    char *internal_version = firmware_update_get_internal_version();
+    if (!internal_version) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to get internal version\r\n");
+        return false;
+    }
+    
+    // Get external version
+    char *external_version = firmware_update_get_external_version();
+    if (!external_version) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to get external version\r\n");
+        return true; // If no external version, internal is considered latest
+    }
+    
+    // Check if external firmware is valid
+    if (!firmware_update_get_external_valid()) {
+        SYS_CONSOLE_PRINT("firmware_update: external firmware is not valid\r\n");
+        return true; // If external is invalid, internal is considered latest
+    }
+    
+    // Compare versions
+    int comparison = compare_semantic_versions(internal_version, external_version);
+    
+    SYS_CONSOLE_PRINT("firmware_update: version comparison - internal: %s, external: %s, result: %d\r\n", 
+                      internal_version, external_version, comparison);
+    
+    // Return true if internal version is greater than or equal to external
+    return (comparison >= 0);
 }
