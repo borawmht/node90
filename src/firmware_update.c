@@ -55,6 +55,12 @@ void firmware_update_init(void) {
     // firmware_update_copy_internal_flash_to_external_flash();
     // firmware_update_compare_internal_flash_to_external_flash();
     // firmware_update_debug_checksum_calculation();
+    SYS_CONSOLE_PRINT("firmware_update: internal: %s %s\r\n", 
+        firmware_update_get_internal_name(), firmware_update_get_internal_version());
+    SYS_CONSOLE_PRINT("firmware_update: external: %s %s %s\r\n", 
+        firmware_update_get_external_name(), 
+        firmware_update_get_external_version(), 
+        firmware_update_get_external_valid() ? "valid ✓" : "invalid ✗");
 }
 
 bool firmware_update_copy_internal_flash_to_external_flash(void){
@@ -521,4 +527,97 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
 bool firmware_update_download_binary_to_external_flash(const char * url){
     SYS_CONSOLE_PRINT("firmware_update: download binary to external flash\r\n");
     return true;
+}
+
+char * firmware_update_get_internal_name(void) {
+    static char app_name[APPLICATION_NAME_SIZE];
+    
+    // Read application name from internal flash
+    if (!NVM_Read((uint32_t*)app_name, APPLICATION_NAME_SIZE, APPLICATION_NAME_ADDRESS)) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to read internal app name\r\n");
+        return NULL;
+    }
+    
+    // Ensure null termination
+    app_name[APPLICATION_NAME_SIZE - 1] = '\0';
+    
+    return app_name;
+}
+
+char * firmware_update_get_internal_version(void) {
+    static char app_version[APPLICATION_VERSION_SIZE];
+    
+    // Read application version from internal flash
+    if (!NVM_Read((uint32_t*)app_version, APPLICATION_VERSION_SIZE, APPLICATION_VERSION_ADDRESS)) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to read internal app version\r\n");
+        return NULL;
+    }
+    
+    // Ensure null termination
+    app_version[APPLICATION_VERSION_SIZE - 1] = '\0';
+    
+    return app_version;
+}
+
+char * firmware_update_get_external_name(void) {
+    static char app_name[APPLICATION_NAME_SIZE];
+    
+    // Check if flash is initialized
+    if (!flash_is_initialized()) {
+        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
+        return NULL;
+    }
+    
+    // Read firmware info from external flash
+    firmware_info_t external_fw_info;
+    if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
+        return NULL;
+    }
+    
+    // Copy the app name
+    strncpy(app_name, external_fw_info.app_name, APPLICATION_NAME_SIZE - 1);
+    app_name[APPLICATION_NAME_SIZE - 1] = '\0'; // Ensure null termination
+    
+    return app_name;
+}
+
+char * firmware_update_get_external_version(void) {
+    static char app_version[APPLICATION_VERSION_SIZE];
+    
+    // Check if flash is initialized
+    if (!flash_is_initialized()) {
+        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
+        return NULL;
+    }
+    
+    // Read firmware info from external flash
+    firmware_info_t external_fw_info;
+    if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
+        return NULL;
+    }
+    
+    // Copy the app version
+    strncpy(app_version, external_fw_info.app_version, APPLICATION_VERSION_SIZE - 1);
+    app_version[APPLICATION_VERSION_SIZE - 1] = '\0'; // Ensure null termination
+    
+    return app_version;
+}
+
+bool firmware_update_get_external_valid(void) {
+    // Check if flash is initialized
+    if (!flash_is_initialized()) {
+        SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
+        return false;
+    }
+    
+    // Read firmware info from external flash
+    firmware_info_t external_fw_info;
+    if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
+        SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
+        return false;
+    }
+    
+    return external_fw_info.valid;
 }
