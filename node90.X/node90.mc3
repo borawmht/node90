@@ -78,14 +78,6 @@
          <string>class com.microchip.mcc.harmony.HarmonyModule</string>
       </entry>
       <entry>
-         <string>lib_zlib</string>
-         <string>class com.microchip.mcc.harmony.HarmonyModule</string>
-      </entry>
-      <entry>
-         <string>net_Pres</string>
-         <string>class com.microchip.mcc.harmony.HarmonyModule</string>
-      </entry>
-      <entry>
          <string>nvm</string>
          <string>class com.microchip.mcc.harmony.HarmonyModule</string>
       </entry>
@@ -10357,7 +10349,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="PRESENTATION LAYER" name="harmonyGroupAttachments"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;Attachments&gt;
   &lt;Attachments dnOrder=&quot;0&quot;&gt;
-    &lt;Attachment dnOrder=&quot;0&quot; id=&quot;Net_Pres_Crypto_Dependency&quot; namespace=&quot;net_Pres&quot; targetAttachmentID=&quot;TCP/IP STACK:net_Pres:Net_Pres_Crypto_Dependency&quot; targetComponentID=&quot;TCP/IP STACK&quot;/&gt;
+    &lt;Attachment dnOrder=&quot;0&quot; id=&quot;Net_Pres_Crypto_Dependency&quot; namespace=&quot;net_Pres&quot;/&gt;
   &lt;/Attachments&gt;
 &lt;/Attachments&gt;
 </value>
@@ -10375,7 +10367,6 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;Attachments&gt;
   &lt;Attachments dnOrder=&quot;0&quot;&gt;
     &lt;Attachment dnOrder=&quot;0&quot; id=&quot;tcpipStack:Core_SysConsole_Dependency&quot; namespace=&quot;BASIC CONFIGURATION&quot; targetAttachmentID=&quot;sys_console&quot; targetComponentID=&quot;sys_console_0&quot;/&gt;
-    &lt;Attachment dnOrder=&quot;1&quot; id=&quot;net_Pres:Net_Pres_Crypto_Dependency&quot; namespace=&quot;PRESENTATION LAYER&quot; targetAttachmentID=&quot;lib_wolfssl&quot; targetComponentID=&quot;lib_wolfssl&quot;/&gt;
   &lt;/Attachments&gt;
 &lt;/Attachments&gt;
 </value>
@@ -10396,7 +10387,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="!@#harmonyUserData"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;UserData&gt;
   &lt;UserData dnOrder=&quot;0&quot;&gt;
-    &lt;GraphSettings canvasHeight=&quot;523&quot; canvasWidth=&quot;803&quot; dnOrder=&quot;0&quot;/&gt;
+    &lt;GraphSettings canvasHeight=&quot;522&quot; canvasWidth=&quot;803&quot; dnOrder=&quot;0&quot;/&gt;
     &lt;PowerProfiles dnOrder=&quot;1&quot;&gt;
       &lt;Profile dnOrder=&quot;0&quot; id=&quot;profile0&quot; name=&quot;Main&quot;/&gt;
     &lt;/PowerProfiles&gt;
@@ -10428,11 +10419,7 @@
         &lt;ElementPosition dnOrder=&quot;2&quot; id=&quot;tcpipIcmp&quot; x=&quot;20&quot; y=&quot;20&quot;/&gt;
       &lt;/ElementPositions&gt;
     &lt;/ComponentGraph&gt;
-    &lt;ComponentGraph dnOrder=&quot;6&quot; id=&quot;PRESENTATION LAYER&quot;&gt;
-      &lt;ElementPositions dnOrder=&quot;0&quot;&gt;
-        &lt;ElementPosition dnOrder=&quot;0&quot; id=&quot;net_Pres&quot; x=&quot;20&quot; y=&quot;20&quot;/&gt;
-      &lt;/ElementPositions&gt;
-    &lt;/ComponentGraph&gt;
+    &lt;ComponentGraph dnOrder=&quot;6&quot; id=&quot;PRESENTATION LAYER&quot;/&gt;
     &lt;ComponentGraph dnOrder=&quot;7&quot; id=&quot;TCP/IP STACK&quot;&gt;
       &lt;ElementPositions dnOrder=&quot;0&quot;&gt;
         &lt;ElementPosition dnOrder=&quot;0&quot; id=&quot;APPLICATION LAYER&quot; x=&quot;30&quot; y=&quot;100&quot;/&gt;
@@ -10461,15 +10448,14 @@
         &lt;ElementPosition dnOrder=&quot;7&quot; id=&quot;lib_crypto&quot; x=&quot;459&quot; y=&quot;405&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;8&quot; id=&quot;lib_wolfcrypt&quot; x=&quot;192&quot; y=&quot;365&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;9&quot; id=&quot;lib_wolfssl&quot; x=&quot;503&quot; y=&quot;313&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;lib_zlib&quot; x=&quot;32&quot; y=&quot;408&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;nvm&quot; x=&quot;659&quot; y=&quot;52&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;spi2&quot; x=&quot;528&quot; y=&quot;145&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;sys_command&quot; x=&quot;351&quot; y=&quot;53&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;14&quot; id=&quot;sys_console&quot; x=&quot;187&quot; y=&quot;53&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;15&quot; id=&quot;sys_debug&quot; x=&quot;351&quot; y=&quot;242&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;16&quot; id=&quot;sys_time&quot; x=&quot;194&quot; y=&quot;235&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;17&quot; id=&quot;uart1&quot; x=&quot;524&quot; y=&quot;54&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;18&quot; id=&quot;uart2&quot; x=&quot;23&quot; y=&quot;116&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;nvm&quot; x=&quot;659&quot; y=&quot;52&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;spi2&quot; x=&quot;528&quot; y=&quot;145&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;sys_command&quot; x=&quot;351&quot; y=&quot;53&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;sys_console&quot; x=&quot;187&quot; y=&quot;53&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;14&quot; id=&quot;sys_debug&quot; x=&quot;351&quot; y=&quot;242&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;15&quot; id=&quot;sys_time&quot; x=&quot;194&quot; y=&quot;235&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;16&quot; id=&quot;uart1&quot; x=&quot;524&quot; y=&quot;54&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;17&quot; id=&quot;uart2&quot; x=&quot;23&quot; y=&quot;116&quot;/&gt;
       &lt;/ElementPositions&gt;
     &lt;/ComponentGraph&gt;
   &lt;/UserData&gt;
@@ -14011,20 +13997,7 @@
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="!@#harmonyAttachmentState"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
-  &lt;lib_wolfcrypt dnOrder=&quot;0&quot;&gt;
-    &lt;Attachments dnOrder=&quot;0&quot;&gt;
-      &lt;DirectDependency dnOrder=&quot;0&quot; id=&quot;LIB_WOLFCRYPT_ZLIB_Dependency&quot;&gt;
-        &lt;Attributes dnOrder=&quot;0&quot;&gt;
-          &lt;String dnOrder=&quot;0&quot; id=&quot;targetComponentID&quot;&gt;
-            &lt;Value dnOrder=&quot;0&quot;&gt;lib_zlib&lt;/Value&gt;
-          &lt;/String&gt;
-          &lt;String dnOrder=&quot;1&quot; id=&quot;targetAttachmentID&quot;&gt;
-            &lt;Value dnOrder=&quot;0&quot;&gt;lib_zlib&lt;/Value&gt;
-          &lt;/String&gt;
-        &lt;/Attributes&gt;
-      &lt;/DirectDependency&gt;
-    &lt;/Attachments&gt;
-  &lt;/lib_wolfcrypt&gt;
+  &lt;lib_wolfcrypt dnOrder=&quot;0&quot;/&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
       </entry>
@@ -14132,7 +14105,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_192"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_192&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14141,7 +14116,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_256"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_256&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14168,7 +14145,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_ccm"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_ccm&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14213,7 +14192,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_ctr"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_ctr&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14249,7 +14230,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_gcm"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_gcm&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14276,7 +14259,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_aes_ofb"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_aes_ofb&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14411,7 +14396,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_customcurves"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_customcurves&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14565,7 +14552,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_havezlib&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;lib_wolfcrypt&quot; value=&quot;true&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;lib_wolfcrypt&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -14726,6 +14713,7 @@
     &lt;/Attributes&gt;
     &lt;Values dnOrder=&quot;1&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;lib_wolfcrypt&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -15018,16 +15006,6 @@
           &lt;/String&gt;
         &lt;/Attributes&gt;
       &lt;/DirectDependency&gt;
-      &lt;DirectCapability dnOrder=&quot;1&quot; id=&quot;lib_wolfssl&quot;&gt;
-        &lt;Attributes dnOrder=&quot;0&quot;&gt;
-          &lt;String dnOrder=&quot;0&quot; id=&quot;targetComponentID&quot;&gt;
-            &lt;Value dnOrder=&quot;0&quot;&gt;TCP/IP&amp;amp;#160;STACK&lt;/Value&gt;
-          &lt;/String&gt;
-          &lt;String dnOrder=&quot;1&quot; id=&quot;targetAttachmentID&quot;&gt;
-            &lt;Value dnOrder=&quot;0&quot;&gt;PRESENTATION&amp;amp;#160;LAYER:net_Pres:Net_Pres_Crypto_Dependency&lt;/Value&gt;
-          &lt;/String&gt;
-        &lt;/Attributes&gt;
-      &lt;/DirectCapability&gt;
     &lt;/Attachments&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
@@ -15122,7 +15100,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfssl" name="wolfsslDTLS"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfsslDTLS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
 </value>
@@ -15257,7 +15237,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfssl" name="wolfsslServerSupport"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfsslServerSupport&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
 </value>
@@ -15311,7 +15293,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfssl" name="wolfsslTlsEccCurvesExt"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfsslTlsEccCurvesExt&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
 </value>
@@ -15359,685 +15343,6 @@
     &lt;Values dnOrder=&quot;0&quot;/&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_zlib" name="!@#harmonyAttachmentState"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_zlib&gt;
-  &lt;lib_zlib dnOrder=&quot;0&quot;/&gt;
-&lt;/lib_zlib&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_zlib" name="#&amp;__MCC_Group_Parrent_id"/>
-         <value>__ROOTVIEW</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="!@#harmonyAttachmentState"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot;/&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="#&amp;__MCC_Group_Parrent_id"/>
-         <value>PRESENTATION LAYER</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CERT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CERT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CERT_REPO"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CERT_REPO&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_CERT_FILENAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_CERT_FILENAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_CERT_FORMAT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_CERT_FORMAT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_CERT_LEN_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_CERT_LEN_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_CERT_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_CERT_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_DEVICE_CERT_LEN_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_DEVICE_CERT_LEN_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_DEVICE_CERT_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_DEVICE_CERT_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_DEVICE_PVT_KEY_LEN_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_DEVICE_PVT_KEY_LEN_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_DEVICE_PVT_KEY_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_DEVICE_PVT_KEY_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_IS_DEVICE_CERT_CHAIN"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_IS_DEVICE_CERT_CHAIN&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_FILENAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_FILENAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_FORMAT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_FORMAT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_SUPPORT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_MUTUAL_AUTH_SUPPORT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_CLIENT_SUPPORT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_CLIENT_SUPPORT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_ENABLE_ATECC_TNGTLS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_ENABLE_ATECC_TNGTLS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_ENABLE_PEER_CERT_VERIFICATION"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_ENABLE_PEER_CERT_VERIFICATION&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX0"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX0&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX1"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX1&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX2"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_CONFIG_IDX2&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX0"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX0&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX1"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX1&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX2"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FILENAME_IDX2&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX0"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX0&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX1"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX1&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX2"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_FORMAT_IDX2&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX0"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX0&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX1"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX1&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX2"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_LEN_VARIABLE_IDX2&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX0"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX0&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX1"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX1&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX2"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_MORE_CLIENT_CERT_VARIABLE_IDX2&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_RUNTIME_CERT_SUPPORT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_RUNTIME_CERT_SUPPORT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_CERT_FILENAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_CERT_FILENAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_CERT_FORMAT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_CERT_FORMAT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_CERT_LEN_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_CERT_LEN_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_CERT_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_CERT_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_KEY_FILENAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_KEY_FILENAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_KEY_LEN_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_KEY_LEN_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_KEY_VARIABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_KEY_VARIABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_BLOB_SERVER_SUPPORT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_BLOB_SERVER_SUPPORT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_CERT_STORE_STUBS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_CERT_STORE_STUBS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_CERT_STORE_STUBS_CLIENT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_CERT_STORE_STUBS_CLIENT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_CERT_STORE_STUBS_SERVER"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_CERT_STORE_STUBS_SERVER&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_ENC_PROVIDE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_ENC_PROVIDE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_GENERATE_ENC_STUBS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_GENERATE_ENC_STUBS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_NEEDED"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_NEEDED&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_RTOS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_RTOS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_RTOS_DELAY"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_RTOS_DELAY&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_RTOS_STACK_SIZE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_RTOS_STACK_SIZE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_RTOS_TASK_PRIORITY"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_RTOS_TASK_PRIORITY&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_RTOS_USE_DELAY"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_RTOS_USE_DELAY&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SNI_CALLBACK_ENABLE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SNI_CALLBACK_ENABLE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SOCKETS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SOCKETS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_ALPN"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_ALPN&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_ALPN_PROTOCOL_NAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_ALPN_PROTOCOL_NAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_CLIENT"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_CLIENT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_CLIENT_ENC"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_CLIENT_ENC&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_DATAGRAM"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_DATAGRAM&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_DATAGRAM_ENC"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_DATAGRAM_ENC&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_ENCRYPTION"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_ENCRYPTION&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_SERVER"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_SERVER&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_SERVER_ENC"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_SERVER_ENC&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_SNI"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_SNI&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_SNI_HOST_NAME"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_SNI_HOST_NAME&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_STREAM"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_STREAM&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_SUPPORT_STREAM_ENC"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_SUPPORT_STREAM_ENC&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_TRANSPORT_AS_TCPIP"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_TRANSPORT_AS_TCPIP&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_USE"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_USE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_USE_WOLF_SSL"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_USE_WOLF_SSL&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_USE_WOLF_SSL_DEBUG_LOG"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_USE_WOLF_SSL_DEBUG_LOG&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
-</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="net_Pres" name="NET_PRES_USE_WOLF_SSL_DEBUG_LOG_BUFFERS"/>
-         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;net_Pres&gt;
-  &lt;net_Pres dnOrder=&quot;0&quot; id=&quot;NET_PRES_USE_WOLF_SSL_DEBUG_LOG_BUFFERS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
-  &lt;/net_Pres&gt;
-&lt;/net_Pres&gt;
 </value>
       </entry>
       <entry>
@@ -21571,7 +20876,7 @@
       </entry>
       <entry>
          <file>../src/config/default/configuration.h</file>
-         <hash>3317e9b2e6bea4fa0b84bf9bc82520f7f2c0fccd116f61209474d7a73f3dae1c</hash>
+         <hash>e7046d9c88d517fd29d6e0762b0f194cdb2ff3fb6abdd4abe93cebc03760c825</hash>
       </entry>
       <entry>
          <file>../src/config/default/crypto/crypto.h</file>
@@ -21583,7 +20888,7 @@
       </entry>
       <entry>
          <file>../src/config/default/definitions.h</file>
-         <hash>8aa8e971e99d5846bdb64f8366ec0ce0319775f802c79805decc97e8a4a2c0eb</hash>
+         <hash>96b75ee860ef20606ef8525e97e6ac9ca5df2882127e95aa8c7cffed304104aa</hash>
       </entry>
       <entry>
          <file>../src/config/default/device.h</file>
@@ -21711,7 +21016,7 @@
       </entry>
       <entry>
          <file>../src/config/default/initialization.c</file>
-         <hash>286ef7a79fc1285d06d74a2f36d3ab9d55172240f895cf490b7775f86d1817ca</hash>
+         <hash>ddf3bd457e877fdf4114c7417c532d94b3197cc03df613dc853a9dae71d27770</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.c</file>
@@ -22270,44 +21575,12 @@
          <hash>00bfb807c77bf87f5143862267e25971f1702ea6928a66b324f66488f8528076</hash>
       </entry>
       <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_cert_store.c</file>
-         <hash>d86c4f5384f3ad15301ccc42832a3e4d5ab75da89b2f1159880429b9cb648cfa</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_certstore.h</file>
-         <hash>6ccc81a1739ce778fd1642909d4588623600bb5c313853bdc23cd5d613cbef0e</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_enc_glue.c</file>
-         <hash>5ca8b388275e393e53ba32ccbdf18152c69c13e11c05e9f2d5640df1447e0a49</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_enc_glue.h</file>
-         <hash>8da230e03e79b72ed63fc33429bdd236a89f10e321e0882a1c92365705756c3f</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_encryptionproviderapi.h</file>
-         <hash>91f874ce589dd651c09d0cefa098751281f8b0732bf21b469c6cbf97c20a445f</hash>
-      </entry>
-      <entry>
          <file>../src/config/default/net_pres/pres/net_pres_socketapi.h</file>
          <hash>00481cb6ce191dafb03a986813eb08423427da56946469dcd25f02de2d14f0f5</hash>
       </entry>
       <entry>
          <file>../src/config/default/net_pres/pres/net_pres_socketapiconversion.h</file>
          <hash>fea956ce0a826b0123329a90f2b70e13d18f21e08e0ba8f90b661122ac3e3703</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/net_pres_transportapi.h</file>
-         <hash>78f49cd8beac27cb483f84138ab8032663022d6c3358689086ff8c97334f3f05</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/src/net_pres.c</file>
-         <hash>53471d9cdc10275d138f2e4a77495b3e454d04a3b7fbf3cc86c2c61241543f90</hash>
-      </entry>
-      <entry>
-         <file>../src/config/default/net_pres/pres/src/net_pres_local.h</file>
-         <hash>bb6ecb92bc005faf7f19031f4945d5d188a24c12d58c7a5f0dd1c0b03f7d659b</hash>
       </entry>
       <entry>
          <file>../src/config/default/osal/osal.h</file>
@@ -22539,7 +21812,7 @@
       </entry>
       <entry>
          <file>../src/config/default/tasks.c</file>
-         <hash>15c626f33c623b5605bf19cd9751896ab0e91125f2dea9701330d04a72697ebb</hash>
+         <hash>855c97645ca329c31350258da4666746e2421895b6168f5d921d318da476c19e</hash>
       </entry>
       <entry>
          <file>../src/config/default/toolchain_specifics.h</file>
@@ -23688,98 +22961,6 @@
       <entry>
          <file>../src/third_party/wolfssl/wolfssl/wolfio.h</file>
          <hash>e4c9b628934192b3b37ce36e8f4b60195915a17cf4393d21e6935d3345a1597b</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/adler32.c</file>
-         <hash>1e14078fc631f6b5691b7dc42fde83dc913213ec6ede54cdf68e612d3eaaf385</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/compress.c</file>
-         <hash>08294a5bfc535bc4e120a8fd8faa38b54e725563e45fea611d67043b1ce52ecc</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/crc32.c</file>
-         <hash>88d8485f43a636f0476bde89ea7c5a489ccb093216d95338a86a774e64cf326c</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/crc32.h</file>
-         <hash>5729f6816e505b456a743aa57c25d13dc070ee932e81aca4fc613f286f85317b</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/deflate.c</file>
-         <hash>044dadb84116d49ee827fe0bb2be14d26558541b869d31d243c285a569056966</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/deflate.h</file>
-         <hash>e96ca9e3cb360792340ee53777cda296255c24a65221c9f25d318e379cc9a8f4</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/gzclose.c</file>
-         <hash>1c766fc1bfc58f18cd3453424d71be1c962ea9b0a05281faa45aec6777daad09</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/gzguts.h</file>
-         <hash>3a955d36bd89e1ac574ef75bb277cb0d80d55de64d538f29e917402a46bfd979</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/infback.c</file>
-         <hash>735170a5ac2be53d054cfa6f36a616e469cf426788ec61035d06d1c3a7d62a58</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inffast.c</file>
-         <hash>82fbaf169410d46c89ff9e601c7adf2352e69be7be503a6b17c5dffc8b4d8521</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inffast.h</file>
-         <hash>c9d1f9ee7bd78f9590065dc93eb14b5cfcbfbb28eaf3a990836512446e1a17cd</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inffixed.h</file>
-         <hash>869a9f968e6b85ce2a2364db6325a35eb0f5b283727b40ac74d2cf053f364124</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inflate.c</file>
-         <hash>1116db93b01e769437bea669316f4be415335c9583d42bf76182058081e440bf</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inflate.h</file>
-         <hash>2269ca49b70870364700396b98e82f9ee2d48e3c6470a04606afbc246c5e9567</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inftrees.c</file>
-         <hash>3677471167d00552017d04e113461e264a73839fdccdb77e56d29229dd576beb</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/inftrees.h</file>
-         <hash>e079c0e402bd59db700b47e28e237926e402173750a760181d2d3917d36a411f</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/trees.c</file>
-         <hash>92687433138e297f1162dc8db813037a235382ec22567db6323c94f5459d9dc8</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/trees.h</file>
-         <hash>ef4025453d5e62f39da4f7d0a04cd256e9091c8d2aff5aada59c31c22491e4dc</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/uncompr.c</file>
-         <hash>fb7ee221380040738a8d2cf4d554f7d719f85e7fbbb310215886e2ad067b0b06</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/zconf.h</file>
-         <hash>9b33468bed28fe7c4d6e8c271386c6022534135ce4241f8edd27b33d4129ac22</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/zlib.h</file>
-         <hash>88efc3c1d5ae6db870d78156f75c6cf484db89c2ec1946d4c271691d7af17195</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/zutil.c</file>
-         <hash>a9763816790554e09eeb241be8b9de5f2132f8e7619696f92cecb25d2f23d1e0</hash>
-      </entry>
-      <entry>
-         <file>../src/third_party/zlib/zutil.h</file>
-         <hash>0681a231ab75937e7b2a9d5574d66aa3fc16858fc7288c80ab54814bdd6d054d</hash>
       </entry>
    </generatedFileHashHistoryMap>
 </config>

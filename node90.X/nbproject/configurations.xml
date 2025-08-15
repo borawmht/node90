@@ -176,16 +176,9 @@
           </logicalFolder>
           <logicalFolder name="net_pres" displayName="net_pres" projectFiles="true">
             <logicalFolder name="pres" displayName="pres" projectFiles="true">
-              <logicalFolder name="src" displayName="src" projectFiles="true">
-                <itemPath>../src/config/default/net_pres/pres/src/net_pres_local.h</itemPath>
-              </logicalFolder>
               <itemPath>../src/config/default/net_pres/pres/net_pres.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapiconversion.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapi.h</itemPath>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_encryptionproviderapi.h</itemPath>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_transportapi.h</itemPath>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_enc_glue.h</itemPath>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_certstore.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="osal" displayName="osal" projectFiles="true">
@@ -469,19 +462,6 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/test.h</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/ssl.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="zlib" displayName="zlib" projectFiles="true">
-        <itemPath>../src/third_party/zlib/gzguts.h</itemPath>
-        <itemPath>../src/third_party/zlib/zutil.h</itemPath>
-        <itemPath>../src/third_party/zlib/inftrees.h</itemPath>
-        <itemPath>../src/third_party/zlib/inflate.h</itemPath>
-        <itemPath>../src/third_party/zlib/inffixed.h</itemPath>
-        <itemPath>../src/third_party/zlib/zlib.h</itemPath>
-        <itemPath>../src/third_party/zlib/deflate.h</itemPath>
-        <itemPath>../src/third_party/zlib/crc32.h</itemPath>
-        <itemPath>../src/third_party/zlib/zconf.h</itemPath>
-        <itemPath>../src/third_party/zlib/inffast.h</itemPath>
-        <itemPath>../src/third_party/zlib/trees.h</itemPath>
-      </logicalFolder>
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/ethernet.h</itemPath>
       <itemPath>../src/coap.h</itemPath>
@@ -577,15 +557,6 @@
                 <itemPath>../src/config/default/library/tcpip/src/tcp.c</itemPath>
                 <itemPath>../src/config/default/library/tcpip/src/nbns.c</itemPath>
               </logicalFolder>
-            </logicalFolder>
-          </logicalFolder>
-          <logicalFolder name="net_pres" displayName="net_pres" projectFiles="true">
-            <logicalFolder name="pres" displayName="pres" projectFiles="true">
-              <logicalFolder name="src" displayName="src" projectFiles="true">
-                <itemPath>../src/config/default/net_pres/pres/src/net_pres.c</itemPath>
-              </logicalFolder>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_cert_store.c</itemPath>
-              <itemPath>../src/config/default/net_pres/pres/net_pres_enc_glue.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="osal" displayName="osal" projectFiles="true">
@@ -804,20 +775,6 @@
         <itemPath>../src/third_party/wolfssl/src/sniffer.c</itemPath>
         <itemPath>../src/third_party/wolfssl/src/ssl.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="zlib" displayName="zlib" projectFiles="true">
-        <itemPath>../src/third_party/zlib/gzclose.c</itemPath>
-        <itemPath>../src/third_party/zlib/zutil.c</itemPath>
-        <itemPath>../src/third_party/zlib/inftrees.c</itemPath>
-        <itemPath>../src/third_party/zlib/infback.c</itemPath>
-        <itemPath>../src/third_party/zlib/compress.c</itemPath>
-        <itemPath>../src/third_party/zlib/adler32.c</itemPath>
-        <itemPath>../src/third_party/zlib/uncompr.c</itemPath>
-        <itemPath>../src/third_party/zlib/inflate.c</itemPath>
-        <itemPath>../src/third_party/zlib/deflate.c</itemPath>
-        <itemPath>../src/third_party/zlib/crc32.c</itemPath>
-        <itemPath>../src/third_party/zlib/inffast.c</itemPath>
-        <itemPath>../src/third_party/zlib/trees.c</itemPath>
-      </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>
       <itemPath>../src/ethernet.c</itemPath>
@@ -884,6 +841,7 @@
       <C32>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
@@ -933,6 +891,7 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
+        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -965,6 +924,7 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="false"/>
@@ -1011,6 +971,7 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
+        <property key="appendMe" value=""/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
@@ -1135,6 +1096,8 @@
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d07ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmerToGoFilePath"
+                  value="/home/brado/Desktop/node90/node90.X/debug/default/node90_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.ledbrightness" value="5"/>

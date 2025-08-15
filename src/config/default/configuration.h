@@ -243,11 +243,13 @@ extern "C" {
 #define WOLFSSL_USER_IO
 #define NO_WRITEV
 #define MICROCHIP_TCPIP
-#define WOLFSSL_DTLS
 #define NO_PWDBASED
+#define HAVE_TLS_EXTENSIONS
+#define HAVE_SUPPORTED_CURVES
 #define NO_ERROR_STRINGS
 #define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
 #define NO_OLD_TLS
+#define NO_WOLFSSL_SERVER
 
 
 /*** TCP Configuration ***/
@@ -290,6 +292,8 @@ extern "C" {
 #define TCPIP_DHCP_NTP_SERVER_ADDRESSES             0
 #define TCPIP_DHCP_ARP_LEASE_CHECK_TMO              1000
 #define TCPIP_DHCP_WAIT_ARP_FAIL_CHECK_TMO          10
+
+
 
 /*** ARP Configuration ***/
 #define TCPIP_ARP_CACHE_ENTRIES                 		5
@@ -453,25 +457,16 @@ extern "C" {
 #undef WOLFSSL_HAVE_MIN
 #undef WOLFSSL_HAVE_MAX
 // ---------- FUNCTIONAL CONFIGURATION START ----------
-// Minimal configuration for HTTPS support
 #define WOLFSSL_AES_SMALL_TABLES
 #define NO_MD4
-#define WOLFSSL_MD5
 #define WOLFSSL_SHA224
-#define WOLFSSL_SHA256
-#define NO_SHA384
-#define NO_SHA512
 #define WOLFSSL_AES_128
-#define NO_AES_192
-#define NO_AES_256
+#define NO_AES_192 // not supported by HW accelerator
+#define NO_AES_256 // not supported by HW accelerator
 #define WOLFSSL_AES_DIRECT
 #define HAVE_AES_DECRYPT
 #define HAVE_AES_ECB
 #define HAVE_AES_CBC
-#define NO_AES_COUNTER
-#define NO_AES_OFB
-#define NO_AESGCM
-#define NO_AESCCM
 #define NO_RC4
 #define NO_HC128
 #define NO_RABBIT
@@ -484,34 +479,18 @@ extern "C" {
 #define NO_ECC521
 #define NO_DH
 #define NO_DSA
-#define FP_MAX_BITS 1024
-#define USE_CERT_BUFFERS_1024
+#define FP_MAX_BITS 4096
+#define USE_CERT_BUFFERS_2048
 #define NO_DEV_RANDOM
 #define HAVE_HASHDRBG
 #define WC_NO_HARDEN
 #define SINGLE_THREADED
 #define NO_SIG_WRAPPER
 #define NO_ERROR_STRINGS
-#define WOLFSSL_MAX_ERROR_SZ 38
-#define NO_OLD_TLS
+#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
+#define NO_WOLFSSL_MEMORY
 #define NO_ZLIB
-// Additional size optimizations
-#define NO_WOLFSSL_SERVER
-#define WOLFSSL_NO_CLIENT_AUTH
-#define NO_FILESYSTEM
-#define NO_WRITEV
 // ---------- FUNCTIONAL CONFIGURATION END ----------
-
-/* MPLAB Harmony Net Presentation Layer Definitions*/
-#define NET_PRES_NUM_INSTANCE 1
-#define NET_PRES_NUM_SOCKETS 10
-
-/* Net Pres RTOS Configurations*/
-#define NET_PRES_RTOS_STACK_SIZE                1024
-#define NET_PRES_RTOS_TASK_PRIORITY             1
-	
-
-	
 
 #define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1
 
