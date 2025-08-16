@@ -29,6 +29,25 @@ Application (0x9D010000 - 0x9D07FFFF) ← 448KB for your app
 - wolfssl 5.4.0 (build errors if using 5.7.0)
 - crypto 3.8.2
 
+## Memory Usage
+- net_pres + wolfssl provider = 40KB
+- wolfSSL = minimal 50KB
+- dns = 15KB
+- tcp + crypto = 100KB
+
+http client crypto minimal = 297KB 55%
+http client minimal components (tcp+crypto) = 397KB 74%
+https client all components (net_pres + wolfssl) = 509KB 95%
+
+not enough program flash for https client using wolfssl.
+
+Try secure element like ATECC608C for TLS handshake.
+cryptoauthlib
+https://github.com/wolfSSL/microchip-atecc-demos
+https://github.com/wolfSSL/microchip-atecc-demos/blob/master/wolfssl_pic32mz_curiosity/wolfssl_client/firmware/src/app.c
+
+
+
 # Tools
 
 ```

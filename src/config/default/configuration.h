@@ -408,24 +408,30 @@ extern "C" {
 #undef WOLFSSL_HAVE_MIN
 #undef WOLFSSL_HAVE_MAX
 // ---------- FUNCTIONAL CONFIGURATION START ----------
-#define WOLFSSL_AES_SMALL_TABLES
+//#define WOLFSSL_AES_SMALL_TABLES
+#define NO_AES
 #define NO_MD4
-#define WOLFSSL_SHA224
-#define WOLFSSL_AES_128
+//#define NO_MD5 // reduce size, no need MD5 for tcp
+//#define WOLFSSL_SHA224
+//#define NO_SHA256 // required for HASH DRBG
+#define NO_SHA1
+//#define WOLFSSL_AES_128
 #define NO_AES_192 // not supported by HW accelerator
 #define NO_AES_256 // not supported by HW accelerator
-#define WOLFSSL_AES_DIRECT
-#define HAVE_AES_DECRYPT
-#define HAVE_AES_ECB
-#define HAVE_AES_CBC
+//#define WOLFSSL_AES_DIRECT
+//#define HAVE_AES_DECRYPT
+//#define HAVE_AES_ECB
+//#define HAVE_AES_CBC
 #define NO_RC4
 #define NO_HC128
 #define NO_RABBIT
-#define HAVE_ECC
+//#define HAVE_ECC // this is like 30KB
 #define NO_DH
 #define NO_DSA
-#define FP_MAX_BITS 4096
-#define USE_CERT_BUFFERS_2048
+#define NO_RSA // this is like 60KB because of asn.c and tfm.c
+#define NO_DES
+//#define FP_MAX_BITS 4096
+//#define USE_CERT_BUFFERS_2048
 #define NO_DEV_RANDOM
 #define HAVE_HASHDRBG
 #define WC_NO_HARDEN
