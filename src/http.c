@@ -9,21 +9,20 @@
 #include "config/default/library/tcpip/tcp.h"
 #include "config/default/library/tcpip/dns.h"
 #include "config/default/library/tcpip/tcpip.h"
-#include "config/default/net_pres/pres/net_pres_socketapi.h"
-#include "config/default/net_pres/pres/net_pres_socketapiconversion.h"
+#include "third_party/wolfssl/wolfssl/ssl.h"
 #include "ethernet.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 // Simple time function for WolfSSL (replaces missing SNTP function)
-//uint32_t TCPIP_SNTP_UTCSecondsGet(void) {
-//    // Return a simple timestamp - this is just for WolfSSL initialization
-//    // In a real application, you might want to implement a proper time source
-//    static uint32_t time_counter = 0;
-//    time_counter += 1000; // Increment by 1 second (assuming 1ms tick)
-//    return time_counter;
-//}
+uint32_t TCPIP_SNTP_UTCSecondsGet(void) {
+   // Return a simple timestamp - this is just for WolfSSL initialization
+   // In a real application, you might want to implement a proper time source
+   static uint32_t time_counter = 0;
+   time_counter += 1000; // Increment by 1 second (assuming 1ms tick)
+   return time_counter;
+}
 
 bool http_server_initialized = false;
 
@@ -39,8 +38,7 @@ typedef enum {
 } http_client_state_t;
 
 typedef struct {
-    http_client_state_t state;
-    NET_PRES_SKT_HANDLE_T socket;
+    http_client_state_t state;    
     char hostname[64];
     uint16_t port;
     IPV4_ADDR server_ip;
@@ -364,7 +362,8 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     
     // For HTTPS, we need to implement SSL/TLS - for now, skip HTTPS
     if (is_https) {
-        SYS_CONSOLE_PRINT("http_client: HTTPS not implemented yet, skipping\r\n");
+        // SYS_CONSOLE_PRINT("http_client: HTTPS not implemented yet, skipping\r\n");
+        return https_client_get_url(url, data, data_size);
         return false;
     }
     
@@ -586,6 +585,273 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     //     }
     // }
     // SYS_CONSOLE_PRINT("http_client: socket cleanup complete\r\n");
+    
+    return true;
+}
+
+bool https_client_get_url(const char *url, const char *data, size_t data_size) {
+    SYS_CONSOLE_PRINT("https_client: get url %s\r\n", url);
+
+    // Parse URL
+    char hostname[64];
+    uint16_t port;
+    char path[128];
+    bool is_https;
+    
+    if (!parse_url(url, hostname, &port, path, &is_https)) {
+        SYS_CONSOLE_PRINT("https_client: failed to parse URL\r\n");
+        return false;
+    }
+    
+    // Check if we have network connectivity
+    
+    if (!ethernet_is_ready()) {
+        SYS_CONSOLE_PRINT("https_client: network not ready\r\n");
+        return false;
+    }
+    
+    // Resolve hostname to IP address
+    
+    IPV4_ADDR server_ip;
+    if (!resolve_hostname(hostname, &server_ip)) {
+        SYS_CONSOLE_PRINT("https_client: failed to resolve hostname\r\n");
+        return false;
+    }
+    
+    // Create direct TCP socket
+    TCP_SOCKET tcp_socket = TCPIP_TCP_ClientOpen(IP_ADDRESS_TYPE_IPV4, port, NULL);
+    if (tcp_socket == INVALID_SOCKET) {
+        SYS_CONSOLE_PRINT("https_client: failed to create direct TCP socket\r\n");
+        return false;
+    }
+
+    // Bind remote address
+    IP_MULTI_ADDRESS remote_addr;
+    remote_addr.v4Add = server_ip;
+    
+    if (!TCPIP_TCP_RemoteBind(tcp_socket, IP_ADDRESS_TYPE_IPV4, port, &remote_addr)) {
+        SYS_CONSOLE_PRINT("http_client: failed to bind remote address\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+    
+    // SYS_CONSOLE_PRINT("http_client: remote address bound successfully\r\n");
+    
+    // Connect using direct TCP
+    if (!TCPIP_TCP_Connect(tcp_socket)) {
+        SYS_CONSOLE_PRINT("http_client: direct TCP connect failed\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+    
+    // SYS_CONSOLE_PRINT("http_client: direct TCP connect successful\r\n");
+    
+    // Wait for connection to be established
+    uint32_t connect_timeout = 0;
+    while (!TCPIP_TCP_IsConnected(tcp_socket) && connect_timeout < 3000) {
+        // for (volatile int i = 0; i < 10000; i++);
+        vTaskDelay(1);
+        connect_timeout++;
+        
+        if (connect_timeout % 1000 == 0) {
+            SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
+        }
+    }
+    
+    if (!TCPIP_TCP_IsConnected(tcp_socket)) {
+        SYS_CONSOLE_PRINT("http_client: TCP connection timeout\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    WOLFSSL_CTX* ctx;
+    WOLFSSL* ssl;
+    WOLFSSL_METHOD* method;
+
+    wolfSSL_Init();
+
+    method = wolfTLSv1_2_client_method();
+    if ((ctx = wolfSSL_CTX_new(method)) == NULL) {
+        SYS_CONSOLE_PRINT("https_client: failed to create SSL context\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    if ((ssl = wolfSSL_new(ctx)) == NULL) {
+        SYS_CONSOLE_PRINT("https_client: failed to create SSL object\r\n");
+        wolfSSL_CTX_free(ctx);
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    wolfSSL_set_fd(ssl, tcp_socket);
+
+    if (wolfSSL_connect(ssl) != SSL_SUCCESS) {
+        SYS_CONSOLE_PRINT("https_client: SSL connect failed\r\n");
+        wolfSSL_free(ssl);
+        wolfSSL_CTX_free(ctx);
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    // Build HTTP request
+    // char request[512];
+    if (data && data_size > 0) {
+        // POST request
+        snprintf(request, sizeof(request),
+                "POST %s HTTP/1.1\r\n"
+                "Host: %s\r\n"
+                "Content-Length: %zu\r\n"
+                "Content-Type: application/x-www-form-urlencoded\r\n"
+                "Connection: close\r\n"
+                "\r\n"
+                "%s",
+                path, hostname, data_size, data);
+    } else {
+        // GET request
+        snprintf(request, sizeof(request),
+                "GET %s HTTP/1.1\r\n"
+                "Host: %s\r\n"
+                "Connection: close\r\n"
+                "\r\n",
+                path, hostname);
+    }
+    
+    // SYS_CONSOLE_PRINT("http_client: sending request:\r\n%s\r\n", request);
+    
+    // Send HTTP request in chunks if needed
+    const char *request_ptr = request;
+    size_t request_len = strlen(request);
+    size_t sent_total = 0;
+    
+    while (sent_total < request_len) {
+        // Check if socket is ready for writing
+        uint16_t write_ready = TCPIP_TCP_PutIsReady(tcp_socket);
+        if (write_ready == 0) {
+            SYS_CONSOLE_PRINT("https_client: socket not ready for writing\r\n");
+            wolfSSL_free(ssl);
+            wolfSSL_CTX_free(ctx);
+            TCPIP_TCP_Close(tcp_socket);
+            return false;
+        }
+        
+        // Calculate how much we can send
+        size_t to_send = (write_ready < (request_len - sent_total)) ? write_ready : (request_len - sent_total);
+        
+        // Send chunk
+        ///uint16_t sent = TCPIP_TCP_ArrayPut(tcp_socket, (const uint8_t*)(request_ptr + sent_total), to_send);
+        uint16_t sent = wolfSSL_write(ssl, (const uint8_t*)(request_ptr + sent_total), to_send);
+        if (sent == 0) {
+            SYS_CONSOLE_PRINT("https_client: failed to send data chunk\r\n");
+            wolfSSL_free(ssl);
+            wolfSSL_CTX_free(ctx);
+            TCPIP_TCP_Close(tcp_socket);
+            return false;
+        }
+        
+        sent_total += sent;
+        SYS_CONSOLE_PRINT("https_client: sent chunk %d bytes, total %d/%d\r\n", sent, sent_total, request_len);
+        
+        // Small delay to allow TCP stack to process
+        // for (volatile int i = 0; i < 1000; i++);
+        vTaskDelay(1);
+    }
+    
+    // SYS_CONSOLE_PRINT("http_client: request sent completely\r\n");
+    
+    // Wait a moment for data to be transmitted
+    // for (volatile int i = 0; i < 50000; i++);
+    vTaskDelay(10);
+    
+    // Receive response with better completion detection
+    // uint8_t response_buffer[1024]; // Increased buffer size
+    uint16_t received = 0;
+    uint32_t receive_timeout = 0;
+    bool response_complete = false;
+    
+    while (receive_timeout < 5000 && !response_complete) { // 5 second timeout
+        uint16_t available = TCPIP_TCP_GetIsReady(tcp_socket);
+        if (available > 0) {
+            uint16_t to_read = (available > sizeof(response_buffer) - received - 1) ? 
+                              (sizeof(response_buffer) - received - 1) : available;
+            //uint16_t read = TCPIP_TCP_ArrayGet(tcp_socket, response_buffer + received, to_read);
+            uint16_t read = wolfSSL_read(ssl, response_buffer + received, to_read);
+            received += read;
+            
+            SYS_CONSOLE_PRINT("https_client: received chunk %d bytes, total %d\r\n", read, received);
+            
+            if (received >= sizeof(response_buffer) - 1) {
+                SYS_CONSOLE_PRINT("https_client: buffer full, stopping\r\n");
+                break; // Buffer full
+            }
+            
+            // Check if response is complete
+            response_buffer[received] = '\0';
+            if (is_http_response_complete((char*)response_buffer, received)) {
+                // SYS_CONSOLE_PRINT("http_client: response appears complete\r\n");
+                response_complete = true;
+                break;
+            }
+        }
+        
+        // Check if connection is still active
+        if (!TCPIP_TCP_IsConnected(tcp_socket)) {
+            SYS_CONSOLE_PRINT("https_client: connection closed by server\r\n");
+            break;
+        }
+        
+        // Wait a bit before checking again
+        // for (volatile int i = 0; i < 10000; i++);
+        vTaskDelay(1);
+        receive_timeout++;
+        
+        if (receive_timeout % 2000 == 0) {
+            SYS_CONSOLE_PRINT("https_client: waiting for response... %d\r\n", receive_timeout / 1000);
+        }
+    }
+    
+    if (receive_timeout >= 5000) {
+        SYS_CONSOLE_PRINT("https_client: response timeout after %d seconds\r\n", receive_timeout / 1000);
+    }
+    
+    // Debug: show first part of response for troubleshooting
+    // SYS_CONSOLE_PRINT("http_client: raw response start:\r\n%.200s\r\n", response_buffer);
+    
+    // Parse and display response information
+    int status_code = 0;
+    if (parse_http_response_status((char*)response_buffer, &status_code)) {
+        SYS_CONSOLE_PRINT("https_client: HTTP status: %d\r\n", status_code);
+    } else {
+        SYS_CONSOLE_PRINT("https_client: could not parse HTTP status\r\n");
+    }
+    
+    const char *body = get_response_body((char*)response_buffer);
+    if (body) {
+        size_t body_len = strlen(body);
+        SYS_CONSOLE_PRINT("https_client: response body: %d bytes\r\n", body_len);
+        
+        // Display body in chunks to avoid console truncation
+        // const char *body_ptr = body;
+        // while (body_ptr < body + body_len) {
+        //     size_t chunk_size = (body_len - (body_ptr - body) > 200) ? 200 : (body_len - (body_ptr - body));
+        //     char temp[201];
+        //     strncpy(temp, body_ptr, chunk_size);
+        //     temp[chunk_size] = '\0';
+        //     SYS_CONSOLE_PRINT("%s", temp);
+        //     body_ptr += chunk_size;
+        // }
+        // SYS_CONSOLE_PRINT("\r\n");
+    } else {
+        SYS_CONSOLE_PRINT("https_client: received: %d bytes (no body found)\r\n", received);
+    }
+
+    // Close socket
+    wolfSSL_free(ssl);
+    wolfSSL_CTX_free(ctx);
+    TCPIP_TCP_Close(tcp_socket);
+    wolfSSL_Cleanup();
+    
+    SYS_CONSOLE_PRINT("https_client: request completed\r\n");
     
     return true;
 }

@@ -35,6 +35,7 @@ Application (0x9D010000 - 0x9D07FFFF) ← 448KB for your app
 - dns = 15KB
 - tcp + crypto = 100KB
 
+
 http client crypto minimal = 297KB 55%
 http client minimal components (tcp+crypto) = 397KB 74%
 https client all components (net_pres + wolfssl) = 509KB 95%
@@ -46,7 +47,23 @@ cryptoauthlib
 https://github.com/wolfSSL/microchip-atecc-demos
 https://github.com/wolfSSL/microchip-atecc-demos/blob/master/wolfssl_pic32mz_curiosity/wolfssl_client/firmware/src/app.c
 
+Actually, I adjusted the wolfssl configuration for minimal and removed the harmony crypto lib. This is much smaller.
 
+http client wolfssl minimal 273KB 51%
+
+No, I am wrong. This did not have the ssl included. When I include ssl it is much larger
+
+https client wolfssl 546KB >100%.
+
+There are several large ssl components (>227.8KB)
+- internal.c = 75.0KB
+- ssl.c = 42.5KB
+- asn.c = 37.6KB
+- ecc.c = 27.2KB
+- tfm.c = 21.9KB
+- aes.c = 9.5KB
+- rsa.c = 8.5KB
+- dh.c = 5.6KB
 
 # Tools
 

@@ -13,5 +13,6 @@
 void http_init(void);
 void http_server_init(void);
 bool http_client_get_url(const char *url, const char *data, size_t data_size);
+bool https_client_get_url(const char *url, const char *data, size_t data_size);
 
 #endif // HTTP_H
