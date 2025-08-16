@@ -3,15 +3,15 @@
   <executable name="dist/default/production/node90.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
-      <length>570512</length>                 
-      <used>546604</used>                     
-      <free>23908</free>                     
+      <length>504976</length>                 
+      <used>477580</used>                     
+      <free>27396</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>131056</length>                 
-      <used>82455</used>                     
-      <free>48601</free>                     
+      <used>82063</used>                     
+      <free>48993</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

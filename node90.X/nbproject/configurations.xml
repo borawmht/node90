@@ -830,6 +830,20 @@
       <item path="../src/config/default/p32MX795F512H.ld"
             ex="true"
             overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
       </item>
       <C32>
         <property key="additional-warnings" value="false"/>
@@ -849,7 +863,7 @@
         <property key="exclude-floating-point" value="false"/>
         <property key="expand-pragma-config" value="false"/>
         <property key="extra-include-directories"
-                  value="../src;../src/config/default;../src/config/default/library;../src/config/default/library/tcpip/src;../src/config/default/library/tcpip/src/common;../src/third_party/rtos/FreeRTOS/Source/include;../src/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX;../src/third_party/wolfssl;../src/third_party/wolfssl/wolfssl;../src/third_party/zlib"/>
+                  value="../src;../src/config/default;../src/config/default/library;../src/config/default/library/cryptoauthlib;../src/config/default/library/cryptoauthlib/crypto;../src/config/default/library/cryptoauthlib/pkcs11;../src/config/default/library/cryptoauthlib/tng;../src/config/default/library/tcpip/src;../src/config/default/library/tcpip/src/common;../src/third_party/rtos/FreeRTOS/Source/include;../src/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX;../src/third_party/wolfssl;../src/third_party/wolfssl/wolfssl;../src/third_party/zlib"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>

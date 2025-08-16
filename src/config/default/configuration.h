@@ -221,10 +221,8 @@ extern "C" {
 #define XMALLOC_OVERRIDE
 #define XMALLOC(s, h, type)  OSAL_Malloc((s))
 #define XFREE(p, h, type)    OSAL_Free((p))
-#define HAVE_FFDHE_2048
 #define NO_PWDBASED
 #define WOLFSSL_SMALL_STACK
-#define WOLFSSL_ENCRYPTED_KEYS
 #define NO_OLD_TLS
 
 
@@ -448,20 +446,16 @@ extern "C" {
 #define NO_RC4
 #define NO_HC128
 #define NO_RABBIT
-#define HAVE_ECC
-#define HAVE_X963_KDF
-#define CURVE25519_SMALL
-#define HAVE_DH
+#define NO_DH
 #define NO_DSA
 #define FP_MAX_BITS 4096
 #define USE_CERT_BUFFERS_2048
+#define WOLFSSL_STATIC_RSA
 #define NO_DEV_RANDOM
 #define HAVE_HASHDRBG
-#define TFM_TIMING_RESISTANT
-#define ECC_TIMING_RESISTANT
-#define WC_RSA_BLINDING
+#define WC_NO_HARDEN
 #define FREERTOS
-//#define WOLFSSL_KEY_GEN
+#define NO_SIG_WRAPPER
 #define DEBUG
 #define DEBUG_WOLFSSL
 // ---------- FUNCTIONAL CONFIGURATION END ----------

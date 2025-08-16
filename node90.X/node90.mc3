@@ -10375,7 +10375,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="!@#harmonyUserData"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;UserData&gt;
   &lt;UserData dnOrder=&quot;0&quot;&gt;
-    &lt;GraphSettings canvasHeight=&quot;524&quot; canvasWidth=&quot;785&quot; dnOrder=&quot;0&quot;/&gt;
+    &lt;GraphSettings canvasHeight=&quot;509&quot; canvasWidth=&quot;785&quot; dnOrder=&quot;0&quot;/&gt;
     &lt;PowerProfiles dnOrder=&quot;1&quot;&gt;
       &lt;Profile dnOrder=&quot;0&quot; id=&quot;profile0&quot; name=&quot;Main&quot;/&gt;
     &lt;/PowerProfiles&gt;
@@ -14003,7 +14003,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="cryptoRsaStatic"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;cryptoRsaStatic&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14292,7 +14294,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_base64&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -14399,7 +14401,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_dh&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -14436,7 +14438,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_ecc"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_ecc&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14513,7 +14517,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_harden&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -14607,7 +14611,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_keygen&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -14744,7 +14748,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="lib_wolfcrypt" name="wolfcrypt_rsa"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_rsa&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
 </value>
@@ -14891,7 +14897,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfcrypt&gt;
   &lt;lib_wolfcrypt dnOrder=&quot;0&quot; id=&quot;wolfcrypt_signature&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfcrypt&gt;
 &lt;/lib_wolfcrypt&gt;
@@ -15078,7 +15084,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfSslSessionCerts&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
@@ -15118,7 +15124,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfsslEncryptedKeys&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
@@ -15129,7 +15135,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;lib_wolfssl&gt;
   &lt;lib_wolfssl dnOrder=&quot;0&quot; id=&quot;wolfsslFfdheGroup2048&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/lib_wolfssl&gt;
 &lt;/lib_wolfssl&gt;
@@ -20708,11 +20714,11 @@
       </entry>
       <entry>
          <file>../src/config/default/configuration.h</file>
-         <hash>829061800bde5dc275ef207f802b5083c5b431d796b666a5ebf8f7334d9be3d3</hash>
+         <hash>f878ba4828399ef41a9ca104a2fcb358ee900413c02e269f2568ecddde388e75</hash>
       </entry>
       <entry>
          <file>../src/config/default/definitions.h</file>
-         <hash>bf6cdc88e35c0633a4fe3c37aa6f290a985baf5d2d0a8b4e7e1e8a32c319d8ab</hash>
+         <hash>357c87bd0a3e71f68ae4e24f465f5640c0a8af15ea3693fdfb9395b136f382ae</hash>
       </entry>
       <entry>
          <file>../src/config/default/device.h</file>
