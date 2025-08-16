@@ -6,9 +6,6 @@
                    projectFiles="true">
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
-          <logicalFolder name="crypto" displayName="crypto" projectFiles="true">
-            <itemPath>../src/config/default/crypto/crypto.h</itemPath>
-          </logicalFolder>
           <logicalFolder name="driver" displayName="driver" projectFiles="true">
             <logicalFolder name="ethmac" displayName="ethmac" projectFiles="true">
               <logicalFolder name="src" displayName="src" projectFiles="true">
@@ -298,11 +295,6 @@
       <logicalFolder name="resources" displayName="resources" projectFiles="true">
         <itemPath>../src/resources/network.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="system" displayName="system" projectFiles="true">
-        <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
-          <itemPath>../src/config/default/system/tmr/sys_tmr.h</itemPath>
-        </logicalFolder>
-      </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/utf8_p.h</itemPath>
         <itemPath>../src/tinycbor/cbor.h</itemPath>
@@ -450,6 +442,20 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/pwdbased.h</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/rc2.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="wolfssl" displayName="wolfssl" projectFiles="true">
+        <itemPath>../src/third_party/wolfssl/wolfssl/sniffer.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/callbacks.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/internal.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/openssl/compat_types.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/wolfio.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/crl.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/version.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/ocsp.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/sniffer_error.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/error-ssl.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/test.h</itemPath>
+        <itemPath>../src/third_party/wolfssl/wolfssl/ssl.h</itemPath>
+      </logicalFolder>
       <itemPath>../src/app.h</itemPath>
       <itemPath>../src/ethernet.h</itemPath>
       <itemPath>../src/coap.h</itemPath>
@@ -486,9 +492,6 @@
                    projectFiles="true">
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
-          <logicalFolder name="crypto" displayName="crypto" projectFiles="true">
-            <itemPath>../src/config/default/crypto/src/crypto.c</itemPath>
-          </logicalFolder>
           <logicalFolder name="driver" displayName="driver" projectFiles="true">
             <logicalFolder name="ethmac" displayName="ethmac" projectFiles="true">
               <logicalFolder name="src" displayName="src" projectFiles="true">
@@ -599,7 +602,6 @@
               <itemPath>../src/config/default/system/time/src/sys_time.c</itemPath>
             </logicalFolder>
             <itemPath>../src/config/default/system/sys_time_h2_adapter.c</itemPath>
-            <itemPath>../src/config/default/system/sys_random_h2_adapter.c</itemPath>
           </logicalFolder>
           <itemPath>../src/config/default/initialization.c</itemPath>
           <itemPath>../src/config/default/interrupts.c</itemPath>
@@ -745,6 +747,22 @@
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/ecc.c</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/curve25519.c</itemPath>
         <itemPath>../src/third_party/wolfssl/wolfssl/wolfcrypt/src/wc_pkcs11.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="wolfssl" displayName="wolfssl" projectFiles="true">
+        <itemPath>../src/third_party/wolfssl/src/x509_str.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/keys.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/wolfio.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/pk.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/ocsp.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/conf.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/tls.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/crl.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/dtls13.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/internal.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/x509.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/tls13.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/sniffer.c</itemPath>
+        <itemPath>../src/third_party/wolfssl/src/ssl.c</itemPath>
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/app.c</itemPath>

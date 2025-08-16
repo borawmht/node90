@@ -201,6 +201,32 @@ extern "C" {
 #define TCPIP_EMAC_FLOW_CONTROL_EMPTY_WMARK         0
 
 
+/******************************************************************************/
+/*wolfSSL TLS Layer Configuration*/
+/******************************************************************************/
+
+#define WOLFSSL_ALT_NAMES
+#define WOLFSSL_DER_LOAD
+#define KEEP_OUR_CERT
+#define KEEP_PEER_CERT
+#define HAVE_CRL_IO
+#define HAVE_IO_TIMEOUT
+#define TFM_NO_ASM
+#define WOLFSSL_NO_ASM
+#define SIZEOF_LONG_LONG 8
+#define WOLFSSL_USER_IO
+#define NO_WRITEV
+#define MICROCHIP_TCPIP
+#include "osal/osal.h"
+#define XMALLOC_OVERRIDE
+#define XMALLOC(s, h, type)  OSAL_Malloc((s))
+#define XFREE(p, h, type)    OSAL_Free((p))
+#define HAVE_FFDHE_2048
+#define NO_PWDBASED
+#define WOLFSSL_SMALL_STACK
+#define WOLFSSL_ENCRYPTED_KEYS
+#define NO_OLD_TLS
+
 
 /*** TCP Configuration ***/
 #define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
@@ -223,7 +249,7 @@ extern "C" {
 #define TCPIP_TCP_QUIET_TIME		        	    0
 #define TCPIP_TCP_COMMANDS   false
 #define TCPIP_TCP_EXTERN_PACKET_PROCESS   false
-#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    false
+#define TCPIP_TCP_DISABLE_CRYPTO_USAGE		        	    true
 
 
 
@@ -400,7 +426,6 @@ extern "C" {
 #define NO_PWDBASED
 #define HAVE_MCAPI
 #define WOLF_CRYPTO_CB  // provide call-back support
-#define WOLFCRYPT_ONLY
 #if (__XC32_VERSION > 100000000)
 #define WOLFSSL_HAVE_MIN
 #define WOLFSSL_HAVE_MAX
@@ -408,38 +433,37 @@ extern "C" {
 #undef WOLFSSL_HAVE_MIN
 #undef WOLFSSL_HAVE_MAX
 // ---------- FUNCTIONAL CONFIGURATION START ----------
-//#define WOLFSSL_AES_SMALL_TABLES
-#define NO_AES
+#define WOLFSSL_AES_SMALL_TABLES
 #define NO_MD4
-//#define NO_MD5 // reduce size, no need MD5 for tcp
-//#define WOLFSSL_SHA224
-//#define NO_SHA256 // required for HASH DRBG
-#define NO_SHA1
-//#define WOLFSSL_AES_128
+#define NO_SHA // specifically, no SHA1 (legacy name)
+#define WOLFSSL_SHA224
+#define NO_DES3
+#define WOLFSSL_AES_128
 #define NO_AES_192 // not supported by HW accelerator
 #define NO_AES_256 // not supported by HW accelerator
-//#define WOLFSSL_AES_DIRECT
-//#define HAVE_AES_DECRYPT
-//#define HAVE_AES_ECB
-//#define HAVE_AES_CBC
+#define WOLFSSL_AES_DIRECT
+#define HAVE_AES_DECRYPT
+#define NO_AES_CBC
+#define HAVE_AESGCM
 #define NO_RC4
 #define NO_HC128
 #define NO_RABBIT
-//#define HAVE_ECC // this is like 30KB
-#define NO_DH
+#define HAVE_ECC
+#define HAVE_X963_KDF
+#define CURVE25519_SMALL
+#define HAVE_DH
 #define NO_DSA
-#define NO_RSA // this is like 60KB because of asn.c and tfm.c
-#define NO_DES
-//#define FP_MAX_BITS 4096
-//#define USE_CERT_BUFFERS_2048
+#define FP_MAX_BITS 4096
+#define USE_CERT_BUFFERS_2048
 #define NO_DEV_RANDOM
 #define HAVE_HASHDRBG
-#define WC_NO_HARDEN
-#define SINGLE_THREADED
-#define NO_SIG_WRAPPER
-#define NO_ERROR_STRINGS
-#define WOLFSSL_MAX_ERROR_SZ 38 // Fix Mandatory Misra 21.18 caused by removing error strings with defining NO_ERROR_STRINGS
-#define NO_WOLFSSL_MEMORY
+#define TFM_TIMING_RESISTANT
+#define ECC_TIMING_RESISTANT
+#define WC_RSA_BLINDING
+#define FREERTOS
+//#define WOLFSSL_KEY_GEN
+#define DEBUG
+#define DEBUG_WOLFSSL
 // ---------- FUNCTIONAL CONFIGURATION END ----------
 
 #define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1
