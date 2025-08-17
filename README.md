@@ -78,6 +78,7 @@ https client program size:
 wolfssl: 473,608 bytes 88% FLASH, 86,075 bytes 66% RAM
 bearssl: 377,764 bytes 70% FLASH, 72,767 bytes 56% RAM
          363,516 bytes 68% FLASH, 72,767 bytes 56% RAM w/o ecdsa
+         318,684 bytes 59% FLASH, 73,047 bytes 56% RAM knownkey rsa
 
 # Tools
 
