@@ -94,7 +94,7 @@ void APP_Tasks ( void ){
                 // http_client_get_url("http://192.168.1.1", NULL, 0);
                 // http_client_get_url("https://httpbin.org/get", NULL, 0);
                 http_client_get_url("http://52.1.207.236/get", NULL, 0);
-                http_client_get_url("https://52.1.207.236/get", NULL, 0);
+                https_client_get_url("https://52.1.207.236/get", NULL, 0);
             }        
             break;
         }

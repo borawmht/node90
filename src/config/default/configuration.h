@@ -207,8 +207,8 @@ extern "C" {
 
 #define WOLFSSL_ALT_NAMES
 #define WOLFSSL_DER_LOAD
-#define KEEP_OUR_CERT
-#define KEEP_PEER_CERT
+// #define KEEP_OUR_CERT
+// #define KEEP_PEER_CERT
 #define HAVE_CRL_IO
 #define HAVE_IO_TIMEOUT
 #define TFM_NO_ASM
@@ -217,10 +217,6 @@ extern "C" {
 #define WOLFSSL_USER_IO
 #define NO_WRITEV
 #define MICROCHIP_TCPIP
-#include "osal/osal.h"
-#define XMALLOC_OVERRIDE
-#define XMALLOC(s, h, type)  OSAL_Malloc((s))
-#define XFREE(p, h, type)    OSAL_Free((p))
 #define NO_PWDBASED
 #define WOLFSSL_SMALL_STACK
 #define NO_OLD_TLS
@@ -295,13 +291,13 @@ extern "C" {
 #define TCPIP_NETWORK_DEFAULT_INTERFACE_NAME_IDX0 "ETHMAC"
 #define TCPIP_IF_ETHMAC
 
-#define TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0              "MCHPBOARD_E"
+#define TCPIP_NETWORK_DEFAULT_HOST_NAME_IDX0              "NODE90"
 #define TCPIP_NETWORK_DEFAULT_MAC_ADDR_IDX0               0
 
-#define TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0         "192.168.100.10"
+#define TCPIP_NETWORK_DEFAULT_IP_ADDRESS_IDX0         "192.168.1.170"
 #define TCPIP_NETWORK_DEFAULT_IP_MASK_IDX0            "255.255.255.0"
-#define TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0            "192.168.100.1"
-#define TCPIP_NETWORK_DEFAULT_DNS_IDX0                "192.168.100.1"
+#define TCPIP_NETWORK_DEFAULT_GATEWAY_IDX0            "192.168.1.1"
+#define TCPIP_NETWORK_DEFAULT_DNS_IDX0                "192.168.1.1"
 #define TCPIP_NETWORK_DEFAULT_SECOND_DNS_IDX0         "0.0.0.0"
 #define TCPIP_NETWORK_DEFAULT_POWER_MODE_IDX0         "full"
 #define TCPIP_NETWORK_DEFAULT_INTERFACE_FLAGS_IDX0            \

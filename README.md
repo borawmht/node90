@@ -65,6 +65,14 @@ There are several large ssl components (>227.8KB)
 - rsa.c = 8.5KB
 - dh.c = 5.6KB
 
+Remove some components (>166.7KB)
+- internal.c = 59.1KB
+- ssl.c = 39.1KB
+- asn.c = 29.6KB
+- tfm.c = 21.3KB
+- aes.c = 9.5KB
+- rsa.c = 8.1KB
+
 # Tools
 
 ```

@@ -173,8 +173,6 @@
           </logicalFolder>
           <logicalFolder name="net_pres" displayName="net_pres" projectFiles="true">
             <logicalFolder name="pres" displayName="pres" projectFiles="true">
-              <logicalFolder name="src" displayName="src" projectFiles="true">
-              </logicalFolder>
               <itemPath>../src/config/default/net_pres/pres/net_pres.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapiconversion.h</itemPath>
               <itemPath>../src/config/default/net_pres/pres/net_pres_socketapi.h</itemPath>
@@ -1104,7 +1102,7 @@
         <property key="memories.programmemory.ranges" value="1d000000-1d07ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
         <property key="programmerToGoFilePath"
-                  value="C:/Users/brado/OneDrive/Documents/PIC32/node90_test4/node90.X/debug/default/node90_ptg"/>
+                  value="/home/brado/Desktop/node90/node90.X/debug/default/node90_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.ledbrightness" value="5"/>

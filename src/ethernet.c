@@ -212,7 +212,7 @@ void ethernet_init() {
     (void) xTaskCreate(
         (TaskFunction_t) ethernet_task,
         "ethernet_task",
-        1*1024,
+        1*512,
         NULL,
         1U ,
         (TaskHandle_t*)NULL);      

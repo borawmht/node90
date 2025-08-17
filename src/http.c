@@ -415,7 +415,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         connect_timeout++;
         
         if (connect_timeout % 1000 == 0) {
-            SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
+            // SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
         }
     }
     
@@ -533,7 +533,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
         receive_timeout++;
         
         if (receive_timeout % 2000 == 0) {
-            SYS_CONSOLE_PRINT("http_client: waiting for response... %d\r\n", receive_timeout / 1000);
+            // SYS_CONSOLE_PRINT("http_client: waiting for response... %d\r\n", receive_timeout / 1000);
         }
     }
     
@@ -587,6 +587,91 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     // SYS_CONSOLE_PRINT("http_client: socket cleanup complete\r\n");
     
     return true;
+}
+
+// Replace the custom I/O functions with these improved versions:
+
+static int custom_recv(WOLFSSL* ssl, char* buf, int sz, void* ctx) {
+    TCP_SOCKET* tcp_socket = (TCP_SOCKET*)ctx;
+    
+    // Check if socket is still connected
+    if (!TCPIP_TCP_IsConnected(*tcp_socket)) {
+        return WOLFSSL_CBIO_ERR_WANT_READ;
+    }
+    
+    // Check if data is available
+    uint16_t available = TCPIP_TCP_GetIsReady(*tcp_socket);
+    if (available == 0) {
+        // No data available, but socket is connected - this is normal during handshake
+        return WOLFSSL_CBIO_ERR_WANT_READ;
+    }
+    
+    // Read available data
+    uint16_t to_read = (available < sz) ? available : sz;
+    uint16_t read = TCPIP_TCP_ArrayGet(*tcp_socket, (uint8_t*)buf, to_read);
+    
+    if (read == 0) {
+        // No data read, but socket is connected - try again later
+        return WOLFSSL_CBIO_ERR_WANT_READ;
+    }
+    
+    return read;
+}
+
+static int custom_send(WOLFSSL* ssl, char* buf, int sz, void* ctx) {
+    TCP_SOCKET* tcp_socket = (TCP_SOCKET*)ctx;
+    
+    // Check if socket is still connected
+    if (!TCPIP_TCP_IsConnected(*tcp_socket)) {
+        return WOLFSSL_CBIO_ERR_WANT_WRITE;
+    }
+    
+    // Check if socket is ready for writing
+    uint16_t write_ready = TCPIP_TCP_PutIsReady(*tcp_socket);
+    if (write_ready == 0) {
+        // Socket not ready for writing - try again later
+        return WOLFSSL_CBIO_ERR_WANT_WRITE;
+    }
+    
+    // Send data
+    uint16_t to_write = (write_ready < sz) ? write_ready : sz;
+    uint16_t written = TCPIP_TCP_ArrayPut(*tcp_socket, (const uint8_t*)buf, to_write);
+    
+    if (written == 0) {
+        // Nothing written - try again later
+        return WOLFSSL_CBIO_ERR_WANT_WRITE;
+    }
+    
+    return written;
+}
+
+// Add this debug callback function after your custom I/O functions:
+
+static void wolfssl_debug_callback(const int logLevel, const char* const logMessage) {
+    // Convert WolfSSL log levels to readable messages
+    const char* level_str;
+    switch (logLevel) {
+        case ERROR_LOG:
+            level_str = "ERROR";
+            break;
+        case INFO_LOG:
+            level_str = "INFO";
+            break;
+        case ENTER_LOG:
+            level_str = "ENTER";
+            break;
+        case LEAVE_LOG:
+            level_str = "LEAVE";
+            break;
+        case OTHER_LOG:
+            level_str = "OTHER";
+            break;
+        default:
+            level_str = "UNKNOWN";
+            break;
+    }
+    
+    SYS_CONSOLE_PRINT("WolfSSL[%s]: %s\r\n", level_str, logMessage);
 }
 
 bool https_client_get_url(const char *url, const char *data, size_t data_size) {
@@ -654,7 +739,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         connect_timeout++;
         
         if (connect_timeout % 1000 == 0) {
-            SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
+            // SYS_CONSOLE_PRINT("https_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
         }
     }
     
@@ -668,14 +753,37 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     WOLFSSL* ssl;
     WOLFSSL_METHOD* method;
 
-    wolfSSL_Init();
+    // wolfSSL_Init(); // This line is removed as per the new_code, as the debug callback is now set up before this.
 
+    // Set up debug callback
+    wolfSSL_SetLoggingCb(wolfssl_debug_callback);
+
+    // Turn on debugging
+    // wolfSSL_Debugging_ON();
+
+    // SYS_CONSOLE_PRINT("https_client: WolfSSL version: %s\r\n", wolfSSL_lib_version());
+
+    // Use TLS 1.2 method
     method = wolfTLSv1_2_client_method();
+    if (method == NULL) {
+        SYS_CONSOLE_PRINT("https_client: TLS 1.2 method not available\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    // SYS_CONSOLE_PRINT("https_client: TLS 1.2 method available\r\n");
+
     if ((ctx = wolfSSL_CTX_new(method)) == NULL) {
         SYS_CONSOLE_PRINT("https_client: failed to create SSL context\r\n");
         TCPIP_TCP_Close(tcp_socket);
         return false;
     }
+
+    wolfSSL_SetIORecv(ctx, custom_recv);
+    wolfSSL_SetIOSend(ctx, custom_send);
+
+    // Disable certificate verification for minimal implementation
+    wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
 
     if ((ssl = wolfSSL_new(ctx)) == NULL) {
         SYS_CONSOLE_PRINT("https_client: failed to create SSL object\r\n");
@@ -684,15 +792,52 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
 
-    wolfSSL_set_fd(ssl, tcp_socket);
+    // Set custom I/O functions instead of using set_fd    
+    wolfSSL_SetIOReadCtx(ssl, &tcp_socket);
+    wolfSSL_SetIOWriteCtx(ssl, &tcp_socket);
 
-    if (wolfSSL_connect(ssl) != SSL_SUCCESS) {
-        SYS_CONSOLE_PRINT("https_client: SSL connect failed\r\n");
+    // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
+    // SYS_CONSOLE_PRINT("https_client: attempting SSL connect to %s:%d\r\n", hostname, port);
+
+    // Try to connect with timeout
+    uint32_t ssl_timeout = 0;
+    int ssl_ret;
+    do {
+        ssl_ret = wolfSSL_connect(ssl);
+        
+        if (ssl_ret == SSL_SUCCESS) {
+            // SYS_CONSOLE_PRINT("https_client: SSL handshake completed\r\n");
+            break;
+        }
+        
+        int err = wolfSSL_get_error(ssl, ssl_ret);
+        // SYS_CONSOLE_PRINT("https_client: SSL connect returned %d, error %d\r\n", ssl_ret, err);
+        
+        if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) {
+            // This is normal during handshake
+            vTaskDelay(10);
+            ssl_timeout++;
+            if (ssl_timeout % 100 == 0) {
+                // SYS_CONSOLE_PRINT("https_client: SSL handshake in progress... %d\r\n", ssl_timeout / 100);
+            }
+        } else {
+            // Real error
+            SYS_CONSOLE_PRINT("https_client: SSL handshake failed with error %d\r\n", err);
+            break;
+        }
+    } while (ssl_timeout < 1000); // 10 second timeout
+
+    if (ssl_ret != SSL_SUCCESS) {
+        int err = wolfSSL_get_error(ssl, ssl_ret);
+        SYS_CONSOLE_PRINT("https_client: Final SSL error: %d\r\n", err);
+        
         wolfSSL_free(ssl);
         wolfSSL_CTX_free(ctx);
         TCPIP_TCP_Close(tcp_socket);
         return false;
     }
+
+    // SYS_CONSOLE_PRINT("https_client: SSL connection established successfully\r\n");
 
     // Build HTTP request
     // char request[512];
@@ -739,7 +884,6 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         size_t to_send = (write_ready < (request_len - sent_total)) ? write_ready : (request_len - sent_total);
         
         // Send chunk
-        ///uint16_t sent = TCPIP_TCP_ArrayPut(tcp_socket, (const uint8_t*)(request_ptr + sent_total), to_send);
         uint16_t sent = wolfSSL_write(ssl, (const uint8_t*)(request_ptr + sent_total), to_send);
         if (sent == 0) {
             SYS_CONSOLE_PRINT("https_client: failed to send data chunk\r\n");
@@ -806,7 +950,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         receive_timeout++;
         
         if (receive_timeout % 2000 == 0) {
-            SYS_CONSOLE_PRINT("https_client: waiting for response... %d\r\n", receive_timeout / 1000);
+            // SYS_CONSOLE_PRINT("https_client: waiting for response... %d\r\n", receive_timeout / 1000);
         }
     }
     
@@ -845,6 +989,25 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         SYS_CONSOLE_PRINT("https_client: received: %d bytes (no body found)\r\n", received);
     }
 
+    // Debug: show the raw response
+    // SYS_CONSOLE_PRINT("https_client: Raw response (first 300 bytes):\r\n");
+    // for (int i = 0; i < received && i < 300; i++) {
+    //     if (response_buffer[i] >= 32 && response_buffer[i] <= 126) {
+    //         SYS_CONSOLE_PRINT("%c", response_buffer[i]);
+    //     } else {
+    //         SYS_CONSOLE_PRINT("\\x%02X", response_buffer[i]);
+    //     }
+    // }
+    // SYS_CONSOLE_PRINT("\r\n");
+
+    // Also show the response in hex for debugging
+    // SYS_CONSOLE_PRINT("https_client: Response hex dump (first 100 bytes):\r\n");
+    // for (int i = 0; i < received && i < 100; i++) {
+    //     SYS_CONSOLE_PRINT("%02X ", response_buffer[i]);
+    //     if ((i + 1) % 16 == 0) SYS_CONSOLE_PRINT("\r\n");
+    // }
+    // SYS_CONSOLE_PRINT("\r\n");
+
     // Close socket
     wolfSSL_free(ssl);
     wolfSSL_CTX_free(ctx);
@@ -852,6 +1015,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     wolfSSL_Cleanup();
     
     SYS_CONSOLE_PRINT("https_client: request completed\r\n");
+    // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
     
     return true;
 }
