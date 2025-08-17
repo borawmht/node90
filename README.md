@@ -80,6 +80,7 @@ bearssl: 377,764 bytes 70% FLASH, 72,767 bytes 56% RAM
          363,516 bytes 68% FLASH, 72,767 bytes 56% RAM w/o ecdsa
          318,684 bytes 59% FLASH, 73,047 bytes 56% RAM knownkey rsa
          326,176 bytes 61% FLASH, 72,791 bytes 56% RAM minimal rsa
+         322,712 bytes 60% FLASH, 74,387 bytes 57% RAM custom no validation rsa
 
 # Tools
 

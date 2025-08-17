@@ -20,6 +20,7 @@
         <itemPath>../src/bearssl/inc/bearssl_rsa.h</itemPath>
         <itemPath>../src/bearssl/inc/bearssl_ssl.h</itemPath>
         <itemPath>../src/bearssl/inc/bearssl_x509.h</itemPath>
+        <itemPath>../src/bearssl/bearssl_custom.h</itemPath>
       </logicalFolder>
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
@@ -826,6 +827,7 @@
           </logicalFolder>
           <itemPath>../src/bearssl/src/settings.c</itemPath>
         </logicalFolder>
+        <itemPath>../src/bearssl/bearssl_custom.c</itemPath>
       </logicalFolder>
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
@@ -1436,6 +1438,8 @@
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d07ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmerToGoFilePath"
+                  value="/home/brado/Desktop/node90/node90.X/debug/default/node90_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.ledbrightness" value="5"/>

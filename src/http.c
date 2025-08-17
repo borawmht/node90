@@ -11,6 +11,7 @@
 #include "config/default/library/tcpip/tcpip.h"
 // #include "third_party/wolfssl/wolfssl/ssl.h"  // Removed - using BearSSL instead
 #include "bearssl/inc/bearssl.h"
+#include "bearssl/bearssl_custom.h"
 #include "ethernet.h"
 #include <string.h>
 #include <stdlib.h>
@@ -61,12 +62,8 @@ uint8_t response_buffer[RESPONSE_SIZE];
 unsigned char iobuf[IOBUF_SIZE];
 
 br_ssl_client_context cc;
-br_x509_minimal_context xc;  // Use minimal context instead of knownkey context
-// br_sslio_context sslio;
-
-// Add this global variable for the known key context
-br_x509_knownkey_context xc_knownkey;  // Use known key context instead of minimal
-br_sslio_context sslio;  // Add this back
+br_sslio_context sslio;
+br_x509_custom_context custom_x509_ctx;
 
 // Helper function to parse HTTP response status
 static bool parse_http_response_status(const char *response, int *status_code) {
@@ -120,17 +117,39 @@ static bool is_http_response_complete(const char *response, size_t received) {
         if (!body_start) return false;
     }
     
-    // If we have headers but no body, response is complete
-    if (body_start + 4 >= response + received) {
-        return true;
+    // Check for Content-Length header - be more careful about parsing
+    const char *headers_end = body_start;
+    const char *content_length = NULL;
+    
+    // Search for Content-Length in the headers section only
+    const char *header_start = response;
+    while (header_start < headers_end) {
+        content_length = strstr(header_start, "Content-Length:");
+        if (content_length && content_length < headers_end) {
+            // Found Content-Length header in headers section
+            break;
+        } else if (content_length) {
+            // Found Content-Length but it's in the body, not headers
+            content_length = NULL;
+            break;
+        } else {
+            // No Content-Length found
+            break;
+        }
     }
     
-    // Check for Content-Length header
-    const char *content_length = strstr(response, "Content-Length:");
-    if (content_length && content_length < body_start) {
-        int expected_length = atoi(content_length + 15); // Skip "Content-Length: "
+    if (content_length && content_length < headers_end) {
+        // Parse the Content-Length value
+        const char *value_start = content_length + 15; // Skip "Content-Length: "
+        while (*value_start == ' ') value_start++; // Skip leading spaces
+        
+        int expected_length = atoi(value_start);
         const char *body = body_start + 4;
         size_t body_length = received - (body - response);
+        
+        SYS_CONSOLE_PRINT("https_client: Content-Length: %d, body_length: %d, received: %d\r\n", 
+                         expected_length, body_length, received);
+        
         return body_length >= expected_length;
     }
     
@@ -142,9 +161,15 @@ static bool is_http_response_complete(const char *response, size_t received) {
         return final_chunk != NULL;
     }
     
-    // If connection is closed and we have some data, assume it's complete
-    // This is a fallback for servers that don't specify content length
-    return true;
+    // For HTTPS, be more conservative - don't assume completion unless we have a lot of data
+    // or the connection is clearly closed
+    if (received > 1000) {
+        // If we have more than 1KB and no Content-Length, assume it's complete
+        return true;
+    }
+    
+    // Don't assume completion for small responses without Content-Length
+    return false;
 }
 
 static bool http_test_client_get_url(void) {
@@ -348,6 +373,8 @@ void http_server_init(void) {
     SYS_CONSOLE_PRINT("http_server: init\r\n");
 }
 
+// Important: This function should be called from a task with at least 2048 bytes of stack
+// Otherwise the TCP connection times out
 bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     if (!url) {
         SYS_CONSOLE_PRINT("http_client: invalid URL\r\n");
@@ -603,19 +630,7 @@ bool http_client_get_url(const char *url, const char *data, size_t data_size) {
     return true;
 }
 
-// Custom time validation callback that always returns success (no validation)
-static int custom_time_check(void *ctx, uint32_t not_before_days, uint32_t not_before_seconds,
-                            uint32_t not_after_days, uint32_t not_after_seconds) {
-    (void)ctx;
-    (void)not_before_days;
-    (void)not_before_seconds;
-    (void)not_after_days;
-    (void)not_after_seconds;
-    return 0; // Always return 0 (valid) - no time validation
-}
-
 // BearSSL I/O functions for TCP socket integration
-
 static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     TCP_SOCKET* tcp_socket = (TCP_SOCKET*)ctx;
     
@@ -625,10 +640,20 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
         return -1; // Connection closed - error
     }
     
-    // Check if data is available
-    uint16_t available = TCPIP_TCP_GetIsReady(*tcp_socket);
+    // Block until data is available
+    uint16_t available = 0;
+    uint32_t timeout = 0;
+    while (available == 0 && timeout < 1000) { // 1 second timeout
+        available = TCPIP_TCP_GetIsReady(*tcp_socket);
+        if (available == 0) {
+            vTaskDelay(1); // Small delay to prevent busy waiting
+            timeout++;
+        }
+    }
+    
     if (available == 0) {
-        return 0; // No data available - will be called again
+        SYS_CONSOLE_PRINT("https_client: recv - timeout waiting for data\r\n");
+        return -1; // Timeout - error
     }
     
     // Read available data
@@ -636,10 +661,11 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     uint16_t read = TCPIP_TCP_ArrayGet(*tcp_socket, buf, to_read);
     
     if (read == 0) {
-        return 0; // No data read - will be called again
+        SYS_CONSOLE_PRINT("https_client: recv - failed to read data\r\n");
+        return -1; // Read failed - error
     }
     
-    SYS_CONSOLE_PRINT("https_client: recv - read %d bytes\r\n", read);
+    // SYS_CONSOLE_PRINT("https_client: recv - read %d bytes\r\n", read);
     return read;
 }
 
@@ -652,10 +678,20 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
         return -1; // Connection closed - error
     }
     
-    // Check if socket is ready for writing
-    uint16_t write_ready = TCPIP_TCP_PutIsReady(*tcp_socket);
+    // Block until socket is ready for writing
+    uint16_t write_ready = 0;
+    uint32_t timeout = 0;
+    while (write_ready == 0 && timeout < 1000) { // 1 second timeout
+        write_ready = TCPIP_TCP_PutIsReady(*tcp_socket);
+        if (write_ready == 0) {
+            vTaskDelay(1); // Small delay to prevent busy waiting
+            timeout++;
+        }
+    }
+    
     if (write_ready == 0) {
-        return 0; // Socket not ready - will be called again
+        SYS_CONSOLE_PRINT("https_client: send - timeout waiting for write ready\r\n");
+        return -1; // Timeout - error
     }
     
     // Send data
@@ -663,27 +699,17 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
     uint16_t written = TCPIP_TCP_ArrayPut(*tcp_socket, buf, to_write);
     
     if (written == 0) {
-        return 0; // Nothing written - will be called again
+        SYS_CONSOLE_PRINT("https_client: send - failed to write data\r\n");
+        return -1; // Write failed - error
     }
     
-    SYS_CONSOLE_PRINT("https_client: send - wrote %d bytes\r\n", written);
+    // SYS_CONSOLE_PRINT("https_client: send - wrote %d bytes\r\n", written);
     return written;
 }
 
-// // Create a proper dummy RSA key for the known key engine
-// // This needs to be at least 128 bytes (1024 bits) to pass BearSSL's minimum key size check
-// static unsigned char dummy_modulus[256] = {0};  // 256 bytes of zeros (2048 bits)
-// static unsigned char dummy_exponent[3] = {0x01, 0x00, 0x01};  // 65537 (common RSA exponent)
-
-// // Initialize the modulus with some non-zero values to make it look more realistic
-// static void init_dummy_rsa_key(void) {
-//     // Set the first byte to 0x80 to make it look like a valid RSA modulus
-//     dummy_modulus[0] = 0x80;
-//     // Set the last byte to 0x01 to make it look like a valid RSA modulus
-//     dummy_modulus[255] = 0x01;
-// }
-
-// char null_hostname[] = "";
+// Important: This function should be called from a task with at least 2048 bytes of stack
+// It had been getting stuck, but recent test did work with 1024 bytes of stack.
+// So verify if task has a smaler stack.
 bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     SYS_CONSOLE_PRINT("https_client: get url %s\r\n", url);
 
@@ -753,49 +779,20 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     }
 
     // Initialize BearSSL client context with minimal engine but accept any key size
-    SYS_CONSOLE_PRINT("https_client: initializing BearSSL with minimal engine (accept any key size)\r\n");
+    // SYS_CONSOLE_PRINT("https_client: initializing BearSSL with minimal engine (accept any key size)\r\n");
     
     // Clear the SSL client context first
-    br_ssl_client_zero(&cc);
-    
-    // Initialize minimal context with no trust anchors (no validation)
-    br_x509_minimal_init(&xc, &br_sha256_vtable, NULL, 0);
-    
-    // Set minimum RSA key size to 128 bytes which is the minimum size for RSA
-    br_x509_minimal_set_minrsa(&xc, 128);
-
-    // Set up hash functions and RSA implementations
-    br_x509_minimal_set_hash(&xc, br_sha256_ID, &br_sha256_vtable);
-    br_x509_minimal_set_hash(&xc, br_sha1_ID, &br_sha1_vtable);
-    br_x509_minimal_set_rsa(&xc, br_rsa_pkcs1_vrfy_get_default());
-    
-    // Set custom time validation callback that always returns success
-    br_x509_minimal_set_time_callback(&xc, NULL, custom_time_check);    
-
-    // init_dummy_rsa_key();
-    // br_rsa_public_key dummy_key = {
-    //     .n = dummy_modulus,  // 256-byte modulus
-    //     .nlen = 256,
-    //     .e = dummy_exponent,  // 65537 exponent
-    //     .elen = 3
-    // };
-    // // Initialize the known key engine with the dummy key
-    // br_x509_knownkey_init_rsa(&xc_knownkey, &dummy_key, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN);    
+    br_ssl_client_zero(&cc);    
     
     // Set up the SSL engine buffer and versions
     br_ssl_engine_set_buffer(&cc.eng, iobuf, sizeof(iobuf), 1);
     br_ssl_engine_set_versions(&cc.eng, BR_TLS12, BR_TLS12);
-    
-    // Set the minimal engine as the X.509 engine
-    br_ssl_engine_set_x509(&cc.eng, &xc.vtable);
-    // // Set the known key engine as the X.509 engine
-    // br_ssl_engine_set_x509(&cc.eng, &xc_knownkey.vtable);
+            
+    custom_x509_ctx.vtable = &no_validation_vtable;
+    br_ssl_engine_set_x509(&cc.eng, &custom_x509_ctx.vtable);
     
     // Set up cipher suites (add ECDHE suites for better compatibility)
     static const uint16_t suites[] = {
-        // BR_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,  // Most common modern suite
-        // BR_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-        // BR_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
         BR_TLS_RSA_WITH_AES_128_GCM_SHA256,
         BR_TLS_RSA_WITH_AES_128_CBC_SHA256,
         BR_TLS_RSA_WITH_AES_128_CBC_SHA
@@ -810,10 +807,6 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     br_ssl_client_set_default_rsapub(&cc);
     br_ssl_engine_set_default_rsavrfy(&cc.eng);
     
-    // Set up EC implementations (required for ECDHE cipher suites)
-    // br_ssl_engine_set_default_ec(&cc.eng);
-    // br_ssl_engine_set_default_ecdsa(&cc.eng);
-    
     // Set up PRF implementations
     br_ssl_engine_set_prf10(&cc.eng, &br_tls10_prf);
     br_ssl_engine_set_prf_sha256(&cc.eng, &br_tls12_sha256_prf);
@@ -822,7 +815,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     br_ssl_engine_set_default_aes_gcm(&cc.eng);
     br_ssl_engine_set_default_aes_cbc(&cc.eng);
     
-    SYS_CONSOLE_PRINT("https_client: SSL client context initialized with minimal engine\r\n");
+    // SYS_CONSOLE_PRINT("https_client: SSL client context initialized with minimal engine\r\n");
     
     // Inject entropy (required for BearSSL)
     uint32_t entropy_data[8] = {
@@ -834,7 +827,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     // Reset the client context for a new connection
     // Use NULL for server name to disable hostname verification
     if (!br_ssl_client_reset(&cc, NULL, 0)) {
-        SYS_CONSOLE_PRINT("https_client: failed to reset BearSSL client context\r\n");
+        SYS_CONSOLE_PRINT("https_client: failed to reset client context\r\n");
         
         // Check SSL engine state after failed reset
         unsigned post_reset_state = br_ssl_engine_current_state(&cc.eng);
@@ -853,7 +846,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     // Set up the I/O wrapper
     br_sslio_init(&sslio, &cc.eng, bearssl_recv, &tcp_socket, bearssl_send, &tcp_socket);
 
-    SYS_CONSOLE_PRINT("https_client: I/O wrapper initialized\r\n");
+    // SYS_CONSOLE_PRINT("https_client: I/O wrapper initialized\r\n");
 
     // Build HTTP request
     if (data && data_size > 0) {
@@ -884,8 +877,7 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     response_buffer[0] = 0; // clear the response buffer
     
     uint32_t send_timeout = 0;
-    while (sent_total < request_len && send_timeout < 10000) { // 10 second timeout
-        // Send a small chunk (64 bytes at a time)
+    while (sent_total < request_len && send_timeout < 3000) { // 3 second timeout        
         size_t chunk_size = 1024;
         if (sent_total + chunk_size > request_len) {
             chunk_size = request_len - sent_total;
@@ -934,30 +926,94 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
         return false;
     }
     
-    // Receive response
+    // Flush any pending data
+    if (br_sslio_flush(&sslio) < 0) {
+        SYS_CONSOLE_PRINT("https_client: failed to flush SSL data\r\n");
+        TCPIP_TCP_Close(tcp_socket);
+        return false;
+    }
+
+    // Receive response with better handling
     uint16_t received = 0;
     uint32_t receive_timeout = 0;
     bool response_complete = false;
-    
+
     while (receive_timeout < 5000 && !response_complete) { // 5 second timeout
-        uint16_t available = TCPIP_TCP_GetIsReady(tcp_socket);
-        if (available > 0) {
-            uint16_t to_read = (available > sizeof(response_buffer) - received - 1) ? 
-                              (sizeof(response_buffer) - received - 1) : available;
-            uint16_t read = TCPIP_TCP_ArrayGet(tcp_socket, response_buffer + received, to_read);
-            received += read;
+        // Check if there's already data available in the SSL engine
+        unsigned char *buf;
+        size_t alen;
+        buf = br_ssl_engine_recvapp_buf(&cc.eng, &alen);
+        if (alen > 0) {
+            // There's already data available - read it
+            size_t to_read = (alen > sizeof(response_buffer) - received - 1) ? 
+                            (sizeof(response_buffer) - received - 1) : alen;
+            memcpy(response_buffer + received, buf, to_read);
+            br_ssl_engine_recvapp_ack(&cc.eng, to_read);
+            received += to_read;
             
-            SYS_CONSOLE_PRINT("https_client: received chunk %d bytes, total %d\r\n", read, received);
+            SYS_CONSOLE_PRINT("https_client: read %d bytes from SSL buffer, total %d\r\n", to_read, received);
             
-            if (received >= sizeof(response_buffer) - 1) {
-                SYS_CONSOLE_PRINT("https_client: buffer full, stopping\r\n");
-                break; // Buffer full
-            }
-            
+            // Debug: show the first part of the response to see what we're getting
+            // if (received > 0 && received < 500) { // Only show for smaller responses to avoid spam
+            //     SYS_CONSOLE_PRINT("https_client: response buffer (first 200 chars):\r\n");
+            //     char debug_buffer[201];
+            //     strncpy(debug_buffer, (char*)response_buffer, 200);
+            //     debug_buffer[200] = '\0';
+            //     SYS_CONSOLE_PRINT("%s\r\n", debug_buffer);
+                
+            //     // Also show if we can find headers
+            //     const char *headers_end = strstr((char*)response_buffer, "\r\n\r\n");
+            //     if (headers_end) {
+            //         SYS_CONSOLE_PRINT("https_client: found headers end at position %d\r\n", headers_end - (char*)response_buffer);
+                    
+            //         // Show the headers section
+            //         size_t headers_len = headers_end - (char*)response_buffer;
+            //         SYS_CONSOLE_PRINT("https_client: headers (%d bytes):\r\n", headers_len);
+            //         char headers_debug[headers_len + 1];
+            //         strncpy(headers_debug, (char*)response_buffer, headers_len);
+            //         headers_debug[headers_len] = '\0';
+            //         SYS_CONSOLE_PRINT("%s\r\n", headers_debug);
+            //     } else {
+            //         SYS_CONSOLE_PRINT("https_client: no headers end found\r\n");
+            //     }
+            // }
+
             // Check if response is complete
             response_buffer[received] = '\0';
             if (is_http_response_complete((char*)response_buffer, received)) {
+                SYS_CONSOLE_PRINT("https_client: response appears complete\r\n");
                 response_complete = true;
+                break;
+            }
+        } else {
+            // No data in SSL buffer, try to read from network
+            int read = br_sslio_read(&sslio, response_buffer + received, 
+                            sizeof(response_buffer) - received - 1);
+            if (read > 0) {
+                received += read;
+                SYS_CONSOLE_PRINT("https_client: received chunk %d bytes, total %d\r\n", read, received);
+                
+                if (received >= sizeof(response_buffer) - 1) {
+                    SYS_CONSOLE_PRINT("https_client: buffer full, stopping\r\n");
+                    break; // Buffer full
+                }
+                
+                // Check if response is complete
+                response_buffer[received] = '\0';
+                if (is_http_response_complete((char*)response_buffer, received)) {
+                    // SYS_CONSOLE_PRINT("https_client: response appears complete\r\n");
+                    response_complete = true;
+                    break;
+                }
+            } else if (read < 0) {
+                // Error or connection closed
+                SYS_CONSOLE_PRINT("https_client: SSL read error: %d\r\n", read);
+                
+                // Check SSL engine state
+                unsigned state = br_ssl_engine_current_state(&cc.eng);
+                SYS_CONSOLE_PRINT("https_client: SSL engine state: 0x%x\r\n", state);
+                int err = br_ssl_engine_last_error(&cc.eng);
+                SYS_CONSOLE_PRINT("https_client: SSL engine error: %d\r\n", err);
                 break;
             }
         }
