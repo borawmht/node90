@@ -73,6 +73,11 @@ Remove some components (>166.7KB)
 - aes.c = 9.5KB
 - rsa.c = 8.1KB
 
+https client program size:
+
+wolfssl: 473,608 bytes 88% FLASH, 86,075 bytes 66% RAM
+bearssl: 
+
 # Tools
 
 ```
