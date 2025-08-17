@@ -175,7 +175,7 @@ void SYS_Tasks ( void )
     (void) xTaskCreate(
            (TaskFunction_t) lAPP_Tasks,
            "APP_Tasks",
-           1024,
+           2*1024,
            NULL,
            1U ,
            &xAPP_Tasks);

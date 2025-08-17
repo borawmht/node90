@@ -670,20 +670,20 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
     return written;
 }
 
-// Create a proper dummy RSA key for the known key engine
-// This needs to be at least 128 bytes (1024 bits) to pass BearSSL's minimum key size check
-static unsigned char dummy_modulus[256] = {0};  // 256 bytes of zeros (2048 bits)
-static unsigned char dummy_exponent[3] = {0x01, 0x00, 0x01};  // 65537 (common RSA exponent)
+// // Create a proper dummy RSA key for the known key engine
+// // This needs to be at least 128 bytes (1024 bits) to pass BearSSL's minimum key size check
+// static unsigned char dummy_modulus[256] = {0};  // 256 bytes of zeros (2048 bits)
+// static unsigned char dummy_exponent[3] = {0x01, 0x00, 0x01};  // 65537 (common RSA exponent)
 
-// Initialize the modulus with some non-zero values to make it look more realistic
-static void init_dummy_rsa_key(void) {
-    // Set the first byte to 0x80 to make it look like a valid RSA modulus
-    dummy_modulus[0] = 0x80;
-    // Set the last byte to 0x01 to make it look like a valid RSA modulus
-    dummy_modulus[255] = 0x01;
-}
+// // Initialize the modulus with some non-zero values to make it look more realistic
+// static void init_dummy_rsa_key(void) {
+//     // Set the first byte to 0x80 to make it look like a valid RSA modulus
+//     dummy_modulus[0] = 0x80;
+//     // Set the last byte to 0x01 to make it look like a valid RSA modulus
+//     dummy_modulus[255] = 0x01;
+// }
 
-char null_hostname[] = "";
+// char null_hostname[] = "";
 bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     SYS_CONSOLE_PRINT("https_client: get url %s\r\n", url);
 
@@ -758,38 +758,38 @@ bool https_client_get_url(const char *url, const char *data, size_t data_size) {
     // Clear the SSL client context first
     br_ssl_client_zero(&cc);
     
-    // // Initialize minimal context with no trust anchors (no validation)
-    // br_x509_minimal_init(&xc, &br_sha256_vtable, NULL, 0);
+    // Initialize minimal context with no trust anchors (no validation)
+    br_x509_minimal_init(&xc, &br_sha256_vtable, NULL, 0);
     
-    // // Set minimum RSA key size to 128 bytes which is the minimum size for RSA
-    // br_x509_minimal_set_minrsa(&xc, 128);
+    // Set minimum RSA key size to 128 bytes which is the minimum size for RSA
+    br_x509_minimal_set_minrsa(&xc, 128);
 
-    // // Set up hash functions and RSA implementations
-    // br_x509_minimal_set_hash(&xc, br_sha256_ID, &br_sha256_vtable);
-    // br_x509_minimal_set_hash(&xc, br_sha1_ID, &br_sha1_vtable);
-    // br_x509_minimal_set_rsa(&xc, br_rsa_pkcs1_vrfy_get_default());
+    // Set up hash functions and RSA implementations
+    br_x509_minimal_set_hash(&xc, br_sha256_ID, &br_sha256_vtable);
+    br_x509_minimal_set_hash(&xc, br_sha1_ID, &br_sha1_vtable);
+    br_x509_minimal_set_rsa(&xc, br_rsa_pkcs1_vrfy_get_default());
     
-    // // Set custom time validation callback that always returns success
-    // br_x509_minimal_set_time_callback(&xc, NULL, custom_time_check);    
+    // Set custom time validation callback that always returns success
+    br_x509_minimal_set_time_callback(&xc, NULL, custom_time_check);    
 
-    init_dummy_rsa_key();
-    br_rsa_public_key dummy_key = {
-        .n = dummy_modulus,  // 256-byte modulus
-        .nlen = 256,
-        .e = dummy_exponent,  // 65537 exponent
-        .elen = 3
-    };
-    // Initialize the known key engine with the dummy key
-    br_x509_knownkey_init_rsa(&xc_knownkey, &dummy_key, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN);    
+    // init_dummy_rsa_key();
+    // br_rsa_public_key dummy_key = {
+    //     .n = dummy_modulus,  // 256-byte modulus
+    //     .nlen = 256,
+    //     .e = dummy_exponent,  // 65537 exponent
+    //     .elen = 3
+    // };
+    // // Initialize the known key engine with the dummy key
+    // br_x509_knownkey_init_rsa(&xc_knownkey, &dummy_key, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN);    
     
     // Set up the SSL engine buffer and versions
     br_ssl_engine_set_buffer(&cc.eng, iobuf, sizeof(iobuf), 1);
     br_ssl_engine_set_versions(&cc.eng, BR_TLS12, BR_TLS12);
     
-    // // Set the minimal engine as the X.509 engine
-    // br_ssl_engine_set_x509(&cc.eng, &xc.vtable);
-    // Set the known key engine as the X.509 engine
-    br_ssl_engine_set_x509(&cc.eng, &xc_knownkey.vtable);
+    // Set the minimal engine as the X.509 engine
+    br_ssl_engine_set_x509(&cc.eng, &xc.vtable);
+    // // Set the known key engine as the X.509 engine
+    // br_ssl_engine_set_x509(&cc.eng, &xc_knownkey.vtable);
     
     // Set up cipher suites (add ECDHE suites for better compatibility)
     static const uint16_t suites[] = {
