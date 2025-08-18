@@ -1,128 +1,161 @@
-# tools/flash.py
-#!/usr/bin/env python3
 import subprocess
 import sys
 import os
 import glob
+import re
+from pathlib import Path
 
-class FlashManager:
-    def __init__(self):
-        self.device = "PIC32MX795F512H"
-        self.programmer = "ICD4"  # or "PK3", "PICkit4", etc.
-        self.release_dir = "release"
-        
-    def flash_bootloader(self, version=None):
-        """Flash bootloader"""
-        if version:
-            hex_file = f"{self.release_dir}/node90_bootloader_{version}.hex"
-        else:
-            hex_file = "bootloader/node90_bootloader.X/dist/default/production/node90_bootloader.X.production.hex"
-        self._flash_hex(hex_file, "0x9D000000-0x9D00FFFF")
-        
-    def flash_application(self, version=None):
-        """Flash application"""
-        if version:
-            hex_file = f"{self.release_dir}/node90_{version}.hex"
-        else:
-            hex_file = "node90.X/dist/default/production/node90.X.production.hex"
-        self._flash_hex(hex_file, "0x9D010000-0x9D07FFFF")
-        
-    def flash_merged(self, version=None):
-        """Flash merged firmware"""
-        if version:
-            hex_file = f"{self.release_dir}/node90_merged_{version}.hex"
-        else:
-            hex_file = "merged/node90_merged.X/dist/default/production/node90_merged.X.production.hex"
-        self._flash_hex(hex_file, "0x9D000000-0x9D07FFFF")
-        
-    def _flash_hex(self, hex_file, address_range):
-        """Flash hex file to specific address range"""
-        if not os.path.exists(hex_file):
-            print(f"Error: Hex file not found: {hex_file}")
-            sys.exit(1)
-            
-        # Using MPLAB X IPE command line
-        # cmd = [
-        #     "ipe.sh",  # or "ipe.bat" on Windows
-        #     "-T", self.device,
-        #     "-P", self.programmer,
-        #     "-F", hex_file,
-        #     "-M",  # Program memory
-        #     "-R", address_range  # Address range
-        # ]
+preserve_none = ''
+# Fix the path to be relative to the script location
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+hex_dir_default = str(project_root / 'bootloader/node90_bootloader.X/dist/default/production/')
+hex_file_default = 'node90_bootloader.X.production.unified.hex'
 
-        preserve_NVM = ' -OP1D07F000-1D07FFFF'
-        preserve_none = ''
-        preserve = preserve_none
+release_dir = str(project_root / 'release/')
 
-        program_cmd = 'java -jar /opt/microchip/mplabx/v6.25/mplab_platform/mplab_ipe/ipecmd.jar -P32MX795F512H -F'+hex_file+' -MC -MB -MP1D000000,1D07FFFF'+preserve+' -TPICD4 -OL'
-        split_program_cmd = program_cmd.split(' ');
-        
-        print(f"Flashing {hex_file} to {address_range}...")
-        subprocess.run(split_program_cmd, check=True)
-        print("Flash completed successfully!")
+def flash(hex_dir=hex_dir_default, hex_file=hex_file_default, preserve=preserve_none):        
+    print("Flashing bootloader...")
+    print("Hex dir: ", hex_dir)
+    print("Hex file: ", hex_file)
+    print("Preserve: ", preserve)
+
+    # Construct the full path to the hex file
+    full_hex_path = os.path.join(hex_dir, hex_file)
     
-    def list_releases(self):
-        """List available releases"""
-        if not os.path.exists(self.release_dir):
-            print("No releases found.")
-            return
+    # Check if the hex file exists
+    if not os.path.exists(full_hex_path):
+        print(f"Error: Hex file not found: {full_hex_path}")
+        return False
+
+    program_cmd = 'java -jar /opt/microchip/mplabx/v6.15/mplab_platform/mplab_ipe/ipecmd.jar -P32MX795F512H -F'+full_hex_path+' -MC -MB -MP1D000000,1D07FFFF'+preserve+' -TPICD4 -OL'
+    split_program_cmd = program_cmd.split(' ');    
+    result = subprocess.run(split_program_cmd)
+    return result.returncode == 0
+
+def get_latest_release_hex_file(release_dir=release_dir):
+    """Find the latest release file in the release directory"""
+    # release_dir is already an absolute path, so use it directly
+    release_path = Path(release_dir)
+    
+    if not release_path.exists():
+        print(f"Release directory not found: {release_path}")
+        return None
+    
+    # Find all merged hex files
+    pattern = "node90_*_merged_bootloader_*.hex"
+    hex_files = list(release_path.glob(pattern))
+    
+    if not hex_files:
+        print(f"No merged hex files found in {release_path}")
+        return None
+    
+    # Extract versions and find the latest
+    latest_file = None
+    latest_version = None
+    
+    for hex_file in hex_files:
+        # Parse filename: node90_xx.xx.xx_merged_bootloader_xx.xx.xx.hex
+        match = re.match(r'node90_(\d+\.\d+\.\d+)_merged_bootloader_\d+\.\d+\.\d+\.hex', hex_file.name)
+        if match:
+            version = match.group(1)
+            if latest_version is None or _compare_versions(version, latest_version) > 0:
+                latest_version = version
+                latest_file = hex_file
+    
+    if latest_file:
+        print(f"Latest release found: {latest_file.name}")
+        return str(latest_file)
+    else:
+        print("No valid merged hex files found")
+        return None
+
+def get_version_release_hex_file(version, release_dir=release_dir):
+    """Find the release file in the release directory by version"""
+    # release_dir is already an absolute path, so use it directly
+    release_path = Path(release_dir)
+    
+    if not release_path.exists():
+        print(f"Release directory not found: {release_path}")
+        return None
+    
+    # Look for files matching the version pattern
+    pattern = f"node90_{version}_merged_bootloader_*.hex"
+    hex_files = list(release_path.glob(pattern))
+    
+    if not hex_files:
+        print(f"No merged hex files found for version {version} in {release_path}")
+        return None
+    
+    if len(hex_files) > 1:
+        print(f"Multiple files found for version {version}:")
+        for f in hex_files:
+            print(f"  - {f.name}")
+        print("Using the first one found")
+    
+    hex_file = hex_files[0]
+    print(f"Found release file: {hex_file.name}")
+    return str(hex_file)
+
+def _compare_versions(version1, version2):
+    """Compare two version strings. Returns 1 if version1 > version2, -1 if version1 < version2, 0 if equal"""
+    v1_parts = [int(x) for x in version1.split('.')]
+    v2_parts = [int(x) for x in version2.split('.')]
+    
+    for i in range(max(len(v1_parts), len(v2_parts))):
+        v1_part = v1_parts[i] if i < len(v1_parts) else 0
+        v2_part = v2_parts[i] if i < len(v2_parts) else 0
         
-        print("Available releases:")
-        hex_files = glob.glob(f"{self.release_dir}/*.hex")
-        versions = set()
-        
-        for hex_file in hex_files:
-            filename = os.path.basename(hex_file)
-            # Extract version from filename
-            if filename.startswith("node90_") and filename.endswith(".hex"):
-                version = filename[6:-4]  # Remove "node90_" prefix and ".hex" suffix
-                if "_" in version:
-                    version = version.split("_", 1)[1]  # Get part after underscore
-                versions.add(version)
-        
-        for version in sorted(versions):
-            print(f"  {version}")
+        if v1_part > v2_part:
+            return 1
+        elif v1_part < v2_part:
+            return -1
+    
+    return 0
 
 def main():
-    flash_mgr = FlashManager()
-    
-    if len(sys.argv) < 2:
-        print("Usage:")
-        print("  python flash.py [bootloader|application|merged] [version]")
-        print("  python flash.py list")
-        print("\nExamples:")
-        print("  python flash.py bootloader")
-        print("  python flash.py application 1.2.3")
-        print("  python flash.py merged release 1.2.3")
-        print("  python flash.py list")
-        sys.exit(1)
-    
-    target = sys.argv[1]
-    
-    if target == "list":
-        flash_mgr.list_releases()
-        return
-    
-    if target not in ["bootloader", "application", "merged"]:
-        print("Invalid target. Use: bootloader, application, merged, or list")
-        sys.exit(1)
-    
-    # Check for version argument
-    version = None
-    if len(sys.argv) >= 3:
-        if sys.argv[2] == "release" and len(sys.argv) >= 4:
-            version = sys.argv[3]
+    if len(sys.argv) == 1:
+        # No arguments - flash default hex
+        print("Flashing default hex file...")
+        flash()
+    elif len(sys.argv) == 2:
+        arg = sys.argv[1]
+        if arg == "latest":
+            # Flash latest release
+            print("Finding latest release...")
+            hex_file = get_latest_release_hex_file()
+            if hex_file:
+                # Extract directory and filename
+                hex_path = Path(hex_file)
+                hex_dir = str(hex_path.parent) + '/'
+                hex_filename = hex_path.name
+                flash(hex_dir, hex_filename)
+            else:
+                print("Failed to find latest release")
+                sys.exit(1)
         else:
-            version = sys.argv[2]
-    
-    # Flash the target
-    if target == "bootloader":
-        flash_mgr.flash_bootloader(version)
-    elif target == "application":
-        flash_mgr.flash_application(version)
-    elif target == "merged":
-        flash_mgr.flash_merged(version)
+            # Assume it's a version
+            print(f"Finding release for version {arg}...")
+            hex_file = get_version_release_hex_file(arg)
+            if hex_file:
+                # Extract directory and filename
+                hex_path = Path(hex_file)
+                hex_dir = str(hex_path.parent) + '/'
+                hex_filename = hex_path.name
+                flash(hex_dir, hex_filename)
+            else:
+                print(f"Failed to find release for version {arg}")
+                sys.exit(1)
+    else:
+        print("Usage:")
+        print("  python flash.py                    # Flash default hex")
+        print("  python flash.py latest             # Flash latest release")
+        print("  python flash.py <version>          # Flash specific version")
+        print("\nExamples:")
+        print("  python flash.py")
+        print("  python flash.py latest")
+        print("  python flash.py 1.0.1")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -16,9 +16,9 @@ Build with XC32 4.60.
 
 ## Structure
 
-Bootloader (0x9D000000 - 0x9D00FFFF) ← 64KB for bootloader
+Bootloader (0x9D000000 - 0x9D003FFF) ← 16KB for bootloader
 
-Application (0x9D010000 - 0x9D07FFFF) ← 448KB for your app
+Application (0x9D004000 - 0x9D07FFFF) ← 496KB for app
 
 ## Modules
 - core 3.15.3
@@ -30,48 +30,8 @@ Application (0x9D010000 - 0x9D07FFFF) ← 448KB for your app
 - crypto 3.8.2
 
 ## Memory Usage
-- net_pres + wolfssl provider = 40KB
-- wolfSSL = minimal 50KB
-- dns = 15KB
-- tcp + crypto = 100KB
 
-
-http client crypto minimal = 297KB 55%
-http client minimal components (tcp+crypto) = 397KB 74%
-https client all components (net_pres + wolfssl) = 509KB 95%
-
-not enough program flash for https client using wolfssl.
-
-Try secure element like ATECC608C for TLS handshake.
-cryptoauthlib
-https://github.com/wolfSSL/microchip-atecc-demos
-https://github.com/wolfSSL/microchip-atecc-demos/blob/master/wolfssl_pic32mz_curiosity/wolfssl_client/firmware/src/app.c
-
-Actually, I adjusted the wolfssl configuration for minimal and removed the harmony crypto lib. This is much smaller.
-
-http client wolfssl minimal 273KB 51%
-
-No, I am wrong. This did not have the ssl included. When I include ssl it is much larger
-
-https client wolfssl 546KB >100%.
-
-There are several large ssl components (>227.8KB)
-- internal.c = 75.0KB
-- ssl.c = 42.5KB
-- asn.c = 37.6KB
-- ecc.c = 27.2KB
-- tfm.c = 21.9KB
-- aes.c = 9.5KB
-- rsa.c = 8.5KB
-- dh.c = 5.6KB
-
-Remove some components (>166.7KB)
-- internal.c = 59.1KB
-- ssl.c = 39.1KB
-- asn.c = 29.6KB
-- tfm.c = 21.3KB
-- aes.c = 9.5KB
-- rsa.c = 8.1KB
+http client 273KB 51%
 
 https client program size:
 
@@ -89,21 +49,4 @@ bearssl: 377,764 bytes 70% FLASH, 72,767 bytes 56% RAM
 python tools/create_release.py patch          # 1.0.0 -> 1.0.1
 python tools/create_release.py minor          # 1.0.0 -> 1.1.0
 python tools/create_release.py major          # 1.0.0 -> 2.0.0
-
-# Create releases for specific components
-python tools/create_release.py bootloader patch
-python tools/create_release.py application minor
-
-# Flash releases
-python tools/flash.py bootloader 1.2.3
-python tools/flash.py application 1.2.3
-python tools/flash.py merged release 1.2.3
-
-# List available releases
-python tools/flash.py list
-
-# Using make targets
-make release-patch
-make flash-merged release 1.2.3
-make list-releases
 ```

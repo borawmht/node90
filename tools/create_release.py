@@ -66,117 +66,101 @@ class ReleaseManager:
         
         return match.group(1)
     
-    def build_project(self, project_path):
-        """Build a project"""
-        print(f"Building {project_path}...")
+    def build_application(self):
+        """Build application project"""
+        print("Building application...")
         try:
-            subprocess.run(["make", "-C", project_path, "production"], 
-                         check=True, capture_output=True, text=True)
-            print(f"✓ {project_path} built successfully")
+            subprocess.run(["make", "-f", "nbproject/Makefile-default.mk", "SUBPROJECTS=", ".build-conf"], 
+                         cwd="node90.X", check=True, capture_output=True, text=True)
+            print("✓ Application built successfully")
             return True
         except subprocess.CalledProcessError as e:
-            print(f"✗ Failed to build {project_path}: {e}")
+            print(f"✗ Failed to build application: {e}")
             print(f"Error output: {e.stderr}")
             return False
     
-    def merge_hex_files(self, bootloader_hex, app_hex, merged_hex):
-        """Merge bootloader and application hex files"""
-        print("Creating merged hex file...")
-        
-        # Read hex files
-        bootloader_ih = intelhex.IntelHex(bootloader_hex)
-        app_ih = intelhex.IntelHex(app_hex)
-        
-        # Create merged hex
-        merged_ih = intelhex.IntelHex()
-        
-        # Add bootloader data (0x9D000000 - 0x9D00FFFF)
-        for addr in bootloader_ih.addresses():
-            if 0x9D000000 <= addr <= 0x9D00FFFF:
-                merged_ih[addr] = bootloader_ih[addr]
-        
-        # Add application data (0x9D010000 - 0x9D07FFFF)
-        for addr in app_ih.addresses():
-            if 0x9D010000 <= addr <= 0x9D07FFFF:
-                merged_ih[addr] = app_ih[addr]
-        
-        # Write merged hex
-        merged_ih.write_hex_file(merged_hex)
-        print(f"✓ Merged hex created: {merged_hex}")
+    def build_bootloader(self):
+        """Build bootloader project"""
+        print("Building bootloader...")
+        try:
+            subprocess.run(["make", "-f", "nbproject/Makefile-default.mk", "SUBPROJECTS=", ".build-conf"], 
+                         cwd="bootloader/node90_bootloader.X", check=True, capture_output=True, text=True)
+            print("✓ Bootloader built successfully")
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"✗ Failed to build bootloader: {e}")
+            print(f"Error output: {e.stderr}")
+            return False
     
     def hex_to_bin(self, hex_file, bin_file):
         """Convert hex file to binary"""
         print(f"Converting {hex_file} to binary...")
         ih = intelhex.IntelHex(hex_file)
-        ih.write_bin_file(bin_file)
+        
+        # Define the address range for application (0x9D004000 - 0x9D07FFFF)
+        start = 0x9D004000
+        end = 0x9D07FFFF
+        size = end - start + 1
+        
+        # Extract binary data for the application range
+        binary_data = ih.tobinarray(start=start, size=size)
+        
+        # Write binary file
+        with open(bin_file, 'wb') as f:
+            f.write(binary_data)
+        
         print(f"✓ Binary created: {bin_file}")
     
-    def create_release(self, target="both", bump_type="patch"):
+    def create_release(self, bump_type="patch"):
         """Create a release"""
         
-        # Determine which version files to update
-        if target == "bootloader":
-            version_files = [self.bootloader_version_file]
-            projects_to_build = ["bootloader/node90_bootloader.X"]
-        elif target == "application":
-            version_files = [self.app_version_file]
-            projects_to_build = ["node90.X"]
-        else:  # both
-            version_files = [self.app_version_file, self.bootloader_version_file]
-            projects_to_build = ["bootloader/node90_bootloader.X", "node90.X"]
+        # Get current application version and bump it
+        current_version = self.get_current_version(self.app_version_file)
+        new_app_version = self.bump_version(current_version, bump_type)
+        self.update_version_file(self.app_version_file, new_app_version)
         
-        # Get current versions and bump them
-        versions = {}
-        for version_file in version_files:
-            current_version = self.get_current_version(version_file)
-            new_version = self.bump_version(current_version, bump_type)
-            versions[version_file] = new_version
-            self.update_version_file(version_file, new_version)
+        # Get current bootloader version (for file naming)
+        bootloader_version = self.get_current_version(self.bootloader_version_file)
         
-        # Build projects
-        for project in projects_to_build:
-            if not self.build_project(project):
-                print("Build failed. Aborting release.")
-                return False
+        # Build application
+        if not self.build_application():
+            print("Application build failed. Aborting release.")
+            return False
+        
+        # Build bootloader
+        if not self.build_bootloader():
+            print("Bootloader build failed. Aborting release.")
+            return False
         
         # Create release directory
         os.makedirs(self.release_dir, exist_ok=True)
         
-        # Get application version for file naming
-        app_version = versions.get(self.app_version_file, 
-                                 self.get_current_version(self.app_version_file))
-        
         # Copy and rename files
         release_files = []
         
-        # Bootloader hex
-        bootloader_src = "bootloader/node90_bootloader.X/dist/default/production/node90_bootloader.X.production.hex"
-        bootloader_dst = f"{self.release_dir}/node90_bootloader_{app_version}.hex"
-        if os.path.exists(bootloader_src):
-            shutil.copy2(bootloader_src, bootloader_dst)
-            release_files.append(bootloader_dst)
-            print(f"✓ Bootloader hex: {bootloader_dst}")
+        # Application binary (converted from hex)
+        app_hex_src = "node90.X/dist/default/production/node90.X.production.hex"
+        app_bin_dst = f"{self.release_dir}/node90_{new_app_version}.bin"
+        if os.path.exists(app_hex_src):
+            self.hex_to_bin(app_hex_src, app_bin_dst)
+            release_files.append(app_bin_dst)
+            print(f"✓ Application binary: {app_bin_dst}")
+        else:
+            print(f"✗ Application hex file not found: {app_hex_src}")
+            return False
         
-        # Application hex
-        app_src = "node90.X/dist/default/production/node90.X.production.hex"
-        app_dst = f"{self.release_dir}/node90_{app_version}.hex"
-        if os.path.exists(app_src):
-            shutil.copy2(app_src, app_dst)
-            release_files.append(app_dst)
-            print(f"✓ Application hex: {app_dst}")
-            
-            # Convert to binary
-            bin_dst = f"{self.release_dir}/node90_{app_version}.bin"
-            self.hex_to_bin(app_dst, bin_dst)
-            release_files.append(bin_dst)
+        # Unified hex from bootloader project
+        unified_hex_src = "bootloader/node90_bootloader.X/dist/default/production/node90_bootloader.X.production.unified.hex"
+        unified_hex_dst = f"{self.release_dir}/node90_{new_app_version}_merged_bootloader_{bootloader_version}.hex"
+        if os.path.exists(unified_hex_src):
+            shutil.copy2(unified_hex_src, unified_hex_dst)
+            release_files.append(unified_hex_dst)
+            print(f"✓ Unified hex: {unified_hex_dst}")
+        else:
+            print(f"✗ Unified hex file not found: {unified_hex_src}")
+            return False
         
-        # Merged hex
-        merged_dst = f"{self.release_dir}/node90_merged_{app_version}.hex"
-        if os.path.exists(app_src) and os.path.exists(bootloader_src):
-            self.merge_hex_files(bootloader_src, app_src, merged_dst)
-            release_files.append(merged_dst)
-        
-        print(f"\n🎉 Release {app_version} created successfully!")
+        print(f"\n🎉 Release {new_app_version} created successfully!")
         print(f"Release files in {self.release_dir}/:")
         for file in release_files:
             print(f"  - {os.path.basename(file)}")
@@ -184,35 +168,20 @@ class ReleaseManager:
         return True
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) != 2:
         print("Usage:")
         print("  python create_release.py [patch|minor|major]")
-        print("  python create_release.py [bootloader|application|both] [patch|minor|major]")
         print("\nExamples:")
         print("  python create_release.py patch")
-        print("  python create_release.py bootloader minor")
-        print("  python create_release.py application major")
+        print("  python create_release.py minor")
+        print("  python create_release.py major")
         sys.exit(1)
     
     release_mgr = ReleaseManager()
+    bump_type = sys.argv[1]
     
-    if len(sys.argv) == 2:
-        # Only bump type specified - default to both
-        bump_type = sys.argv[1]
-        target = "both"
-    else:
-        # Target and bump type specified
-        target = sys.argv[1]
-        bump_type = sys.argv[2]
-    
-    # Validate arguments
-    valid_targets = ["bootloader", "application", "both"]
+    # Validate bump type
     valid_bumps = ["patch", "minor", "major"]
-    
-    if target not in valid_targets:
-        print(f"Invalid target: {target}")
-        print(f"Valid targets: {', '.join(valid_targets)}")
-        sys.exit(1)
     
     if bump_type not in valid_bumps:
         print(f"Invalid bump type: {bump_type}")
@@ -220,7 +189,7 @@ def main():
         sys.exit(1)
     
     # Create release
-    success = release_mgr.create_release(target, bump_type)
+    success = release_mgr.create_release(bump_type)
     sys.exit(0 if success else 1)
 
 if __name__ == "__main__":
