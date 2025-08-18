@@ -52,10 +52,7 @@ typedef struct {
 
 static http_client_context_t http_client = {0};
 
-#define REQUEST_SIZE 512
 char request[REQUEST_SIZE];
-
-#define RESPONSE_SIZE 1024
 uint8_t response_buffer[RESPONSE_SIZE];
 
 #define IOBUF_SIZE 4096  // Increased to 4KB for better BearSSL compatibility
@@ -66,7 +63,7 @@ br_sslio_context sslio;
 br_x509_custom_context custom_x509_ctx;
 
 // Helper function to parse HTTP response status
-static bool parse_http_response_status(const char *response, int *status_code) {
+bool parse_http_response_status(const char *response, int *status_code) {
     if (!response || !status_code) return false;
     
     // Look for "HTTP/1.x XXX" pattern
@@ -202,7 +199,7 @@ static bool http_test_client_get_url(void) {
 }
 
 // Helper function to parse URL
-static bool parse_url(const char *url, char *hostname, uint16_t *port, char *path, bool *is_https) {
+bool parse_url(const char *url, char *hostname, uint16_t *port, char *path, bool *is_https) {
     if (!url || !hostname || !port || !path || !is_https) {
         return false;
     }
@@ -306,7 +303,7 @@ static bool string_to_ipv4(const char *ip_str, IPV4_ADDR *ip_addr) {
 }
 
 // Helper function to resolve hostname to IP address
-static bool resolve_hostname(const char *hostname, IPV4_ADDR *ip_addr) {
+bool resolve_hostname(const char *hostname, IPV4_ADDR *ip_addr) {
     if (!hostname || !ip_addr) return false;
     
     // If it's already an IP address, convert it directly

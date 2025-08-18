@@ -31,5 +31,6 @@ typedef struct{
 
 void APP_Initialize(void); // initialize before task scheduler starts
 void APP_Tasks(void); // called by task scheduler
+void app_start_firmware_download(char* url);
 
 #endif

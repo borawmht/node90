@@ -17,6 +17,7 @@
 #define APPLICATION_VERSION_SIZE    0x20
 
 void firmware_update_init(void);
+void firmware_update_show_version(void);
 bool firmware_update_copy_internal_flash_to_external_flash(void);
 bool firmware_update_copy_external_flash_to_internal_flash(void);
 bool firmware_update_compare_internal_flash_to_external_flash(void);

@@ -39,6 +39,10 @@ uint8_t led_stat_period = FAST_LED_PERIOD; // led status period
 
 uint16_t app_test_counter = 0;
 
+bool app_firmware_download_request = false;
+bool app_firmware_download_running = false;
+char app_firmware_download_url[256];
+
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
 void APP_Initialize ( void ){
@@ -93,9 +97,17 @@ void APP_Tasks ( void ){
                 // http_client_get_url("http://httpbin.org/get", NULL, 0);
                 // http_client_get_url("http://192.168.1.1", NULL, 0);
                 // http_client_get_url("https://httpbin.org/get", NULL, 0);
-                http_client_get_url("http://52.1.207.236/get", NULL, 0);
-                https_client_get_url("https://52.1.207.236/get", NULL, 0);
-            }        
+                // http_client_get_url("http://52.1.207.236/get", NULL, 0);
+                // https_client_get_url("https://52.1.207.236/get", NULL, 0);
+                // firmware_update_download_binary_to_external_flash("http://192.168.1.68:8080/release/node90_1.0.1.bin");
+            } 
+            if(app_firmware_download_request == true && 
+                app_firmware_download_running == false &&
+                ethernet_linkUp() && ethernet_hasIP()){
+                app_firmware_download_running = true;
+                app_firmware_download_request = false;
+                firmware_update_download_binary_to_external_flash(app_firmware_download_url);
+            }
             break;
         }
 
@@ -103,5 +115,20 @@ void APP_Tasks ( void ){
         {            
             break;
         }
+    }
+}
+
+
+void app_start_firmware_download(char* url)
+{
+    if(app_firmware_download_request == false && app_firmware_download_running == false){
+        if(url == NULL){
+            //strncpy(app_firmware_download_url, "http://192.168.1.68:8080/release/node90_1.0.1.bin", 256);
+            strncpy(app_firmware_download_url, "http://192.168.1.68:8080/tools/node90.X.production.bin", 256);
+        }
+        else{
+            strncpy(app_firmware_download_url, url, 256);
+        }
+        app_firmware_download_request = true;        
     }
 }

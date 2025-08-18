@@ -48,6 +48,8 @@ def makeBin(filename,start_address,end_address,bin_filename=None):
         fileContent = file.read()
         print([int(b) for b in fileContent[4128:4159]])
         print([int(b) for b in fileContent[4160:4191]])
+        print([chr(b) for b in fileContent[4128:4159]])
+        print([chr(b) for b in fileContent[4160:4191]])
     return
 
 def main(args):
