@@ -17,6 +17,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Forward declarations for static functions
+static int bearssl_recv(void *ctx, unsigned char *buf, size_t len);
+static int bearssl_send(void *ctx, const unsigned char *buf, size_t len);
+static bool http_client_init_ssl(http_client_connection_t *conn);
+static bool http_client_create_socket(const char *url, http_client_connection_t *conn);
+static bool http_client_send_request(http_client_connection_t *conn, const char *data, size_t data_size);
+static bool http_client_read_data(http_client_connection_t *conn, uint8_t *response_buffer, size_t buffer_size, size_t *received);
+static void http_client_close_connection(http_client_connection_t *conn);
+
 // Simple time function for WolfSSL (replaces missing SNTP function)
 uint32_t TCPIP_SNTP_UTCSecondsGet(void) {
    // Return a simple timestamp - this is just for WolfSSL initialization
@@ -50,17 +59,7 @@ typedef struct {
     uint32_t timeout_duration;
 } http_client_context_t;
 
-// HTTP client connection structure
-typedef struct {
-    char hostname[64];
-    uint16_t port;
-    IPV4_ADDR server_ip;
-    bool is_https;
-    TCP_SOCKET tcp_socket;
-    bool ssl_initialized;
-    br_ssl_client_context *ssl_ctx;
-    br_sslio_context *ssl_io;
-} http_client_connection_t;
+// HTTP client connection structure is now defined in http.h
 
 static http_client_context_t http_client = {0};
 

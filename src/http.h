@@ -55,6 +55,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "definitions.h"
+#include "config/default/library/tcpip/tcp.h"
+#include "bearssl/inc/bearssl.h"
 
 #define REQUEST_SIZE 512
 extern char request[REQUEST_SIZE];
@@ -81,6 +83,18 @@ bool http_client_get(const char *url, uint8_t *data_read, size_t *data_read_size
 // Returns true on success, false on failure
 bool http_client_post(const char *url, const char *data_write, size_t data_write_size,
                      uint8_t *data_read, size_t *data_read_size);
+
+// HTTP client connection structure (forward declaration)
+typedef struct http_client_connection {
+    char hostname[64];
+    uint16_t port;
+    IPV4_ADDR server_ip;
+    bool is_https;
+    TCP_SOCKET tcp_socket;
+    bool ssl_initialized;
+    br_ssl_client_context *ssl_ctx;
+    br_sslio_context *ssl_io;
+} http_client_connection_t;
 
 // Streaming HTTP client for large downloads
 typedef struct {
