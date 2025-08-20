@@ -170,6 +170,7 @@ static void lkeyRightProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDc
 static void lkeyLeftProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt);
 static void lkeyHomeProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt);
 static void lkeyEndProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt);
+static void lkeyDeleteProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt);
 
 
 /* MISRA C-2012 Rule 4.1, 17.1 and 21.6 deviated below. Deviation record ID -
@@ -186,6 +187,7 @@ static const KEY_SEQ_DCPT keySeqTbl[] =
     {"\x1b[D",      lkeyLeftProcess,    (int32_t)sizeof("\x1b[D") - 1},
     {"\x1b[1~",     lkeyHomeProcess,    (int32_t)sizeof("\x1b[1~") - 1},
     {"\x1b[4~",     lkeyEndProcess,     (int32_t)sizeof("\x1b[4~") - 1},
+    {"\x1b[3~",     lkeyDeleteProcess,  (int32_t)sizeof("\x1b[3~") - 1},
 };
 
 
@@ -400,6 +402,7 @@ static void RunCmdTask(SYS_CMD_IO_DCPT* pCmdIO)
 
     // read the character
     newCh = (*pCmdApi->getc_t)(cmdIoParam); /* Read data from console. */
+    // SYS_CONSOLE_PRINT("(%c)[0x%02x]\r\n", newCh, newCh); // debug
 
     if(pCmdIO->seqChars != 0)
     {   // in the middle of escape sequence
@@ -463,8 +466,8 @@ static void RunCmdTask(SYS_CMD_IO_DCPT* pCmdIO)
         ParseCmdBuffer(pCmdIO);
         (*pCmdApi->msg)(cmdIoParam, promptStr);
     }
-    else if(newCh == '\b')
-    {
+    else if((newCh == '\b') || ((int32_t)newCh == 0x7f))
+    {   // backspace - handle both 0x08 and 0x7F
         if(pCmdIO->cmdPnt > pCmdIO->cmdBuff)
         {
             if(pCmdIO->cmdEnd > pCmdIO->cmdPnt)
@@ -489,26 +492,6 @@ static void RunCmdTask(SYS_CMD_IO_DCPT* pCmdIO)
                 (*pCmdApi->msg)(cmdIoParam, "\b\x1b[K");
                 pCmdIO->cmdPnt--; pCmdIO->cmdEnd--;
             }
-        }
-    }
-    else if((int32_t)newCh == 0x7f)
-    {   // delete
-        if(pCmdIO->cmdEnd > pCmdIO->cmdPnt)
-        {
-            char* pSrc = pCmdIO->cmdPnt + 1;
-            char* pDst = pCmdIO->cmdPnt;
-            len = pCmdIO->cmdEnd - pSrc;
-            for(ix = 0; ix < (uint32_t)len; ix++)
-            {
-                *pDst = *pSrc;
-                pDst++;
-                pSrc++;
-            }
-            pCmdIO->cmdEnd--;
-            // update the display; erase to the end of line(<ESC>[K) and move cursor backwards (<ESC>[{COUNT}D)
-            *pCmdIO->cmdEnd = '\0';
-            (void) sprintf(pCmdIO->ctrlBuff, "\x1b[K%s\x1b[%dD", pCmdIO->cmdPnt, len);
-            (*pCmdApi->msg)(cmdIoParam, pCmdIO->ctrlBuff);
         }
     }
     else if((int32_t)newCh == 0x1b)
@@ -1241,6 +1224,33 @@ static void lkeyEndProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt
         pCmdIO->cmdPnt = pCmdIO->cmdEnd;
     }
 
+}
+
+static void lkeyDeleteProcess(SYS_CMD_IO_DCPT* pCmdIO, const KEY_SEQ_DCPT* pSeqDcpt)
+{   // delete key (VT100 escape sequence)
+    const SYS_CMD_API* pCmdApi = pCmdIO->devNode.pCmdApi;
+    const void* cmdIoParam = pCmdIO->devNode.cmdIoParam;
+
+    if(pCmdIO->cmdEnd > pCmdIO->cmdPnt)
+    {
+        char* pSrc = pCmdIO->cmdPnt + 1;
+        char* pDst = pCmdIO->cmdPnt;
+        int len = pCmdIO->cmdEnd - pSrc;
+        uint32_t ix;
+        
+        for(ix = 0; ix < (uint32_t)len; ix++)
+        {
+            *pDst = *pSrc;
+            pDst++;
+            pSrc++;
+        }
+        pCmdIO->cmdEnd--;
+        *pCmdIO->cmdEnd = '\0';
+        
+        // update the display
+        (void) sprintf(pCmdIO->ctrlBuff, "\x1b[K%s\x1b[%dD", pCmdIO->cmdPnt, len);
+        (*pCmdApi->msg)(cmdIoParam, pCmdIO->ctrlBuff);
+    }
 }
 /* MISRAC 2012 deviation block end */
 
