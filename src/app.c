@@ -97,8 +97,8 @@ void APP_Tasks ( void ){
                 // http_client_get_url("http://httpbin.org/get", NULL, 0);
                 // http_client_get_url("http://192.168.1.1", NULL, 0);
                 // http_client_get_url("https://httpbin.org/get", NULL, 0);
-                // http_client_get_url("http://52.1.207.236/get", NULL, 0);
-                // https_client_get_url("https://52.1.207.236/get", NULL, 0);
+                http_client_get("http://52.1.207.236/get", NULL, NULL);
+                http_client_get("https://52.1.207.236/get", NULL, NULL);
                 // firmware_update_download_binary_to_external_flash("http://192.168.1.68:8080/release/node90_1.0.1.bin");
             } 
             if(app_firmware_download_request == true && 
