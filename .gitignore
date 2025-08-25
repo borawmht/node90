@@ -1,4 +1,10 @@
 node90.X/.generated_files/
 node90.X/build/
 node90.X/debug/
+
+bootloader/node90_bootloader.X/.generated_files/
+bootloader/node90_bootloader.X/build/
+bootloader/node90_bootloader.X/debug/
+
 .vscode/
+*.pem
