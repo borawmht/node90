@@ -92,6 +92,22 @@ bool parse_http_response_status(const char *response, int *status_code) {
         return true;
     }
     
+    // Also try to find HTTP status line anywhere in the response
+    // This handles cases where there might be some garbage before the HTTP response
+    const char *http_start = strstr(response, "HTTP/1.");
+    if (http_start) {
+        // Find the space after the version number
+        const char *version_end = http_start + 7;
+        while (*version_end && *version_end != ' ') version_end++;
+        
+        // Skip spaces
+        while (*version_end == ' ') version_end++;
+        
+        // Parse the status code
+        *status_code = atoi(version_end);
+        return true;
+    }
+    
     return false;
 }
 
@@ -111,7 +127,48 @@ static const char* get_response_body(const char *response) {
         return body_start + 2;
     }
     
+    // For HTTPS responses that might be malformed, try to find the body
+    // by looking for the first occurrence of '{' or '[' which often indicates JSON
+    const char *json_start = strchr(response, '{');
+    if (!json_start) {
+        json_start = strchr(response, '[');
+    }
+    if (json_start) {
+        // Check if this looks like it's after headers
+        const char *before_json = json_start - 1;
+        while (before_json > response && (*before_json == ' ' || *before_json == '\r' || *before_json == '\n')) {
+            before_json--;
+        }
+        // If we found a newline before the JSON, it's likely the body
+        if (before_json >= response && (*before_json == '\r' || *before_json == '\n')) {
+            return json_start;
+        }
+    }
+    
     return NULL;
+}
+
+// Debug function to dump response buffer
+static void dump_response_buffer(const char *response, size_t received) {
+    if (!response || received == 0) return;
+    
+    SYS_CONSOLE_PRINT("http_client: === RESPONSE DUMP (%d bytes) ===\r\n", received);
+    
+    // Print first 200 characters or full response if shorter
+    size_t to_print = (received > 200) ? 200 : received;
+    for (size_t i = 0; i < to_print; i++) {
+        if (response[i] >= 32 && response[i] <= 126) {
+            SYS_CONSOLE_PRINT("%c", response[i]);
+        } else {
+            SYS_CONSOLE_PRINT("\\x%02x", (unsigned char)response[i]);
+        }
+    }
+    
+    if (received > 200) {
+        SYS_CONSOLE_PRINT("... (truncated)");
+    }
+    SYS_CONSOLE_PRINT("\r\n");
+    SYS_CONSOLE_PRINT("http_client: === END DUMP ===\r\n");
 }
 
 // Helper function to check if HTTP response is complete
@@ -174,6 +231,13 @@ static bool is_http_response_complete(const char *response, size_t received) {
     // or the connection is clearly closed
     if (received > 1000) {
         // If we have more than 1KB and no Content-Length, assume it's complete
+        return true;
+    }
+    
+    // For HTTPS, if we have headers and some body data, assume it's complete
+    // This handles cases where the SSL connection closes after sending the response
+    if (body_start && (received - (body_start - response)) > 0) {
+        // We have headers and at least some body data
         return true;
     }
     
@@ -457,8 +521,8 @@ static bool http_client_create_socket(const char *url, http_client_connection_t 
     // Wait for connection to be established
     uint32_t connect_timeout = 0;
     while (!TCPIP_TCP_IsConnected(conn->tcp_socket) && connect_timeout < 3000) {
-        vTaskDelay(1);
-        connect_timeout++;
+        vTaskDelay(10);
+        connect_timeout+=10;
         
         if (connect_timeout % 1000 == 0) {
             // SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
@@ -555,6 +619,10 @@ static bool http_client_init_ssl(http_client_connection_t *conn) {
     conn->ssl_io = &sslio;
     conn->ssl_initialized = true;
     
+    // Debug: check SSL state after initialization
+    unsigned ssl_state = br_ssl_engine_current_state(&cc.eng);
+    SYS_CONSOLE_PRINT("https_client: SSL state after init: 0x%x\r\n", ssl_state);
+    
     return true;
 }
 
@@ -586,14 +654,26 @@ static bool http_client_send_request(http_client_connection_t *conn, const char 
                 conn->path, conn->hostname);
     }
 
-    SYS_CONSOLE_PRINT("http_client: request: %s\r\n", request);
-    SYS_CONSOLE_PRINT("http_client: request length: %d\r\n", strlen(request));
+    // SYS_CONSOLE_PRINT("http_client: request: %s\r\n", request);
+    // SYS_CONSOLE_PRINT("http_client: request length: %d\r\n", strlen(request));
+    
+    // Request bytes debug (for HTTPS)
+    if (conn->is_https) {
+        // SYS_CONSOLE_PRINT("https_client: request bytes: ");
+        // for (int i = 0; i < strlen(request) && i < 100; i++) {
+        //     SYS_CONSOLE_PRINT("%02x ", (unsigned char)request[i]);
+        // }
+        // SYS_CONSOLE_PRINT("\r\n");
+    }
     
     const char *request_ptr = request;
     size_t request_len = strlen(request);
     size_t sent_total = 0;
     
     if (conn->is_https && conn->ssl_initialized) {
+        // SSL state before sending (debug)
+        unsigned ssl_state_before = br_ssl_engine_current_state(&conn->ssl_ctx->eng);
+        
         // Send through SSL
         uint32_t send_timeout = 0;
         while (sent_total < request_len && send_timeout < 3000) { // 3 second timeout        
@@ -615,15 +695,36 @@ static bool http_client_send_request(http_client_connection_t *conn, const char 
             sent_total += write_result;
             SYS_CONSOLE_PRINT("https_client: sent chunk %d bytes, total %d/%d\r\n", write_result, sent_total, request_len);
             
-            vTaskDelay(1);
-            send_timeout++;
+            vTaskDelay(10);
+            send_timeout+=10;
         }
+        
+        // SSL state after sending (debug)
+        unsigned ssl_state_after = br_ssl_engine_current_state(&conn->ssl_ctx->eng);
         
         // Flush any pending data
         if (br_sslio_flush(conn->ssl_io) < 0) {
             SYS_CONSOLE_PRINT("https_client: failed to flush SSL data\r\n");
             return false;
         }
+        
+        // Debug: check if connection is still alive after sending
+        if (!TCPIP_TCP_IsConnected(conn->tcp_socket)) {
+            SYS_CONSOLE_PRINT("https_client: TCP connection closed after sending request\r\n");
+            return false;
+        }
+        
+        SYS_CONSOLE_PRINT("https_client: request sent successfully, waiting for response...\r\n");
+        
+        // Check if there's any data available immediately after sending (debug)
+        unsigned char *buf;
+        size_t alen;
+        buf = br_ssl_engine_recvapp_buf(&conn->ssl_ctx->eng, &alen);
+        // if (alen > 0) {
+        //     SYS_CONSOLE_PRINT("https_client: immediate data available: %d bytes\r\n", alen);
+        // } else {
+        //     SYS_CONSOLE_PRINT("https_client: no immediate data available\r\n");
+        // }
     } else {
         // Send through plain TCP
         while (sent_total < request_len) {
@@ -652,7 +753,8 @@ static bool http_client_send_request(http_client_connection_t *conn, const char 
     }
     
     // Wait a moment for data to be transmitted
-    vTaskDelay(10);
+    // vTaskDelay(50);
+    vTaskDelay(1);
     
     return true;
 }
@@ -670,6 +772,11 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
     
     while (receive_timeout < 5000 && !response_complete) { // 5 second timeout
         if (conn->is_https && conn->ssl_initialized) {
+            // SSL state during read (debug)
+            if (receive_timeout % 1000 == 0) {
+                unsigned ssl_state = br_ssl_engine_current_state(&conn->ssl_ctx->eng);
+            }
+            
             // Read through SSL
             // Check if there's already data available in the SSL engine
             unsigned char *buf;
@@ -710,10 +817,29 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
                         response_complete = true;
                         break;
                     }
-                } else if (read < 0) {
+                } else if (read < 0 && !TCPIP_TCP_IsConnected(conn->tcp_socket)) {
                     // Error or connection closed
                     SYS_CONSOLE_PRINT("https_client: SSL read error: %d\r\n", read);
-                    break;
+                    
+                    // Check SSL engine error
+                    int ssl_err = br_ssl_engine_last_error(&conn->ssl_ctx->eng);
+                    if (ssl_err != 0) {
+                        SYS_CONSOLE_PRINT("https_client: SSL engine error: %d\r\n", ssl_err);                        
+                    }
+                    
+                    // Check if connection is still alive
+                    if (!TCPIP_TCP_IsConnected(conn->tcp_socket)) {
+                        SYS_CONSOLE_PRINT("https_client: TCP connection closed during SSL read\r\n");
+                    }
+                    
+                    // For HTTPS, if we have some data and get a read error, 
+                    // the response might be complete
+                    if (*received > 0) {
+                        SYS_CONSOLE_PRINT("https_client: SSL read error but have %d bytes, assuming complete\r\n", *received);
+                        response_complete = true;
+                        break;
+                    }
+                    // break;
                 }
             }
         } else {
@@ -725,18 +851,18 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
                 uint16_t read = TCPIP_TCP_ArrayGet(conn->tcp_socket, response_buffer + *received, to_read);
                 *received += read;
 
-                if(content_length == 0){
-                    SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
-                    for(int i=0; i<read; i++){
-                        SYS_CONSOLE_PRINT("%c", response_buffer[i]);
-                    }
-                    SYS_CONSOLE_PRINT("\r\n");
-                    const char *content_length_header = strstr((char*)response_buffer, "Content-Length:");
-                    if (content_length_header) {
-                        content_length = atoi(content_length_header + 15);
-                        SYS_CONSOLE_PRINT("http_client: Content-Length: %lu bytes\r\n", content_length);
-                    }
-                }
+                // if(content_length == 0){
+                //     SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
+                //     for(int i=0; i<read; i++){
+                //         SYS_CONSOLE_PRINT("%c", response_buffer[i]);
+                //     }
+                //     SYS_CONSOLE_PRINT("\r\n");
+                //     const char *content_length_header = strstr((char*)response_buffer, "Content-Length:");
+                //     if (content_length_header) {
+                //         content_length = atoi(content_length_header + 15);
+                //         SYS_CONSOLE_PRINT("http_client: Content-Length: %lu bytes\r\n", content_length);
+                //     }
+                // }
                 
                 SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
                 
@@ -757,16 +883,39 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
         // Check if connection is still active
         if (!TCPIP_TCP_IsConnected(conn->tcp_socket)) {
             SYS_CONSOLE_PRINT("http_client: connection closed by server\r\n");
+            // If we have some data and connection closed, assume response is complete
+            if (*received > 0) {
+                response_complete = true;
+            }
             break;
         }
         
         // Wait a bit before checking again
-        vTaskDelay(1);
-        receive_timeout++;
+        vTaskDelay(10);
+        receive_timeout+=10;
         
         if (receive_timeout % 2000 == 0) {
             SYS_CONSOLE_PRINT("http_client: waiting for response... %d\r\n", receive_timeout / 1000);
         }
+    }
+    
+    // For HTTPS, if we have data but didn't detect completion, assume it's complete
+    if (conn->is_https && *received > 0 && !response_complete) {
+        SYS_CONSOLE_PRINT("https_client: assuming response complete with %d bytes\r\n", *received);
+        response_complete = true;
+    }
+    
+    // Debug: dump the response buffer for HTTPS
+    // if (conn->is_https && *received > 0) {
+    //     dump_response_buffer((char*)response_buffer, *received);
+    // }
+    
+    // Final received bytes debug (for HTTPS)
+    if (conn->is_https) {
+        // SYS_CONSOLE_PRINT("https_client: final received bytes: %d\r\n", *received);
+        // if (*received == 0) {
+        //     SYS_CONSOLE_PRINT("https_client: no data received - SSL connection may have closed\r\n");
+        // }
     }
     
     return true;
@@ -826,6 +975,7 @@ bool http_client_fetch(const char *url, const char *data_write, size_t data_writ
     
     // Step 3: Read HTTP response
     size_t received = 0;
+    response_buffer[0] = '\0'; // clear the buffer
     if (!http_client_read_data(&conn, response_buffer, sizeof(response_buffer), &received)) {
         SYS_CONSOLE_PRINT("http_client: failed to read response\r\n");
         http_client_close_connection(&conn);
@@ -850,7 +1000,7 @@ bool http_client_fetch(const char *url, const char *data_write, size_t data_writ
         memcpy(data_read, body, copy_size);
         *data_read_size = copy_size;
         
-        SYS_CONSOLE_PRINT("http_client: copied %d bytes to caller buffer\r\n", copy_size);
+        // SYS_CONSOLE_PRINT("http_client: copied %d bytes to caller buffer\r\n", copy_size);
     } else {
         SYS_CONSOLE_PRINT("http_client: received: %d bytes (no body found)\r\n", received);
         *data_read_size = 0;
@@ -877,7 +1027,7 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     // Block until data is available
     uint16_t available = 0;
     uint32_t timeout = 0;
-    while (available == 0 && timeout < 1000) { // 1 second timeout
+    while (available == 0 && timeout < 3000) { // 1 second timeout
         available = TCPIP_TCP_GetIsReady(*tcp_socket);
         if (available == 0) {
             vTaskDelay(1); // Small delay to prevent busy waiting
@@ -887,6 +1037,10 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     
     if (available == 0) {
         SYS_CONSOLE_PRINT("bearssl_recv: recv - timeout waiting for data\r\n");
+        // Check if connection is still alive
+        if (!TCPIP_TCP_IsConnected(*tcp_socket)) {
+            SYS_CONSOLE_PRINT("bearssl_recv: recv - connection closed during timeout\r\n");
+        }
         return -1; // Timeout - error
     }
     
@@ -900,6 +1054,7 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     }
     
     // SYS_CONSOLE_PRINT("bearssl_recv: recv - read %d bytes\r\n", read);
+    // vTaskDelay(1);
     return read;
 }
 
