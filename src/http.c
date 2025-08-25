@@ -520,12 +520,12 @@ static bool http_client_create_socket(const char *url, http_client_connection_t 
     
     // Wait for connection to be established
     uint32_t connect_timeout = 0;
-    while (!TCPIP_TCP_IsConnected(conn->tcp_socket) && connect_timeout < 3000) {
+    while (!TCPIP_TCP_IsConnected(conn->tcp_socket) && connect_timeout < 5000) { // Increased timeout to 5 seconds
         vTaskDelay(10);
         connect_timeout+=10;
         
         if (connect_timeout % 1000 == 0) {
-            // SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
+            SYS_CONSOLE_PRINT("http_client: waiting for TCP connection... %d\r\n", connect_timeout / 1000);
         }
     }
     
@@ -620,8 +620,8 @@ static bool http_client_init_ssl(http_client_connection_t *conn) {
     conn->ssl_initialized = true;
     
     // Debug: check SSL state after initialization
-    unsigned ssl_state = br_ssl_engine_current_state(&cc.eng);
-    SYS_CONSOLE_PRINT("https_client: SSL state after init: 0x%x\r\n", ssl_state);
+    // unsigned ssl_state = br_ssl_engine_current_state(&cc.eng);
+    // SYS_CONSOLE_PRINT("https_client: SSL state after init: 0x%x\r\n", ssl_state);
     
     return true;
 }
@@ -676,7 +676,7 @@ static bool http_client_send_request(http_client_connection_t *conn, const char 
         
         // Send through SSL
         uint32_t send_timeout = 0;
-        while (sent_total < request_len && send_timeout < 3000) { // 3 second timeout        
+        while (sent_total < request_len && send_timeout < 5000) { // 5 second timeout        
             size_t chunk_size = 1024;
             if (sent_total + chunk_size > request_len) {
                 chunk_size = request_len - sent_total;
@@ -894,7 +894,7 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
         vTaskDelay(10);
         receive_timeout+=10;
         
-        if (receive_timeout % 2000 == 0) {
+        if (receive_timeout % 1000 == 0) {
             SYS_CONSOLE_PRINT("http_client: waiting for response... %d\r\n", receive_timeout / 1000);
         }
     }
