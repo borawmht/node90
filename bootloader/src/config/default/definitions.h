@@ -49,11 +49,14 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include "configuration.h"
 #include "peripheral/uart/plib_uart2.h"
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
 #include "peripheral/spi/spi_master/plib_spi2_master.h"
+#include "driver/sst26/drv_sst26.h"
+#include "peripheral/nvm/plib_nvm.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -71,6 +74,14 @@ extern "C" {
 
 /* CPU clock frequency */
 #define CPU_CLOCK_FREQUENCY 80000000U
+    
+#ifndef SYS_CONSOLE_PRINT
+#define SYS_CONSOLE_PRINT printf
+#endif
+    
+#ifndef SYS_CONSOLE_MESSAGE
+#define SYS_CONSOLE_MESSAGE printf
+#endif
 
 // *****************************************************************************
 // *****************************************************************************

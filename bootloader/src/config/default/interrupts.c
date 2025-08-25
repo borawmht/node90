@@ -66,6 +66,8 @@
 // Section: System Interrupt Vector declarations
 // *****************************************************************************
 // *****************************************************************************
+void SPI_2_Handler (void);
+void FCE_Handler (void);
 
 
 // *****************************************************************************
@@ -73,6 +75,16 @@
 // Section: System Interrupt Vector definitions
 // *****************************************************************************
 // *****************************************************************************
+void __attribute__((used)) __ISR(_SPI_2_VECTOR, ipl1SOFT) SPI_2_Handler (void)
+{
+    SPI_2_InterruptHandler();
+}
+
+void __attribute__((used)) __ISR(_FCE_VECTOR, ipl1SOFT) FCE_Handler (void)
+{
+    NVM_InterruptHandler();
+}
+
 
 
 

@@ -48,14 +48,16 @@
 // *****************************************************************************
 // *****************************************************************************
 
+/* Global object to save SPI Exchange related data */
+static volatile SPI_OBJECT spi2Obj;
 
 #define SPI2_CON_MSTEN                      (1UL << _SPI2CON_MSTEN_POSITION)
 #define SPI2_CON_CKP                        (0UL << _SPI2CON_CKP_POSITION)
-#define SPI2_CON_CKE                        (0UL << _SPI2CON_CKE_POSITION)
+#define SPI2_CON_CKE                        (1UL << _SPI2CON_CKE_POSITION)
 #define SPI2_CON_MODE_32_MODE_16            (0UL << _SPI2CON_MODE16_POSITION)
 #define SPI2_CON_ENHBUF                     (1UL << _SPI2CON_ENHBUF_POSITION)
-#define SPI2_CON_MSSEN                      (1UL << _SPI2CON_MSSEN_POSITION)
-#define SPI2_CON_SMP                        (0UL << _SPI2CON_SMP_POSITION)
+#define SPI2_CON_MSSEN                      (0UL << _SPI2CON_MSSEN_POSITION)
+#define SPI2_CON_SMP                        (1UL << _SPI2CON_SMP_POSITION)
 
 void SPI2_Initialize ( void )
 {
@@ -87,10 +89,10 @@ void SPI2_Initialize ( void )
     /*
     MSTEN = 1
     CKP = 0
-    CKE = 0
+    CKE = 1
     MODE<32,16> = 0
     ENHBUF = 1
-    MSSEN = 1
+    MSSEN = 0
     */
     SPI2CONSET = (SPI2_CON_MSSEN | SPI2_CON_ENHBUF | SPI2_CON_MODE_32_MODE_16 | SPI2_CON_CKE | SPI2_CON_CKP | SPI2_CON_MSTEN | SPI2_CON_SMP);
 
@@ -98,6 +100,9 @@ void SPI2_Initialize ( void )
     /* Enable receive interrupt when the receive buffer is not empty (SRXISEL = '01') */
     SPI2CONSET = 0x00000005;
 
+    /* Initialize global variables */
+    spi2Obj.transferIsBusy = false;
+    spi2Obj.callback = NULL;
 
     /* Enable SPI2 */
     SPI2CONSET = _SPI2CON_ON_MASK;
@@ -160,166 +165,397 @@ bool SPI2_IsTransmitterBusy (void)
     return ((SPI2STAT & _SPI2STAT_SRMT_MASK) == 0U)? true : false;
 }
 
-bool SPI2_WriteRead(void* pTransmitData, size_t txSize, void* pReceiveData, size_t rxSize)
+bool SPI2_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, size_t rxSize)
 {
-    size_t txCount = 0;
-    size_t rxCount = 0;
-    size_t dummySize = 0;
-    size_t dummyRxCntr = 0;
-    size_t receivedData;
-    bool isSuccess = false;
+    bool isRequestAccepted = false;
 
     /* Verify the request */
-    if (((txSize > 0U) && (pTransmitData != NULL)) || ((rxSize > 0U) && (pReceiveData != NULL)))
+    if((spi2Obj.transferIsBusy == false) && (((txSize > 0U) && (pTransmitData != NULL)) || ((rxSize > 0U) && (pReceiveData != NULL))))
     {
-        if (pTransmitData == NULL)
+        isRequestAccepted = true;
+        spi2Obj.txBuffer = pTransmitData;
+        spi2Obj.rxBuffer = pReceiveData;
+        spi2Obj.rxCount = 0;
+        spi2Obj.txCount = 0;
+        spi2Obj.dummySize = 0;
+
+        if (pTransmitData != NULL)
         {
-            txSize = 0;
+            spi2Obj.txSize = txSize;
         }
-        if (pReceiveData == NULL)
+        else
         {
-            rxSize = 0;
+            spi2Obj.txSize = 0;
+        }
+
+        if (pReceiveData != NULL)
+        {
+            spi2Obj.rxSize = rxSize;
+        }
+        else
+        {
+            spi2Obj.rxSize = 0;
+        }
+
+        spi2Obj.transferIsBusy = true;
+
+        size_t txSz = spi2Obj.txSize;
+        if (spi2Obj.rxSize > txSz)
+        {
+            spi2Obj.dummySize = spi2Obj.rxSize - txSz;
         }
 
         /* Clear the receive overflow error if any */
         SPI2STATCLR = _SPI2STAT_SPIROV_MASK;
 
-        /* Flush out any unread data in SPI read buffer from the previous transfer */
+        /* Make sure there is no data pending in the RX FIFO */
+        /* Depending on 8/16/32 bit mode, there may be 16/8/4 bytes in the FIFO */
         while ((SPI2STAT & _SPI2STAT_SPIRBE_MASK) == 0U)
         {
             (void)SPI2BUF;
         }
 
-        if (rxSize > txSize)
-        {
-            dummySize = rxSize - txSize;
-        }
+        /* Configure SPI to generate receive interrupt when receive buffer is empty (SRXISEL = '01') */
+        SPI2CONCLR = _SPI2CON_SRXISEL_MASK;
+        SPI2CONSET = 0x00000001;
 
-        /* If dataBit size is 32 bits */
-        if (_SPI2CON_MODE32_MASK == (SPI2CON & _SPI2CON_MODE32_MASK))
+        /* Configure SPI to generate transmit interrupt when the transmit shift register is empty (STXISEL = '00')*/
+        SPI2CONCLR = _SPI2CON_STXISEL_MASK;
+
+        /* Disable the receive interrupt */
+        IEC1CLR = 0x40;
+
+        /* Disable the transmit interrupt */
+        IEC1CLR = 0x80;
+
+        /* Clear the receive interrupt flag */
+        IFS1CLR = 0x40;
+
+        /* Clear the transmit interrupt flag */
+        IFS1CLR = 0x80;
+
+        /* Start the first write here itself, rest will happen in ISR context */
+        if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
         {
-            rxSize >>= 2;
-            txSize >>= 2;
-            dummySize >>= 2;
+            spi2Obj.txSize >>= 2;
+            spi2Obj.dummySize >>= 2;
+            spi2Obj.rxSize >>= 2;
+
+            txSz = spi2Obj.txSize;
+            if(spi2Obj.txCount < txSz)
+            {
+                SPI2BUF = *((uint32_t*)spi2Obj.txBuffer);
+                spi2Obj.txCount++;
+            }
+            else if (spi2Obj.dummySize > 0U)
+            {
+                SPI2BUF = (uint32_t)(0xffU);
+                spi2Obj.dummySize--;
+            }
+            else
+            {
+                /* Nothing to process */
+            }
         }
-        /* If dataBit size is 16 bits */
-        else if (_SPI2CON_MODE16_MASK == (SPI2CON & _SPI2CON_MODE16_MASK))
+        else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
         {
-            rxSize >>= 1;
-            txSize >>= 1;
-            dummySize >>= 1;
+            spi2Obj.txSize >>= 1;
+            spi2Obj.dummySize >>= 1;
+            spi2Obj.rxSize >>= 1;
+
+            txSz = spi2Obj.txSize;
+            if (spi2Obj.txCount < txSz)
+            {
+                SPI2BUF = *((uint16_t*)spi2Obj.txBuffer);
+                spi2Obj.txCount++;
+            }
+            else if (spi2Obj.dummySize > 0U)
+            {
+                SPI2BUF = (uint16_t)(0xffU);
+                spi2Obj.dummySize--;
+            }
+            else
+            {
+                /* Nothing to process */
+            }
         }
         else
         {
-             /* Nothing to process */
-        }
-
-        while((SPI2STAT & _SPI2STAT_SPITBE_MASK) == 0U)
-        {
-            /* Wait for transmit buffer to be empty */
-        }
-
-        while ((txCount != txSize) || (dummySize != 0U))
-        {
-            if (txCount != txSize)
+            if (spi2Obj.txCount < txSz)
             {
-                if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
+                SPI2BUF = *((uint8_t*)spi2Obj.txBuffer);
+                spi2Obj.txCount++;
+            }
+            else if (spi2Obj.dummySize > 0U)
+            {
+                SPI2BUF = (uint8_t)(0xffU);
+                spi2Obj.dummySize--;
+            }
+            else
+            {
+                /* Nothing to process */
+            }
+        }
+
+        if (rxSize > 0U)
+        {
+            /* Enable receive interrupt to complete the transfer in ISR context.
+             * Keep the transmit interrupt disabled. Transmit interrupt will be
+             * enabled later if txCount < txSize, when rxCount = rxSize.
+             */
+            IEC1SET = 0x40;
+        }
+        else
+        {
+            if (spi2Obj.txCount != txSz)
+            {
+                /* Configure SPI to generate transmit buffer empty interrupt only if more than
+                 * data is pending (STXISEL = '01')  */
+                SPI2CONSET = 0x00000004;
+            }
+            /* Enable transmit interrupt to complete the transfer in ISR context */
+            IEC1SET = 0x80;
+        }
+    }
+
+    return isRequestAccepted;
+}
+
+bool SPI2_IsBusy (void)
+{
+    bool transferIsBusy = spi2Obj.transferIsBusy;
+
+    return (((SPI2STAT & _SPI2STAT_SRMT_MASK) == 0) || (transferIsBusy));
+}
+
+void SPI2_CallbackRegister (SPI_CALLBACK callback, uintptr_t context)
+{
+    spi2Obj.callback = callback;
+
+    spi2Obj.context = context;
+}
+
+static void __attribute__((used)) SPI2_RX_InterruptHandler (void)
+{
+    uint32_t receivedData = 0;
+
+    /* Check if the receive buffer is empty or not */
+    if ((SPI2STAT & _SPI2STAT_SPIRBE_MASK) == 0U)
+    {
+        /* Receive buffer is not empty. Read the received data. */
+        receivedData = SPI2BUF;
+
+        size_t rxCount = spi2Obj.rxCount;
+        size_t txCount = spi2Obj.txCount;
+
+        if (rxCount < spi2Obj.rxSize)
+        {
+            /* Copy the received data to the user buffer */
+            if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
+            {
+                ((uint32_t*)spi2Obj.rxBuffer)[rxCount] = receivedData;
+                rxCount++;
+            }
+            else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
+            {
+                ((uint16_t*)spi2Obj.rxBuffer)[rxCount] = (uint16_t)receivedData;
+                rxCount++;
+            }
+            else
+            {
+                ((uint8_t*)spi2Obj.rxBuffer)[rxCount] = (uint8_t)receivedData;
+                rxCount++;
+            }
+
+            spi2Obj.rxCount = rxCount;
+
+            if (rxCount == spi2Obj.rxSize)
+            {
+                if (txCount < spi2Obj.txSize)
                 {
-                    SPI2BUF = ((uint32_t*)pTransmitData)[txCount];
+                    /* Reception of all bytes is complete. However, there are few more
+                     * bytes to be transmitted as txCount != txSize. Finish the
+                     * transmission of the remaining bytes from the transmit interrupt. */
+
+                    /* Disable the receive interrupt */
+                    IEC1CLR = 0x40;
+
+                    /* Generate TX interrupt when buffer is completely empty (STXISEL = '00') */
+                    SPI2CONCLR = _SPI2CON_STXISEL_MASK;
+                    SPI2CONSET = 0x00000004;
+
+                    /* Enable the transmit interrupt. Callback will be given from the
+                     * transmit interrupt, when all bytes are shifted out. */
+                    IEC1SET = 0x80;
                 }
-                else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
+            }
+        }
+        if (rxCount < spi2Obj.rxSize)
+        {
+            /* More bytes pending to be received .. */
+            if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
+            {
+                if (txCount < spi2Obj.txSize)
                 {
-                    SPI2BUF = ((uint16_t*)pTransmitData)[txCount];
+                    SPI2BUF = ((uint32_t*)spi2Obj.txBuffer)[txCount];
+                    txCount++;
                 }
-                else
+                else if (spi2Obj.dummySize > 0U)
                 {
-                    SPI2BUF = ((uint8_t*)pTransmitData)[txCount];
+                    SPI2BUF = (uint32_t)(0xffU);
+                    spi2Obj.dummySize--;
                 }
+               else
+                {
+                   /* Do Nothing */
+                }
+            }
+            else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
+            {
+                if (txCount < spi2Obj.txSize)
+                {
+                    SPI2BUF = ((uint16_t*)spi2Obj.txBuffer)[txCount];
+                    txCount++;
+                }
+                else if (spi2Obj.dummySize > 0U)
+                {
+                    SPI2BUF = (uint16_t)(0xffU);
+                    spi2Obj.dummySize--;
+                }
+               else
+                {
+                      /* Do Nothing */
+                }
+            }
+            else
+            {
+                if (txCount < spi2Obj.txSize)
+                {
+                    SPI2BUF = ((uint8_t*)spi2Obj.txBuffer)[txCount];
+                    txCount++;
+                }
+                else if (spi2Obj.dummySize > 0U)
+                {
+                    SPI2BUF = (uint8_t)(0xffU);
+                    spi2Obj.dummySize--;
+                }
+               else
+                {
+                    /* Do Nothing */
+                }
+            }
+
+            spi2Obj.txCount = txCount;
+        }
+        else
+        {
+            if(rxCount == spi2Obj.rxSize)
+            {
+                if (txCount == spi2Obj.txSize)
+                {
+                    /* Clear receiver overflow error if any */
+                    SPI2STATCLR = _SPI2STAT_SPIROV_MASK;
+
+                    /* Disable receive interrupt */
+                    IEC1CLR = 0x40;
+
+                    /* Transfer complete. Give a callback */
+                    spi2Obj.transferIsBusy = false;
+
+                    if(spi2Obj.callback != NULL)
+                    {
+                        uintptr_t context = spi2Obj.context;
+
+                        spi2Obj.callback(context);
+                    }
+                }
+            }
+        }
+    }
+
+    /* Clear SPI2 RX Interrupt flag */
+    /* This flag should cleared only after reading buffer */
+    IFS1CLR = 0x40;
+}
+
+static void __attribute__((used)) SPI2_TX_InterruptHandler (void)
+{
+    /* If there are more words to be transmitted, then transmit them here and keep track of the count */
+    if((SPI2STAT & _SPI2STAT_SPITBE_MASK) == _SPI2STAT_SPITBE_MASK)
+    {
+        size_t txCount = spi2Obj.txCount;
+
+        if (txCount < spi2Obj.txSize)
+        {
+            if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
+            {
+                SPI2BUF = ((uint32_t*)spi2Obj.txBuffer)[txCount];
                 txCount++;
             }
-            else if (dummySize > 0U)
+            else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
             {
-                SPI2BUF = 0xff;
-                dummySize--;
+                SPI2BUF = ((uint16_t*)spi2Obj.txBuffer)[txCount];
+                txCount++;
             }
             else
             {
-                 /* Nothing to process */
+                SPI2BUF = ((uint8_t*)spi2Obj.txBuffer)[txCount];
+                txCount++;
             }
 
-            if (rxCount == rxSize)
+            spi2Obj.txCount = txCount;
+
+            if (txCount == spi2Obj.txSize)
             {
-                /* If inside this if condition, then it means that txSize > rxSize and all RX bytes are received */
-
-                /* For transmit only request, wait for buffer to become empty */
-                while((SPI2STAT & _SPI2STAT_SPITBE_MASK) == 0U)
-                {
-                    /* Wait for buffer empty */
-                }
-
-                /* Read until the receive buffer is not empty */
-                while ((SPI2STAT & _SPI2STAT_SPIRBE_MASK) == 0U)
-                {
-                    (void)SPI2BUF;
-                    dummyRxCntr++;
-                }
-            }
-            else
-            {
-                /* If data is read, wait for the Receiver Data the data to become available */
-                while((SPI2STAT & _SPI2STAT_SPIRBE_MASK) == _SPI2STAT_SPIRBE_MASK)
-                {
-                  /* Do Nothing */
-                }
-
-                /* We have data waiting in the SPI buffer */
-                receivedData = SPI2BUF;
-
-                if (rxCount < rxSize)
-                {
-                    if((_SPI2CON_MODE32_MASK) == (SPI2CON & (_SPI2CON_MODE32_MASK)))
-                    {
-                        ((uint32_t*)pReceiveData)[rxCount]  = receivedData;
-                        rxCount++;
-                    }
-                    else if((_SPI2CON_MODE16_MASK) == (SPI2CON & (_SPI2CON_MODE16_MASK)))
-                    {
-                        ((uint16_t*)pReceiveData)[rxCount]  = (uint16_t)receivedData;
-                        rxCount++;
-                    }
-                    else
-                    {
-                        ((uint8_t*)pReceiveData)[rxCount]  = (uint8_t)receivedData;
-                        rxCount++;
-                    }
-                }
+                /* All bytes are submitted to the SPI module. Now, enable transmit
+                 * interrupt when the shift register is empty (STXISEL = '00')*/
+                SPI2CONCLR = _SPI2CON_STXISEL_MASK;
             }
         }
-
-        /* Make sure no data is pending in the shift register */
-        while((SPI2STAT & _SPI2STAT_SRMT_MASK) == 0U)
+        else if (txCount == spi2Obj.txSize)
         {
-            /* Data pending in shift register */
-        }
-
-        /* Make sure for every character transmitted a character is also received back.
-         * If this is not done, we may prematurely exit this routine with the last bit still being
-         * transmitted out. As a result, the application may prematurely deselect the CS line and also
-         * the next request can receive last character of previous request as its first character.
-         */
-        if (txSize > rxSize)
-        {
-            while (dummyRxCntr != (txSize - rxSize))
+            if ((SPI2STAT & _SPI2STAT_SRMT_MASK) != 0U)
             {
-                /* Wait for all the RX bytes to be received. */
-                while ((bool)(SPI2STAT & _SPI2STAT_SPIRBE_MASK) == false)
+                /* This part of code is executed when the shift register is empty. */
+
+                /* Clear receiver overflow error if any */
+                SPI2STATCLR = _SPI2STAT_SPIROV_MASK;
+
+                /* Disable transmit interrupt */
+                IEC1CLR = 0x80;
+
+                /* Transfer complete. Give a callback */
+                spi2Obj.transferIsBusy = false;
+
+                if(spi2Obj.callback != NULL)
                 {
-                    (void)SPI2BUF;
-                    dummyRxCntr++;
+                    uintptr_t context = spi2Obj.context;
+
+                    spi2Obj.callback(context);
                 }
             }
         }
-        isSuccess = true;
+        else
+        {
+            /* Do Nothing */
+        }
     }
-    return isSuccess;
+    /* Clear the transmit interrupt flag */
+    IFS1CLR = 0x80;
+}
+
+void __attribute__((used)) SPI_2_InterruptHandler (void)
+{
+    uint32_t iec_reg_read = IEC1;
+    if (((IFS1 & _IFS1_SPI2RXIF_MASK) != 0U) && (( iec_reg_read & _IEC1_SPI2RXIE_MASK)!= 0U))
+    {
+        /* RX interrupt is enabled and RX buffer is not empty */
+        SPI2_RX_InterruptHandler();
+    }
+    iec_reg_read = IEC1;
+    if (((IFS1 & _IFS1_SPI2TXIF_MASK) != 0U) && ((iec_reg_read & _IEC1_SPI2TXIE_MASK) != 0U))
+    {
+        /* TX interrupt is enabled and TX buffer is empty */
+        SPI2_TX_InterruptHandler();
+    }
 }

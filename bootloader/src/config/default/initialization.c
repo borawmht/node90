@@ -103,6 +103,23 @@
 /* MISRA C-2012 Rule 11.1 - Deviation record ID - H3_MISRAC_2012_R_11_1_DR_1 */
 /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
 /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
+// <editor-fold defaultstate="collapsed" desc="DRV_SST26 Initialization Data">
+
+static const DRV_SST26_PLIB_INTERFACE drvSST26PlibAPI = {
+    .writeRead          = (DRV_SST26_PLIB_WRITE_READ)SPI2_WriteRead,
+    .write_t              = (DRV_SST26_PLIB_WRITE)SPI2_Write,
+    .read_t               = (DRV_SST26_PLIB_READ)SPI2_Read,
+    .isBusy             = (DRV_SST26_PLIB_IS_BUSY)SPI2_IsBusy,
+    .callbackRegister   = (DRV_SST26_PLIB_CALLBACK_REGISTER)SPI2_CallbackRegister,
+};
+
+static const DRV_SST26_INIT drvSST26InitData =
+{
+    .sst26Plib      = &drvSST26PlibAPI,
+    .chipSelectPin  = DRV_SST26_CHIP_SELECT_PIN,
+};
+// </editor-fold>
+
 
 
 
@@ -204,9 +221,25 @@ void SYS_Initialize ( void* data )
 
 	SPI2_Initialize();
 
+    NVM_Initialize();
 
+
+    /* MISRAC 2012 deviation block start */
+    /* Following MISRA-C rules deviated in this block  */
+    /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
+    /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
+
+    //sysObj.drvSST26 = DRV_SST26_Initialize((SYS_MODULE_INDEX)DRV_SST26_INDEX, (SYS_MODULE_INIT *)&drvSST26InitData);
+    DRV_SST26_Initialize((SYS_MODULE_INDEX)DRV_SST26_INDEX, (SYS_MODULE_INIT *)&drvSST26InitData);
+
+
+
+
+    /* MISRAC 2012 deviation block end */
     EVIC_Initialize();
 
+    /* Enable global interrupts */
+    (void)__builtin_enable_interrupts();
 
 
 

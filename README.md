@@ -16,9 +16,9 @@ Build with XC32 4.60.
 
 ## Structure
 
-Bootloader (0x9D000000 - 0x9D003FFF) ← 16KB for bootloader
+Bootloader (0x9D000000 - 0x9D007FFF) ← 32KB for bootloader
 
-Application (0x9D004000 - 0x9D07FFFF) ← 496KB for app
+Application (0x9D008000 - 0x9D07FFFF) ← 480KB for app
 
 ## Modules
 - core 3.15.3

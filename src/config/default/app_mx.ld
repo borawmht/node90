@@ -88,7 +88,7 @@ OPTIONAL("processor.o")
  *   xc32-gcc src.c -Wl,--defsym=_ebase_address=0x9D001000
  *************************************************************************/
 PROVIDE(_vector_spacing = 0x0001);
-PROVIDE(_ebase_address = 0x9D005000);
+PROVIDE(_ebase_address = 0x9D009000);
 
 /*************************************************************************
  * Memory Address Equates
@@ -99,7 +99,7 @@ PROVIDE(_ebase_address = 0x9D005000);
  * _DBG_CODE_SIZE                 -- In-circuit Debug Executive size
  * _GEN_EXCPT_ADDR                -- General Exception Vector
  *************************************************************************/
-_RESET_ADDR                    = 0xBD000000 + 0x4000; /* Size of Bootloader is 0x4000 */
+_RESET_ADDR                    = 0xBD000000 + 0x8000; /* Size of Bootloader is 0x8000 */
 _GEN_EXCPT_ADDR                = _ebase_address + 0x180;
 
 /*************************************************************************
@@ -118,9 +118,9 @@ _GEN_EXCPT_ADDR                = _ebase_address + 0x180;
 
 MEMORY
 {
-  /* Size of Bootloader is 0x4000 */
-  kseg0_program_mem     (rx)  : ORIGIN = 0x9D005000, LENGTH = 0x80000 - 0x1000 - 0x4000
-  kseg1_boot_mem              : ORIGIN = 0xBD004000, LENGTH = 0x490
+  /* Size of Bootloader is 0x8000 */
+  kseg0_program_mem     (rx)  : ORIGIN = 0x9D009000, LENGTH = 0x80000 - 0x1000 - 0x8000
+  kseg1_boot_mem              : ORIGIN = 0xBD008000, LENGTH = 0x490
 
   /* Bootloader Trigger Pattern 16 Bytes */
   kseg1_data_mem       (w!x)  : ORIGIN = 0xA0000000 + 16, LENGTH = 0x20000 - 16
@@ -137,19 +137,19 @@ MEMORY
 SECTIONS
 {
   /* Application signature at fixed offset 0x1000 from start */
-  .app_signature 0x9D005000 :
+  .app_signature 0x9D009000 :
   {
     KEEP(*(.app_signature))
     . = ALIGN(4);
   } >kseg0_program_mem
 
-  .app_name 0x9D005020 :
+  .app_name 0x9D009020 :
   {
     KEEP(*(.app_name))
     . = ALIGN(4);
   } >kseg0_program_mem
 
-  .app_version 0x9D005040 :
+  .app_version 0x9D009040 :
   {
     KEEP(*(.app_version))
     . = ALIGN(4);

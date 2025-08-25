@@ -10,6 +10,8 @@
 #include <xc.h>
 #include "definitions.h"                // SYS function prototypes
 #include "project_version.h"
+#include "firmware_update.h"
+#include "flash.h"
 
 __attribute__((section(".bootloader_name")))
 const char bootloader_name[] = PROJECT_NAME;
@@ -22,7 +24,7 @@ uint32_t trigger_pattern;
 #define TRIGGER_PATTERN_ADDRESS 0xA0000000
 
 // Application entry point
-#define APP_START_ADDRESS    0x9D004000
+#define APP_START_ADDRESS    0x9D008000
 #define APP_VALID_SIGNATURE  0x12345678
 
 typedef void (*app_function_t)(void);
@@ -93,10 +95,23 @@ void jump_to_application(void) {
 }
 
 void bootloader_main(void) {
-    printf("bootloader: main\r\n");
-    // testing so just load application
-    printf("bootloader: testing in progress - continue to application\r\n");
-    jump_to_application();
+    printf("bootloader: main\r\n");    
+    flash_init();
+    if(trigger_pattern == 2) {
+        firmware_update_copy_external_flash_to_internal_flash();
+        jump_to_application();
+    }
+    else if(trigger_pattern == 3) {
+        firmware_update_copy_internal_flash_to_external_flash();
+        jump_to_application();
+    }
+    else if(trigger_pattern == 4) {
+        firmware_update_compare_internal_flash_to_external_flash();
+        jump_to_application();
+    }
+    else {
+        jump_to_application();
+    }
     while(1){
         SYS_Tasks();
     }
@@ -114,7 +129,7 @@ int main ( void )
     
     check_reset_source();
     
-    if(trigger_pattern != 0) {
+    if(trigger_pattern > 1) {
         printf("bootloader: trigger pattern: 0x%08X\r\n", trigger_pattern);
         bootloader_main();
     }
