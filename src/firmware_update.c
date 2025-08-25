@@ -615,6 +615,96 @@ static bool flush_download_buffer_to_flash(uint8_t *buffer, uint32_t buffer_size
     return true;
 }
 
+// Helper function to search for app_name and app_version in the download buffer
+static bool find_app_info_in_buffer(uint8_t *buffer, uint32_t buffer_size, uint32_t download_offset, uint32_t *name_offset, uint32_t *version_offset) {
+    const char *target_name = "node90";
+    const char *target_version_prefix = "1."; // Assuming version starts with "1."
+    
+    SYS_CONSOLE_PRINT("firmware_update: searching for app info in buffer of size %lu\r\n", buffer_size);
+    
+    // Search for the app name "node90"
+    bool name_found = false;
+    uint32_t found_name_offset = 0;
+    
+    for (uint32_t i = 0; i <= buffer_size - strlen(target_name); i++) {
+        bool match = true;
+        for (uint32_t j = 0; j < strlen(target_name); j++) {
+            if (buffer[i + j] != target_name[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            name_found = true;
+            found_name_offset = download_offset + i;
+            SYS_CONSOLE_PRINT("firmware_update: found 'node90' at offset %lu\r\n", found_name_offset);
+            break;
+        }
+    }
+    
+    if (!name_found) {
+        SYS_CONSOLE_PRINT("firmware_update: could not find 'node90' in buffer\r\n");
+        return false;
+    }
+    
+    // Search for version string (look for "1." pattern)
+    bool version_found = false;
+    uint32_t found_version_offset = 0;
+    
+    for (uint32_t i = 0; i <= buffer_size - strlen(target_version_prefix); i++) {
+        bool match = true;
+        for (uint32_t j = 0; j < strlen(target_version_prefix); j++) {
+            if (buffer[i + j] != target_version_prefix[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            // Verify this looks like a version string by checking a few more characters
+            bool looks_like_version = true;
+            for (uint32_t k = strlen(target_version_prefix); k < strlen(target_version_prefix) + 10 && i + k < buffer_size; k++) {
+                char c = buffer[i + k];
+                if (c == '\0' || c == ' ' || c == '\r' || c == '\n') {
+                    break; // End of version string
+                }
+                if (!((c >= '0' && c <= '9') || c == '.')) {
+                    looks_like_version = false;
+                    break;
+                }
+            }
+            
+            if (looks_like_version) {
+                version_found = true;
+                found_version_offset = download_offset + i;
+                SYS_CONSOLE_PRINT("firmware_update: found version at offset %lu\r\n", found_version_offset);
+                break;
+            }
+        }
+    }
+    
+    if (!version_found) {
+        SYS_CONSOLE_PRINT("firmware_update: could not find version string in buffer\r\n");
+        return false;
+    }
+    
+    // Compare with expected offsets
+    SYS_CONSOLE_PRINT("firmware_update: found name at %lu (expected: 4128), version at %lu (expected: 4160)\r\n", 
+                     found_name_offset, found_version_offset);
+    
+    if (found_name_offset != 4128) {
+        SYS_CONSOLE_PRINT("firmware_update: WARNING - name offset differs from expected!\r\n");
+    }
+    
+    if (found_version_offset != 4160) {
+        SYS_CONSOLE_PRINT("firmware_update: WARNING - version offset differs from expected!\r\n");
+    }
+    
+    *name_offset = found_name_offset;
+    *version_offset = found_version_offset;
+    
+    return true;
+}
+
 bool firmware_update_download_binary_to_external_flash(const char *url) {
     SYS_CONSOLE_PRINT("firmware_update: download binary to external flash from %s\r\n", url);
     
@@ -706,7 +796,8 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         }
         
         // Read chunk from HTTP stream into the buffer
-        int bytes_read = http_stream_read(&stream, download_buffer + download_buffer_used, available_space);
+        //int bytes_read = http_stream_read(&stream, download_buffer + download_buffer_used, available_space);
+        int bytes_read = http_stream_read(&stream, download_buffer + download_buffer_used, 513);
         
         if (bytes_read < 0) {
             SYS_CONSOLE_PRINT("firmware_update: error reading from HTTP stream\r\n");
@@ -721,8 +812,32 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         }
         
         // Update buffer usage and checksum
+        uint32_t buffer_offset = download_buffer_used;
         download_buffer_used += bytes_read;
         total_downloaded += bytes_read;
+
+        if(total_downloaded <= 0x1400){
+            for(int i=0; i<bytes_read; i++){
+                SYS_CONSOLE_PRINT("%c", download_buffer[buffer_offset+i]);
+            }
+            SYS_CONSOLE_PRINT("\r\n");
+        }
+
+        // find app_name and app_version
+        // Search for app info in the buffer if we haven't found it yet
+        static bool app_info_found = false;
+        static uint32_t found_name_offset = 0;
+        static uint32_t found_version_offset = 0;
+        uint32_t download_offset = total_downloaded - bytes_read;
+        
+        if (!app_info_found) { 
+            if (find_app_info_in_buffer(download_buffer, download_buffer_used, download_offset, &found_name_offset, &found_version_offset)) {
+                app_info_found = true;
+                SYS_CONSOLE_PRINT("firmware_update: app info found - name at %lu, version at %lu\r\n", 
+                                 found_name_offset, found_version_offset);
+            }
+        }
+        
         
         // Update checksum for the new data
         for (int i = 0; i < bytes_read; i++) {
@@ -741,7 +856,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
             SYS_CONSOLE_PRINT("firmware_update: failed to flush buffer to flash\r\n");
             http_stream_close(&stream);
             return false;
-        }
+        }        
         
         // Check if we've downloaded more than expected binary size
         if (total_downloaded >= binary_size) {

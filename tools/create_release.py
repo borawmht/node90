@@ -98,8 +98,8 @@ class ReleaseManager:
         ih = intelhex.IntelHex(hex_file)
         
         # Define the address range for application (0x9D004000 - 0x9D07FFFF)
-        start = 0x9D004000
-        end = 0x9D07FFFF
+        start = 0x1D004000
+        end = 0x1D07FFFF
         size = end - start + 1
         
         # Extract binary data for the application range

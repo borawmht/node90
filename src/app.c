@@ -97,8 +97,8 @@ void APP_Tasks ( void ){
                 // http_client_get_url("http://httpbin.org/get", NULL, 0);
                 // http_client_get_url("http://192.168.1.1", NULL, 0);
                 // http_client_get_url("https://httpbin.org/get", NULL, 0);
-                http_client_get("http://52.1.207.236/get", NULL, NULL);
-                http_client_get("https://52.1.207.236/get", NULL, NULL);
+                // http_client_get("http://52.1.207.236/get", NULL, NULL);
+                // http_client_get("https://52.1.207.236/get", NULL, NULL);
                 // firmware_update_download_binary_to_external_flash("http://192.168.1.68:8080/release/node90_1.0.1.bin");
             } 
             if(app_firmware_download_request == true && 
@@ -123,8 +123,10 @@ void app_start_firmware_download(char* url)
 {
     if(app_firmware_download_request == false && app_firmware_download_running == false){
         if(url == NULL){
-            //strncpy(app_firmware_download_url, "http://192.168.1.68:8080/release/node90_1.0.1.bin", 256);
-            strncpy(app_firmware_download_url, "http://192.168.1.68:8080/tools/node90.X.production.bin", 256);
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
+            strncpy(app_firmware_download_url, "https://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.1.0.bin", 256);
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/tools/node90.X.production.bin", 256);
         }
         else{
             strncpy(app_firmware_download_url, url, 256);
