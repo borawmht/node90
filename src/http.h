@@ -87,6 +87,7 @@ bool http_client_post(const char *url, const char *data_write, size_t data_write
 // HTTP client connection structure (forward declaration)
 typedef struct http_client_connection {
     char hostname[64];
+    char path[128];
     uint16_t port;
     IPV4_ADDR server_ip;
     bool is_https;

@@ -156,7 +156,7 @@ static bool is_http_response_complete(const char *response, size_t received) {
         const char *body = body_start + 4;
         size_t body_length = received - (body - response);
         
-        SYS_CONSOLE_PRINT("https_client: Content-Length: %d, body_length: %d, received: %d\r\n", 
+        SYS_CONSOLE_PRINT("http_client: Content-Length: %d, body_length: %d, received: %d\r\n", 
                          expected_length, body_length, received);
         
         return body_length >= expected_length;
@@ -413,8 +413,7 @@ static bool http_client_create_socket(const char *url, http_client_connection_t 
     }
     
     // Parse URL
-    char path[128];
-    if (!parse_url(url, conn->hostname, &conn->port, path, &conn->is_https)) {
+    if (!parse_url(url, conn->hostname, &conn->port, conn->path, &conn->is_https)) {
         SYS_CONSOLE_PRINT("http_client: failed to parse URL\r\n");
         return false;
     }
@@ -569,23 +568,26 @@ static bool http_client_send_request(http_client_connection_t *conn, const char 
     if (data && data_size > 0) {
         // POST request
         snprintf(request, sizeof(request),
-                "POST / HTTP/1.1\r\n"
+                "POST %s HTTP/1.1\r\n"
                 "Host: %s\r\n"
                 "Content-Length: %zu\r\n"
                 "Content-Type: application/x-www-form-urlencoded\r\n"
                 "Connection: close\r\n"
                 "\r\n"
                 "%s",
-                conn->hostname, data_size, data);
+                conn->path, conn->hostname, data_size, data);
     } else {
         // GET request
         snprintf(request, sizeof(request),
-                "GET / HTTP/1.1\r\n"
+                "GET %s HTTP/1.1\r\n"
                 "Host: %s\r\n"
                 "Connection: close\r\n"
                 "\r\n",
-                conn->hostname);
+                conn->path, conn->hostname);
     }
+
+    SYS_CONSOLE_PRINT("http_client: request: %s\r\n", request);
+    SYS_CONSOLE_PRINT("http_client: request length: %d\r\n", strlen(request));
     
     const char *request_ptr = request;
     size_t request_len = strlen(request);
@@ -664,6 +666,7 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
     *received = 0;
     uint32_t receive_timeout = 0;
     bool response_complete = false;
+    uint16_t content_length = 0;
     
     while (receive_timeout < 5000 && !response_complete) { // 5 second timeout
         if (conn->is_https && conn->ssl_initialized) {
@@ -721,6 +724,19 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
                                   (buffer_size - *received - 1) : available;
                 uint16_t read = TCPIP_TCP_ArrayGet(conn->tcp_socket, response_buffer + *received, to_read);
                 *received += read;
+
+                if(content_length == 0){
+                    SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
+                    for(int i=0; i<read; i++){
+                        SYS_CONSOLE_PRINT("%c", response_buffer[i]);
+                    }
+                    SYS_CONSOLE_PRINT("\r\n");
+                    const char *content_length_header = strstr((char*)response_buffer, "Content-Length:");
+                    if (content_length_header) {
+                        content_length = atoi(content_length_header + 15);
+                        SYS_CONSOLE_PRINT("http_client: Content-Length: %lu bytes\r\n", content_length);
+                    }
+                }
                 
                 SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
                 
@@ -854,7 +870,7 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     
     // Check if socket is still connected
     if (!TCPIP_TCP_IsConnected(*tcp_socket)) {
-        SYS_CONSOLE_PRINT("https_client: recv - connection closed\r\n");
+        SYS_CONSOLE_PRINT("bearssl_recv: recv - connection closed\r\n");
         return -1; // Connection closed - error
     }
     
@@ -870,7 +886,7 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     }
     
     if (available == 0) {
-        SYS_CONSOLE_PRINT("https_client: recv - timeout waiting for data\r\n");
+        SYS_CONSOLE_PRINT("bearssl_recv: recv - timeout waiting for data\r\n");
         return -1; // Timeout - error
     }
     
@@ -879,11 +895,11 @@ static int bearssl_recv(void *ctx, unsigned char *buf, size_t len) {
     uint16_t read = TCPIP_TCP_ArrayGet(*tcp_socket, buf, to_read);
     
     if (read == 0) {
-        SYS_CONSOLE_PRINT("https_client: recv - failed to read data\r\n");
+        SYS_CONSOLE_PRINT("bearssl_recv: recv - failed to read data\r\n");
         return -1; // Read failed - error
     }
     
-    // SYS_CONSOLE_PRINT("https_client: recv - read %d bytes\r\n", read);
+    // SYS_CONSOLE_PRINT("bearssl_recv: recv - read %d bytes\r\n", read);
     return read;
 }
 
@@ -892,7 +908,7 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
     
     // Check if socket is still connected
     if (!TCPIP_TCP_IsConnected(*tcp_socket)) {
-        SYS_CONSOLE_PRINT("https_client: send - connection closed\r\n");
+        SYS_CONSOLE_PRINT("bearssl_send: send - connection closed\r\n");
         return -1; // Connection closed - error
     }
     
@@ -908,7 +924,7 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
     }
     
     if (write_ready == 0) {
-        SYS_CONSOLE_PRINT("https_client: send - timeout waiting for write ready\r\n");
+        SYS_CONSOLE_PRINT("bearssl_send: send - timeout waiting for write ready\r\n");
         return -1; // Timeout - error
     }
     
@@ -917,11 +933,11 @@ static int bearssl_send(void *ctx, const unsigned char *buf, size_t len) {
     uint16_t written = TCPIP_TCP_ArrayPut(*tcp_socket, buf, to_write);
     
     if (written == 0) {
-        SYS_CONSOLE_PRINT("https_client: send - failed to write data\r\n");
+        SYS_CONSOLE_PRINT("bearssl_send: send - failed to write data\r\n");
         return -1; // Write failed - error
     }
     
-    // SYS_CONSOLE_PRINT("https_client: send - wrote %d bytes\r\n", written);
+    // SYS_CONSOLE_PRINT("bearssl_send: send - wrote %d bytes\r\n", written);
     return written;
 }
 
