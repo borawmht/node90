@@ -2,6 +2,9 @@
 
 Node90 Firmware
 
+# 1.5.0
+- add actuators resource
+
 # 1.4.4
 - fix issue coap response during firmware update, disable ethernet_send if http_stream is open
 - revert app stack depth 4KB to 2KB and FreeRTOS heap 48000 to 44000

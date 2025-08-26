@@ -9,11 +9,12 @@
 #define NETWORK_H
 
 #include "coap.h"
+#include "resources.h"
 #include <stdbool.h>
 
 typedef struct {
     char serial_number[16];
-    char tag[16];
+    char tag[TAG_SIZE];
     char inx_ip[20];
 } network_t;
 

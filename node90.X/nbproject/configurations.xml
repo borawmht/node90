@@ -312,6 +312,7 @@
         <itemPath>../src/resources/network.h</itemPath>
         <itemPath>../src/resources/version.h</itemPath>
         <itemPath>../src/resources/ota.h</itemPath>
+        <itemPath>../src/resources/actuators.h</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/utf8_p.h</itemPath>
@@ -488,6 +489,8 @@
       <itemPath>../src/firmware_update.h</itemPath>
       <itemPath>../src/spi_coordinator.h</itemPath>
       <itemPath>../src/http.h</itemPath>
+      <itemPath>../src/control.h</itemPath>
+      <itemPath>../src/sense.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -978,6 +981,7 @@
         <itemPath>../src/resources/network.c</itemPath>
         <itemPath>../src/resources/version.c</itemPath>
         <itemPath>../src/resources/ota.c</itemPath>
+        <itemPath>../src/resources/actuators.c</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/cborencoder_float.c</itemPath>
@@ -1122,6 +1126,8 @@
       <itemPath>../src/firmware_update.c</itemPath>
       <itemPath>../src/spi_coordinator.c</itemPath>
       <itemPath>../src/http.c</itemPath>
+      <itemPath>../src/control.c</itemPath>
+      <itemPath>../src/sense.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

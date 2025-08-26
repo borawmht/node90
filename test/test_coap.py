@@ -118,27 +118,27 @@ if __name__ == "__main__":
     # result = get(node_ip, '/inx/version', 5)
     # print(f"Result: {result}")
 
-    result = put(node_ip, '/inx/ota', 'bin_url', 'http://192.168.1.65:8080/release/node90_latest.bin', confirm=True)
-    print(f"Result: {result}")
-    result = get(node_ip, '/inx/ota', 5)
-    print(f"Result: {result}")
-    result = put(node_ip, '/inx/ota', 'start', 'download', confirm=True)
-    # result = put(node_ip, '/inx/ota', 'start', 'true', confirm=True)
-    print(f"Result: {result}")
-    time.sleep(1)
-    result = get(node_ip, '/inx/ota', 5)
-    # result = get(node_ip, '/inx/version', 5)
-    # result = get(node_ip, '/inx/network', 5)
-    # result = put(node_ip, '/inx/event', 'on', '0', confirm=True)
-    print(f"Result: {result}")
-    try:
-        downloading = True if result['e']['downloading']=='true' else False
-        while downloading:
-            time.sleep(3)
-            result = get(node_ip, '/inx/ota', 5)            
-            downloading = True if result['e']['downloading']=='true' else False
-    except Exception as e:
-        print(f"Exception: {e}")
+    # result = put(node_ip, '/inx/ota', 'bin_url', 'http://192.168.1.65:8080/release/node90_latest.bin', confirm=True)
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/ota', 5)
+    # print(f"Result: {result}")
+    # result = put(node_ip, '/inx/ota', 'start', 'download', confirm=True)
+    # # result = put(node_ip, '/inx/ota', 'start', 'true', confirm=True)
+    # print(f"Result: {result}")
+    # time.sleep(1)
+    # result = get(node_ip, '/inx/ota', 5)
+    # # result = get(node_ip, '/inx/version', 5)
+    # # result = get(node_ip, '/inx/network', 5)
+    # # result = put(node_ip, '/inx/event', 'on', '0', confirm=True)
+    # print(f"Result: {result}")
+    # try:
+    #     downloading = True if result['e']['downloading']=='true' else False
+    #     while downloading:
+    #         time.sleep(3)
+    #         result = get(node_ip, '/inx/ota', 5)            
+    #         downloading = True if result['e']['downloading']=='true' else False
+    # except Exception as e:
+    #     print(f"Exception: {e}")
 
     # result = put(node_ip, '/inx/ota', 'start', 'update', confirm=True)
     # print(f"Result: {result}")
@@ -148,4 +148,15 @@ if __name__ == "__main__":
     # Then test error rate
     # print("\nTesting error rate...")
     # test_error_rate('192.168.1.29', '/', 5, 3)
+
+    result = put(node_ip, '/inx/actuators/actuator1', 'cluster', 'new_group', confirm=True)
+    print(f"Result: {result}")
+    result = get(node_ip, '/inx/actuators/actuator1', 5)
+    print(f"Result: {result}")
+    result = get(node_ip, '/inx/actuators/actuator1/context', 5)
+    print(f"Result: {result}")
+    result = get(node_ip, '/inx/actuators/actuator2/context', 5)
+    print(f"Result: {result}")
+    result = get(node_ip, '/inx/actuators', 5)
+    print(f"Result: {result}")
     

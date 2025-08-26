@@ -77,8 +77,8 @@ bool network_coap_get_handler(coap_message_t *response){
 
 bool network_set_tag(char *tag){
     // TODO: validate tag
-    bool changed = strncmp(network.tag,tag,16) != 0;
-    strncpy(network.tag,tag,16);
+    bool changed = strncmp(network.tag,tag,TAG_SIZE) != 0;
+    strncpy(network.tag,tag,TAG_SIZE);
     SYS_CONSOLE_PRINT("network: tag: %s\r\n", network.tag);
     if(changed){
         return storage_setStr(network_ns, "tag", network.tag);

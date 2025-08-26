@@ -243,6 +243,21 @@ bool storage_loadBool(const char *namespace, const char *key, bool *b, bool defa
     return ret;
 }
 
+bool storage_loadBoolIndex(const char *namespace, const char *key, bool *b, bool default_value, uint8_t index, bool (*func)(uint8_t, bool)) {
+    bool value = default_value;
+    *b = value;
+    bool ret = storage_getBool(namespace, key, &value);
+    if (!ret) {
+        ret = storage_setBool(namespace, key, value); // save default value
+    } else {
+        *b = value; // set value if load OK
+    }
+    if (func != NULL) {
+        func(index, *b);
+    }
+    return ret;
+}
+
 // U8 functions
 bool storage_getU8(const char *namespace, const char *key, uint8_t *value) {
     uint16_t data_len = sizeof(uint8_t);
@@ -318,6 +333,21 @@ bool storage_loadU16(const char *namespace, const char *key, uint16_t *u16, uint
     return ret;
 }
 
+bool storage_loadU16Index(const char *namespace, const char *key, uint16_t *u16, uint16_t default_value, uint8_t index, bool (*func)(uint8_t, uint16_t)) {
+    uint16_t value = default_value;
+    *u16 = value;
+    bool ret = storage_getU16(namespace, key, &value);
+    if (!ret) {
+        ret = storage_setU16(namespace, key, value); // save default value
+    } else {
+        *u16 = value; // set value if load OK
+    }
+    if (func != NULL) {
+        func(index, *u16);
+    }
+    return ret;
+}
+
 // I16 functions
 bool storage_getI16(const char *namespace, const char *key, int16_t *value) {
     uint16_t data_len = sizeof(int16_t);
@@ -339,6 +369,21 @@ bool storage_loadI16(const char *namespace, const char *key, int16_t *i16, int16
     }
     if (func != NULL) {
         func(*i16);
+    }
+    return ret;
+}
+
+bool storage_loadI16Index(const char *namespace, const char *key, int16_t *i16, int16_t default_value, uint8_t index, bool (*func)(uint8_t, int16_t)) {
+    int16_t value = default_value;
+    *i16 = value;
+    bool ret = storage_getI16(namespace, key, &value);
+    if (!ret) {
+        ret = storage_setI16(namespace, key, value); // save default value
+    } else {
+        *i16 = value; // set value if load OK
+    }
+    if (func != NULL) {
+        func(index, *i16);
     }
     return ret;
 }
@@ -427,7 +472,7 @@ bool storage_loadStr(const char *namespace, const char *key, char *str, const ch
     return ret;
 }
 
-bool storage_loadStrIndex(const char *namespace, const char *key, char *value, const char *default_value, uint16_t index, bool (*func)(uint16_t, char *)) {
+bool storage_loadStrIndex(const char *namespace, const char *key, char *value, const char *default_value, uint8_t index, bool (*func)(uint8_t, char *)) {
     char str[STORAGE_STR_LENGTH_MAX + 1];
     strcpy(str, default_value);
     strcpy(value, str);

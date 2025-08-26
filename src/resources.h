@@ -10,6 +10,9 @@
 
 #include "coap.h"
 
+#define CLUSTER_SIZE 64
+#define TAG_SIZE 16
+
 typedef struct {
     const char *path;    
     void (*init)(void);
