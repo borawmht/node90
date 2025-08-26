@@ -92,7 +92,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     firmware_update_busy = true;
     
     // Calculate binary size
-    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     SYS_CONSOLE_PRINT("firmware_update: binary size: %lu bytes\r\n", binary_size);
     
     // Allocate buffer for binary data (use smaller chunks to save memory)
@@ -415,7 +415,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     }
     
     // Calculate expected binary size
-    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     
     // Compare file size
     if (external_fw_info.file_size != expected_binary_size) {
@@ -798,7 +798,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     }
     
     // Pre-erase all sectors needed for the binary
-    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     uint32_t sector_size = 4096; // 4KB sectors
     uint32_t total_sectors = (binary_size + sector_size - 1) / sector_size; // Round up
     SYS_CONSOLE_PRINT("firmware_update: erasing %lu sectors for binary data (binary size: %lu bytes)\r\n", total_sectors, binary_size);

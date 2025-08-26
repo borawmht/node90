@@ -123,7 +123,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     }
     
     // Calculate binary size
-    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     SYS_CONSOLE_PRINT("firmware_update: binary size: %u bytes\r\n", binary_size);
     
     // Allocate buffer for binary data (use smaller chunks to save memory)
@@ -384,7 +384,7 @@ bool firmware_update_copy_external_flash_to_internal_flash(void){
     }
     
     // Calculate expected binary size
-    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     
     // Compare file size
     if (external_fw_info.file_size != expected_binary_size) {
@@ -689,7 +689,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     }
     
     // Calculate expected binary size
-    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
+    uint32_t expected_binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS + 1;
     
     // Compare file size
     if (external_fw_info.file_size != expected_binary_size) {

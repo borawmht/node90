@@ -2,6 +2,9 @@
 
 Node90 Firmware
 
+# 1.4.2
+- fix binary size +1
+
 # 1.4.1
 - add task yields during firmware update processes
 - increase app stack depth 2KB to 4KB
