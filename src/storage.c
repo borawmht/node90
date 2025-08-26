@@ -396,7 +396,11 @@ bool storage_loadI32(const char *namespace, const char *key, int32_t *i32, int32
 // String functions
 bool storage_getStr(const char *namespace, const char *key, char *value) {
     uint16_t data_len = STORAGE_STR_LENGTH_MAX;
-    return storage_read_entry(namespace, key, STORAGE_TYPE_STR, value, &data_len);
+    bool ret = storage_read_entry(namespace, key, STORAGE_TYPE_STR, value, &data_len);
+    if (ret) {
+        value[data_len] = '\0';  // Ensure null termination
+    }
+    return ret;
 }
 
 bool storage_setStr(const char *namespace, const char *key, char *value) {

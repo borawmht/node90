@@ -34,12 +34,12 @@ static void command_download_firmware(SYS_CMD_DEVICE_NODE* pCmdIO, int argc, cha
     if(argc > 1) {        
         sprintf(command_response,"download_firmware: downloaded firmware\r\n");
         (*pCmdIO->pCmdApi->msg)(cmdIoParam, command_response );
-        app_start_firmware_download(argv[1]);
+        app_start_firmware_download(argv[1],false);
     } else {
         // char url[] = "http://192.168.1.68:8080/release/node90_1.0.1.bin";
         // sprintf(command_response,"download_firmware: no argument, assume %s\r\n", url);
         // (*pCmdIO->pCmdApi->msg)(cmdIoParam, command_response );
-        app_start_firmware_download(NULL);
+        app_start_firmware_download(NULL,false);
     }
 }
 

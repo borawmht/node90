@@ -16,6 +16,11 @@
 #define APPLICATION_VERSION_ADDRESS 0x9D009040
 #define APPLICATION_VERSION_SIZE    0x20
 
+#define TRIGGER_RESTART 1
+#define TRIGGER_UPDATE 2
+#define TRIGGER_COPY_INTERNAL_TO_EXTERNAL 3
+#define TRIGGER_COMPARE_EXTERNAL_TO_INTERNAL 4
+
 void firmware_update_init(void);
 void firmware_update_show_version(void);
 bool firmware_update_copy_internal_flash_to_external_flash(void);

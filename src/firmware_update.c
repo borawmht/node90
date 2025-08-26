@@ -30,6 +30,8 @@ typedef struct {
     bool valid;  // Indicates if binary was copied and verified successfully
 } firmware_info_t;
 
+bool firmware_update_busy = false;
+
 // Add this debug function to help troubleshoot
 void firmware_update_debug_checksum_calculation(void) {
     SYS_CONSOLE_PRINT("firmware_update: debugging checksum calculation\r\n");
@@ -86,6 +88,8 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
         return false;
     }
+
+    firmware_update_busy = true;
     
     // Calculate binary size
     uint32_t binary_size = APPLICATION_END_ADDRESS - APPLICATION_START_ADDRESS;
@@ -99,6 +103,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         binary_buffer = malloc(512); // Try 512 bytes
         if (binary_buffer == NULL) {
             SYS_CONSOLE_PRINT("firmware_update: failed to allocate 512B buffer\r\n");
+            firmware_update_busy = false;
             return false;
         }
         SYS_CONSOLE_PRINT("firmware_update: using 512B buffer\r\n");
@@ -109,6 +114,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     if (!NVM_Read((uint32_t*)app_name, APPLICATION_NAME_SIZE, APPLICATION_NAME_ADDRESS)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read app name\r\n");
         free(binary_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -117,6 +123,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     if (!NVM_Read((uint32_t*)app_version, APPLICATION_VERSION_SIZE, APPLICATION_VERSION_ADDRESS)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read app version\r\n");
         free(binary_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -136,6 +143,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         if (!NVM_Read((uint32_t*)binary_buffer, chunk_size, current_addr)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to read binary chunk at 0x%08lx\r\n", current_addr);
             free(binary_buffer);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -166,6 +174,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     if (!flash_erase_sector(FLASH_INFO_OFFSET)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to erase info sector\r\n");
         free(binary_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -173,6 +182,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     if (!flash_write(FLASH_INFO_OFFSET, (uint8_t*)&fw_info, sizeof(fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to write firmware info\r\n");
         free(binary_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -183,6 +193,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&verify_fw_info, sizeof(verify_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read back firmware info for verification\r\n");
         free(binary_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -200,8 +211,11 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         if (!flash_erase_sector(sector_addr)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to erase sector %lu\r\n", sector);
             free(binary_buffer);
+            firmware_update_busy = false;
             return false;
         }
+
+        vTaskDelay(1); // yield to other tasks
     }
     
     SYS_CONSOLE_PRINT("firmware_update: all sectors erased successfully\r\n");
@@ -224,6 +238,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
             if (!NVM_Read((uint32_t*)binary_buffer, chunk_size, current_addr)) {
                 SYS_CONSOLE_PRINT("firmware_update: failed to read binary chunk at 0x%08lx\r\n", current_addr);
                 free(binary_buffer);
+                firmware_update_busy = false;
                 return false;
             }
             
@@ -239,6 +254,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
             if (verify_buffer == NULL) {
                 SYS_CONSOLE_PRINT("firmware_update: failed to allocate verify buffer\r\n");
                 free(binary_buffer);
+                firmware_update_busy = false;
                 return false;
             }
             
@@ -274,6 +290,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         if (!chunk_verified) {
             SYS_CONSOLE_PRINT("firmware_update: failed to write and verify chunk after %lu retries\r\n", max_retries);
             free(binary_buffer);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -283,6 +300,8 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         total_copied += chunk_size;
         
         SYS_CONSOLE_PRINT("firmware_update: copied and verified %lu bytes, %lu remaining\r\n", chunk_size, remaining);
+
+        vTaskDelay(1); // yield to other tasks
     }
     
     free(binary_buffer);
@@ -294,11 +313,13 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     // We need to erase the info sector again before updating the valid flag
     if (!flash_erase_sector(FLASH_INFO_OFFSET)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to erase info sector for valid flag update\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
     if (!flash_write(FLASH_INFO_OFFSET, (uint8_t*)&fw_info, sizeof(fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to update firmware info as valid\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -306,6 +327,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     firmware_info_t final_verify_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&final_verify_fw_info, sizeof(final_verify_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read back final firmware info\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -313,10 +335,12 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     
     if (!final_verify_fw_info.valid) {
         SYS_CONSOLE_PRINT("firmware_update: WARNING - valid flag was not set correctly!\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
     SYS_CONSOLE_PRINT("firmware_update: copy completed successfully with verification\r\n");
+    firmware_update_busy = false;
     return true;
 }
 
@@ -333,11 +357,14 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
         SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
         return false;
     }
+
+    firmware_update_busy = true;
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&external_fw_info, sizeof(external_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read external firmware info\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -350,6 +377,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     // Check if the firmware info indicates a valid copy
     if (!external_fw_info.valid) {
         SYS_CONSOLE_PRINT("firmware_update: external firmware info indicates invalid/corrupted copy\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -357,6 +385,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     char internal_app_name[APPLICATION_NAME_SIZE];
     if (!NVM_Read((uint32_t*)internal_app_name, APPLICATION_NAME_SIZE, APPLICATION_NAME_ADDRESS)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read internal app name\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -364,6 +393,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     char internal_app_version[APPLICATION_VERSION_SIZE];
     if (!NVM_Read((uint32_t*)internal_app_version, APPLICATION_VERSION_SIZE, APPLICATION_VERSION_ADDRESS)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read internal app version\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -373,12 +403,14 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     // Compare application name
     if (strncmp(internal_app_name, external_fw_info.app_name, APPLICATION_NAME_SIZE) != 0) {
         SYS_CONSOLE_PRINT("firmware_update: app name mismatch\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
     // Compare application version
     if (strncmp(internal_app_version, external_fw_info.app_version, APPLICATION_VERSION_SIZE) != 0) {
         SYS_CONSOLE_PRINT("firmware_update: app version mismatch\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -389,6 +421,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     if (external_fw_info.file_size != expected_binary_size) {
         SYS_CONSOLE_PRINT("firmware_update: file size mismatch - expected: %lu, got: %lu\r\n", 
                          expected_binary_size, external_fw_info.file_size);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -399,6 +432,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
         SYS_CONSOLE_PRINT("firmware_update: failed to allocate comparison buffers\r\n");
         if (internal_buffer) free(internal_buffer);
         if (external_buffer) free(external_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -419,6 +453,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
             SYS_CONSOLE_PRINT("firmware_update: failed to read internal binary chunk at 0x%08lx\r\n", current_addr);
             free(internal_buffer);
             free(external_buffer);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -427,6 +462,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
             SYS_CONSOLE_PRINT("firmware_update: failed to read external binary chunk at 0x%08lx\r\n", external_addr);
             free(internal_buffer);
             free(external_buffer);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -475,12 +511,15 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
         if (bytes_compared % 16384 == 0) { // Show progress every 16KB
             SYS_CONSOLE_PRINT("firmware_update: compared %lu bytes, %lu remaining\r\n", bytes_compared, remaining);
         }
+
+        vTaskDelay(1); // yield to other tasks
     }
     
     if (data_mismatch) {
         SYS_CONSOLE_PRINT("firmware_update: byte-by-byte comparison FAILED\r\n");
         free(internal_buffer);
         free(external_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -502,6 +541,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
             SYS_CONSOLE_PRINT("firmware_update: failed to read internal binary chunk for checksum\r\n");
             free(internal_buffer);
             free(external_buffer);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -527,6 +567,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
                          internal_checksum, external_fw_info.checksum);
         free(internal_buffer);
         free(external_buffer);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -536,6 +577,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
     free(external_buffer);
     
     SYS_CONSOLE_PRINT("firmware_update: comparison completed successfully - all data and checksums match\r\n");
+    firmware_update_busy = false;
     return true;
 }
 
@@ -712,7 +754,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     if (!flash_is_initialized()) {
         SYS_CONSOLE_PRINT("firmware_update: external flash not initialized\r\n");
         return false;
-    }
+    }    
     
     // Check if we have network connectivity
     if (!ethernet_is_ready()) {
@@ -726,6 +768,8 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         SYS_CONSOLE_PRINT("firmware_update: failed to open HTTP stream\r\n");
         return false;
     }
+
+    firmware_update_busy = true;
     
     // Prepare firmware info structure (initially with valid=false)
     firmware_info_t fw_info;
@@ -741,6 +785,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     if (!flash_erase_sector(FLASH_INFO_OFFSET)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to erase info sector\r\n");
         http_stream_close(&stream);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -748,6 +793,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     if (!flash_write(FLASH_INFO_OFFSET, (uint8_t*)&fw_info, sizeof(fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to write firmware info\r\n");
         http_stream_close(&stream);
+        firmware_update_busy = false;
         return false;
     }
     
@@ -764,8 +810,11 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         if (!flash_erase_sector(sector_addr)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to erase sector %lu\r\n", sector);
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
+
+        vTaskDelay(1); // yield to other tasks
     }
     
     SYS_CONSOLE_PRINT("firmware_update: all sectors erased successfully\r\n");
@@ -790,6 +839,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
                                                &download_buffer_used, &flash_write_address)) {
                 SYS_CONSOLE_PRINT("firmware_update: failed to flush buffer to flash\r\n");
                 http_stream_close(&stream);
+                firmware_update_busy = false;
                 return false;
             }
             available_space = download_buffer_size; // Buffer is now empty
@@ -802,6 +852,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         if (bytes_read < 0) {
             SYS_CONSOLE_PRINT("firmware_update: error reading from HTTP stream\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -855,6 +906,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
                                            &download_buffer_used, &flash_write_address)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to flush buffer to flash\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }        
         
@@ -863,6 +915,8 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
             SYS_CONSOLE_PRINT("firmware_update: reached expected binary size\r\n");
             break;
         }
+
+        vTaskDelay(1); // yield to other tasks
     }
     
     // Flush any remaining data in the buffer
@@ -880,6 +934,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         if (!flash_write(flash_write_address, download_buffer, download_buffer_used)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to write final buffered data to flash\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -888,12 +943,14 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         if (download_buffer_used > download_buffer_size) {
             SYS_CONSOLE_PRINT("firmware_update: final data too large for verification buffer\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
         
         if (!flash_read(flash_write_address, verify_buffer, download_buffer_used)) {
             SYS_CONSOLE_PRINT("firmware_update: failed to read back final data for verification\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -911,6 +968,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         if (!verify_match) {
             SYS_CONSOLE_PRINT("firmware_update: final data verification failed\r\n");
             http_stream_close(&stream);
+            firmware_update_busy = false;
             return false;
         }
         
@@ -929,6 +987,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     // Read the name from the downloaded binary at offset 4128
     if (!flash_read(FLASH_BINARY_OFFSET + 4128, (uint8_t*)extracted_name, APPLICATION_NAME_SIZE)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read name from downloaded binary\r\n");
+        firmware_update_busy = false;
         return false;
     }
     extracted_name[APPLICATION_NAME_SIZE - 1] = '\0'; // Ensure null termination
@@ -936,6 +995,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     // Read the version from the downloaded binary at offset 4160
     if (!flash_read(FLASH_BINARY_OFFSET + 4160, (uint8_t*)extracted_version, APPLICATION_VERSION_SIZE)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read version from downloaded binary\r\n");
+        firmware_update_busy = false;
         return false;
     }
     extracted_version[APPLICATION_VERSION_SIZE - 1] = '\0'; // Ensure null termination
@@ -954,11 +1014,13 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     // Erase the info sector again before updating the valid flag
     if (!flash_erase_sector(FLASH_INFO_OFFSET)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to erase info sector for valid flag update\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
     if (!flash_write(FLASH_INFO_OFFSET, (uint8_t*)&fw_info, sizeof(fw_info))) {
-        SYS_CONSOLE_PRINT("firmware_update: failed to update firmware info as valid\r\n");
+        SYS_CONSOLE_PRINT("firmware_update: failed to update firmware info as valid\r\n");  
+        firmware_update_busy = false;
         return false;
     }
     
@@ -966,6 +1028,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     firmware_info_t final_verify_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&final_verify_fw_info, sizeof(final_verify_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read back final firmware info\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
@@ -973,10 +1036,12 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     
     if (!final_verify_fw_info.valid) {
         SYS_CONSOLE_PRINT("firmware_update: WARNING - valid flag was not set correctly!\r\n");
+        firmware_update_busy = false;
         return false;
     }
     
     SYS_CONSOLE_PRINT("firmware_update: download and verification completed successfully\r\n");
+    firmware_update_busy = false;
     return true;
 }
 
@@ -1030,6 +1095,10 @@ char * firmware_update_get_external_name(void) {
     if (!flash_is_initialized()) {
         return "none";
     }
+
+    if(firmware_update_busy){
+        return app_name;
+    }
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
@@ -1063,6 +1132,10 @@ char * firmware_update_get_external_version(void) {
     if (!flash_is_initialized()) {
         return "none";
     }
+
+    if(firmware_update_busy){
+        return app_version;
+    }
     
     // Read firmware info from external flash
     firmware_info_t external_fw_info;
@@ -1090,9 +1163,15 @@ char * firmware_update_get_external_version(void) {
 }
 
 bool firmware_update_get_external_valid(void) {
+    static bool external_valid = false;
+
     // Check if flash is initialized
     if (!flash_is_initialized()) {
         return false;
+    }
+
+    if(firmware_update_busy){
+        return external_valid;
     }
     
     // Read firmware info from external flash

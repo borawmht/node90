@@ -2,6 +2,17 @@
 
 Node90 Firmware
 
+# 1.4.1
+- add task yields during firmware update processes
+- increase app stack depth 2KB to 4KB
+- increase FreRTOS heap 44000 to 48000
+
+# 1.4.0
+- fix create_realease.py hex_to_bin start and end memory addresses for larger bootloader size
+- add node90_latest.bin during create_realease.py
+- fix storage_getStr() null terminator
+- add version and ota resources
+
 # 1.3.0
 - change bootloader size to 32KB
 

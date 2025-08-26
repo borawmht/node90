@@ -107,13 +107,31 @@ def test_error_rate(ip_address, path, timeout=1, repeats=10):
 if __name__ == "__main__":
     # Test single request first
     node_ip = '192.168.1.229'
-    print("Testing single request...")    
-    result = get(node_ip, '/inx/network', 5)    
+    # print("Testing single request...")    
+    # result = get(node_ip, '/inx/network', 5)    
+    # print(f"Result: {result}")
+    # result = "confirmed" if put(node_ip, '/inx/network', 'tag', '3', confirm=True) else "not confirmed"
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/network', 5)
+    # print(f"Result: {result}")
+
+    # result = get(node_ip, '/inx/version', 5)
+    # print(f"Result: {result}")
+
+    result = put(node_ip, '/inx/ota', 'bin_url', 'http://192.168.1.65:8080/release/node90_latest.bin', confirm=True)
     print(f"Result: {result}")
-    result = "confirmed" if put(node_ip, '/inx/network', 'tag', '3', confirm=True) else "not confirmed"
+    result = get(node_ip, '/inx/ota', 5)
     print(f"Result: {result}")
-    result = get(node_ip, '/inx/network', 5)
+    #result = put(node_ip, '/inx/ota', 'start', 'download', confirm=True)
+    result = put(node_ip, '/inx/ota', 'start', 'true', confirm=True)
     print(f"Result: {result}")
+    time.sleep(1)
+    result = get(node_ip, '/inx/ota', 5)
+    print(f"Result: {result}")
+    # result = put(node_ip, '/inx/ota', 'start', 'update', confirm=True)
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/ota', 5)
+    # print(f"Result: {result}")
     
     # Then test error rate
     # print("\nTesting error rate...")

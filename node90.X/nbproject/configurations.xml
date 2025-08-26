@@ -310,6 +310,8 @@
       </logicalFolder>
       <logicalFolder name="resources" displayName="resources" projectFiles="true">
         <itemPath>../src/resources/network.h</itemPath>
+        <itemPath>../src/resources/version.h</itemPath>
+        <itemPath>../src/resources/ota.h</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/utf8_p.h</itemPath>
@@ -974,6 +976,8 @@
       </logicalFolder>
       <logicalFolder name="resources" displayName="resources" projectFiles="true">
         <itemPath>../src/resources/network.c</itemPath>
+        <itemPath>../src/resources/version.c</itemPath>
+        <itemPath>../src/resources/ota.c</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/cborencoder_float.c</itemPath>

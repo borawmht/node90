@@ -97,8 +97,9 @@ class ReleaseManager:
         print(f"Converting {hex_file} to binary...")
         ih = intelhex.IntelHex(hex_file)
         
-        # Define the address range for application (0x9D004000 - 0x9D07FFFF)
-        start = 0x1D004000
+        # Define the address range for application 
+        # (0x9D008000 - 0x9D07FFFF) which is 0x1D008000 - 0x1D07FFFF
+        start = 0x1D008000
         end = 0x1D07FFFF
         size = end - start + 1
         
@@ -109,7 +110,7 @@ class ReleaseManager:
         with open(bin_file, 'wb') as f:
             f.write(binary_data)
         
-        print(f"✓ Binary created: {bin_file}")
+        print(f"✓ Binary created: {bin_file}")        
     
     def create_release(self, bump_type="patch"):
         """Create a release"""
@@ -145,6 +146,12 @@ class ReleaseManager:
             self.hex_to_bin(app_hex_src, app_bin_dst)
             release_files.append(app_bin_dst)
             print(f"✓ Application binary: {app_bin_dst}")
+            # Also save as node90_latest.bin overwrite the previous one
+            if os.path.exists(f"{self.release_dir}/node90_latest.bin"):
+                os.remove(f"{self.release_dir}/node90_latest.bin")
+            shutil.copy2(app_bin_dst, f"{self.release_dir}/node90_latest.bin")
+            print(f"✓ Application binary: {self.release_dir}/node90_latest.bin")
+            release_files.append(f"{self.release_dir}/node90_latest.bin")
         else:
             print(f"✗ Application hex file not found: {app_hex_src}")
             return False

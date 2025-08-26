@@ -42,6 +42,7 @@ uint16_t app_test_counter = 0;
 bool app_firmware_download_request = false;
 bool app_firmware_download_running = false;
 char app_firmware_download_url[256];
+bool app_firmware_update_request = false;
 
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
@@ -106,7 +107,11 @@ void APP_Tasks ( void ){
                 ethernet_linkUp() && ethernet_hasIP()){
                 app_firmware_download_running = true;
                 app_firmware_download_request = false;
-                firmware_update_download_binary_to_external_flash(app_firmware_download_url);
+                bool result = firmware_update_download_binary_to_external_flash(app_firmware_download_url);
+                if(result && app_firmware_update_request && firmware_update_get_external_valid()){
+                    trigger_pattern = TRIGGER_UPDATE;
+                    SYS_RESET_SoftwareReset();
+                }
             }
             break;
         }
@@ -119,7 +124,7 @@ void APP_Tasks ( void ){
 }
 
 
-void app_start_firmware_download(char* url)
+bool app_start_firmware_download(char* url, bool update)
 {
     if(app_firmware_download_request == false && app_firmware_download_running == false){
         if(url == NULL){
@@ -131,6 +136,13 @@ void app_start_firmware_download(char* url)
         else{
             strncpy(app_firmware_download_url, url, 256);
         }
+        app_firmware_update_request = update;
         app_firmware_download_request = true;        
+        return true;
     }
+    return false;
+}
+
+bool app_firmware_downloading(void){
+    return app_firmware_download_running;
 }

@@ -5,6 +5,8 @@
 #define _PROJECT_VERSION_H
 
 #define PROJECT_NAME "node90"
-#define PROJECT_VERSION "1.3.0"
+#define PROJECT_VERSION "1.4.1"
+#define PROJECT_BUILD_DATE __DATE__
+#define PROJECT_BUILD_TIME __TIME__
 
 #endif
