@@ -74,6 +74,8 @@ br_ssl_client_context cc;
 br_sslio_context sslio;
 br_x509_custom_context custom_x509_ctx;
 
+uint32_t http_stream_open_count = 0;
+
 // Helper function to parse HTTP response status
 bool parse_http_response_status(const char *response, int *status_code) {
     if (!response || !status_code) return false;
@@ -804,10 +806,10 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
                                 buffer_size - *received - 1);
                 if (read > 0) {
                     *received += read;
-                    SYS_CONSOLE_PRINT("https_client: received chunk %d bytes, total %d\r\n", read, *received);
+                    // SYS_CONSOLE_PRINT("https_client: received chunk %d bytes, total %d\r\n", read, *received);
                     
                     if (*received >= buffer_size - 1) {
-                        SYS_CONSOLE_PRINT("https_client: buffer full, stopping\r\n");
+                        // SYS_CONSOLE_PRINT("https_client: buffer full, stopping\r\n");
                         break; // Buffer full
                     }
                     
@@ -864,10 +866,10 @@ static bool http_client_read_data(http_client_connection_t *conn, uint8_t *respo
                 //     }
                 // }
                 
-                SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
+                // SYS_CONSOLE_PRINT("http_client: received chunk %d bytes, total %d\r\n", read, *received);
                 
                 if (*received >= buffer_size - 1) {
-                    SYS_CONSOLE_PRINT("http_client: buffer full, stopping\r\n");
+                    // SYS_CONSOLE_PRINT("http_client: buffer full, stopping\r\n");
                     break; // Buffer full
                 }
                 
@@ -1168,6 +1170,7 @@ bool http_stream_open(const char *url, http_stream_t *stream) {
     
     stream->headers_received = true;
     SYS_CONSOLE_PRINT("http_stream: stream opened successfully\r\n");
+    http_stream_open_count++;
     
     return true;
 }
@@ -1224,8 +1227,8 @@ int http_stream_read(http_stream_t *stream, uint8_t *buffer, size_t buffer_size)
                 stream->total_received += network_received;
                 bytes_read += network_received;
                 
-                SYS_CONSOLE_PRINT("http_stream: read %lu bytes from network, total: %lu\r\n", 
-                                 network_received, stream->total_received);
+                // SYS_CONSOLE_PRINT("http_stream: read %lu bytes from network, total: %lu\r\n", 
+                //                  network_received, stream->total_received);
                 
                 // Check if download is complete
                 if (stream->content_length > 0 && stream->total_received >= stream->content_length) {
@@ -1254,8 +1257,12 @@ int http_stream_read(http_stream_t *stream, uint8_t *buffer, size_t buffer_size)
 // Close streaming connection
 void http_stream_close(http_stream_t *stream) {
     if (stream) {
+        http_stream_open_count--;
         http_client_close_connection(&stream->conn);
         SYS_CONSOLE_PRINT("http_stream: stream closed\r\n");
     }
 }
 
+bool http_stream_get_open(void){
+    return http_stream_open_count > 0;
+}

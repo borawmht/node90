@@ -218,17 +218,22 @@ bool flash_write(uint32_t address, const uint8_t *data, uint16_t length) {
 }
 
 bool flash_erase_sector(uint32_t address) {
+    // SYS_CONSOLE_PRINT("flash: erasing sector: start\r\n");
+
     if (!flash_is_initialized()) {
         SYS_CONSOLE_PRINT("flash: erase sector failed - not initialized\r\n");
         return false;
     }
     
+    // SYS_CONSOLE_PRINT("flash: erasing sector: init ok\r\n");
+
     // Acquire SPI2 for flash use
     if (!spi_coordinator_acquire(SPI_DEVICE_FLASH)) {
         SYS_CONSOLE_PRINT("flash: failed to acquire SPI2\r\n");
         return false;
     }
     
+    // SYS_CONSOLE_PRINT("flash: erasing sector: aquire ok\r\n");
     // SYS_CONSOLE_PRINT("flash: erasing sector at 0x%08lx\r\n", address);
     
     // Perform sector erase (4KB sectors)
@@ -237,16 +242,29 @@ bool flash_erase_sector(uint32_t address) {
         spi_coordinator_release(); // Release on error
         return false;
     }
+
+    // SYS_CONSOLE_PRINT("flash: erasing sector: erase ok\r\n");
     
     // Wait for erase to complete
+    uint32_t timeout = 100;
     while (DRV_SST26_TransferStatusGet(flash_handle) == DRV_SST26_TRANSFER_BUSY) {
         // Wait for completion
+        vTaskDelay(1); // yield to other tasks
+        timeout--;
+        if (timeout == 0) {
+            SYS_CONSOLE_PRINT("flash: sector erase timeout\r\n"); 
+            break;          
+        }
     }
+
+    // SYS_CONSOLE_PRINT("flash: erasing sector: wait ok\r\n");
     
     bool success = (DRV_SST26_TransferStatusGet(flash_handle) == DRV_SST26_TRANSFER_COMPLETED);
     
     // Release SPI2
     spi_coordinator_release();
+
+    // SYS_CONSOLE_PRINT("flash: erasing sector: release ok\r\n");
     
     if (success) {
         // SYS_CONSOLE_PRINT("flash: sector erase completed successfully\r\n");

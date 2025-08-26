@@ -464,6 +464,8 @@ void net_checksum_calculate(uint8_t *data, int length)
 }
 
 // Send CoAP response as raw packet
+coap_packet_t coap_response_packet;
+uint8_t coap_response_buffer[COAP_MAX_PAYLOAD_SIZE];
 bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packet_info, 
                               const coap_message_t *response) {
     if (packet_info == NULL || response == NULL) {
@@ -471,7 +473,8 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     }
     
     // Build CoAP message
-    uint8_t coap_buffer[COAP_MAX_PAYLOAD_SIZE];
+    //uint8_t coap_buffer[COAP_MAX_PAYLOAD_SIZE];
+    uint8_t *coap_buffer = &coap_response_buffer[0];
     uint16_t coap_length;
     if (!coap_build_message(response, coap_buffer, &coap_length)) {
         SYS_CONSOLE_PRINT("coap: build failed\r\n");
@@ -481,39 +484,41 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     // SYS_CONSOLE_PRINT("coap: response built, len: %d\r\n", coap_length);
     
     // Create packet using structs for clarity
-    coap_packet_t packet = {0};
+    // coap_packet_t packet = {0};
+    coap_packet_t *packet = &coap_response_packet;
+    memset(packet, 0, sizeof(coap_packet_t));
     
     // Fill Ethernet header (will be filled by ethernet_send_to, but we can set ethertype)
-    memcpy(packet.eth.dst_mac,src_mac,6);
-    memcpy(packet.eth.src_mac,ethernet_getMACAddress(),6);
-    packet.eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
+    memcpy(packet->eth.dst_mac,src_mac,6);
+    memcpy(packet->eth.src_mac,ethernet_getMACAddress(),6);
+    packet->eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
     
     // Fill IP header
-    packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
-    packet.ip.tos = 0x00;          // Type of Service
-    packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    packet->ip.version_ihl = 0x45;  // Version 4, header length 5 words
+    packet->ip.tos = 0x00;          // Type of Service
+    packet->ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
     //packet.ip.identification = TCPIP_Helper_htons(0x1234);  // Identification
-    packet.ip.identification = TCPIP_Helper_htons(coap_ctx.message_id_counter++);  // Identification
-    packet.ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
-    packet.ip.ttl = 100;              // Time to Live
-    packet.ip.protocol = 17;         // Protocol (UDP)
-    packet.ip.checksum = 0;          // Will be calculated
-    memcpy(packet.ip.src_ip, packet_info->src_ip, 4);
-    memcpy(packet.ip.dst_ip, packet_info->dst_ip, 4);
+    packet->ip.identification = TCPIP_Helper_htons(coap_ctx.message_id_counter++);  // Identification
+    packet->ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
+    packet->ip.ttl = 100;              // Time to Live
+    packet->ip.protocol = 17;         // Protocol (UDP)
+    packet->ip.checksum = 0;          // Will be calculated
+    memcpy(packet->ip.src_ip, packet_info->src_ip, 4);
+    memcpy(packet->ip.dst_ip, packet_info->dst_ip, 4);
     
     // Fill UDP header
-    packet.udp.src_port = TCPIP_Helper_htons(packet_info->src_port);
-    packet.udp.dst_port = TCPIP_Helper_htons(packet_info->dst_port);
-    packet.udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
-    packet.udp.checksum = 0;  // Will be calculated
+    packet->udp.src_port = TCPIP_Helper_htons(packet_info->src_port);
+    packet->udp.dst_port = TCPIP_Helper_htons(packet_info->dst_port);
+    packet->udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
+    packet->udp.checksum = 0;  // Will be calculated
     
     // Copy CoAP payload
-    memcpy(packet.payload, coap_buffer, coap_length);
+    memcpy(packet->payload, coap_buffer, coap_length);
     
     // Calculate IP checksum
-    packet.ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t)));
+    packet->ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet->ip, sizeof(ip_header_t)));
 
-    net_checksum_calculate((uint8_t*)&packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    net_checksum_calculate((uint8_t*)packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
     // SYS_CONSOLE_PRINT("coap: ip.checksum: %04x\r\n", packet.ip.checksum);
     // SYS_CONSOLE_PRINT("coap: udp.checksum: %04x\r\n", packet.udp.checksum);
     
@@ -523,11 +528,11 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     // SYS_CONSOLE_PRINT("coap: packet created, total length: %d\r\n", sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
     
     // Send the packet (skip Ethernet header as it's filled by ethernet_send_to)
-    size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;
-    if (!ethernet_send((uint8_t*)&packet, packet_length)) {
+    size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;    
+    if (!ethernet_send((uint8_t*)packet, packet_length)) {
         SYS_CONSOLE_PRINT("coap: failed to send packet\r\n");
         return false;
-    }
+    }    
     
     // SYS_CONSOLE_PRINT("coap: response sent successfully\r\n");
     return true;

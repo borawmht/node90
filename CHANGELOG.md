@@ -2,6 +2,10 @@
 
 Node90 Firmware
 
+# 1.4.4
+- fix issue coap response during firmware update, disable ethernet_send if http_stream is open
+- revert app stack depth 4KB to 2KB and FreeRTOS heap 48000 to 44000
+
 # 1.4.3
 - add LED_STAT_Toggle() during firmware update
 - change WDTPS PS8192 8 seconds timeout
@@ -13,7 +17,7 @@ Node90 Firmware
 # 1.4.1
 - add task yields during firmware update processes
 - increase app stack depth 2KB to 4KB
-- increase FreRTOS heap 44000 to 48000
+- increase FreeRTOS heap 44000 to 48000
 
 # 1.4.0
 - fix create_realease.py hex_to_bin start and end memory addresses for larger bootloader size

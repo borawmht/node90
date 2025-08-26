@@ -30,6 +30,9 @@ typedef struct {
     bool valid;  // Indicates if binary was copied and verified successfully
 } firmware_info_t;
 
+firmware_info_t fw_info;
+firmware_info_t final_verify_fw_info;
+
 bool firmware_update_busy = false;
 
 // Add this debug function to help troubleshoot
@@ -162,7 +165,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     SYS_CONSOLE_PRINT("firmware_update: calculated checksum: 0x%08lx\r\n", checksum);
     
     // Prepare firmware info structure
-    firmware_info_t fw_info;
+    // firmware_info_t fw_info;
     memset(&fw_info, 0, sizeof(fw_info));  // Clear entire structure
     strncpy(fw_info.app_name, app_name, APPLICATION_NAME_SIZE - 1);
     strncpy(fw_info.app_version, app_version, APPLICATION_VERSION_SIZE - 1);
@@ -326,7 +329,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
     }
     
     // Verify the update was successful
-    firmware_info_t final_verify_fw_info;
+    // firmware_info_t final_verify_fw_info;
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&final_verify_fw_info, sizeof(final_verify_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read back final firmware info\r\n");
         firmware_update_busy = false;
@@ -608,8 +611,8 @@ static bool flush_download_buffer_to_flash(uint8_t *buffer, uint32_t buffer_size
     uint32_t bytes_to_write = complete_pages * 256;
     
     if (bytes_to_write > 0) {
-        SYS_CONSOLE_PRINT("firmware_update: flushing %lu bytes (%lu complete pages) to flash at 0x%08lx\r\n", 
-                         bytes_to_write, complete_pages, *flash_addr);
+        // SYS_CONSOLE_PRINT("firmware_update: flushing %lu bytes (%lu complete pages) to flash at 0x%08lx\r\n", 
+        //                  bytes_to_write, complete_pages, *flash_addr);
         
         // Write complete pages to flash
         if (!flash_write(*flash_addr, buffer, bytes_to_write)) {
@@ -645,7 +648,7 @@ static bool flush_download_buffer_to_flash(uint8_t *buffer, uint32_t buffer_size
             return false;
         }
         
-        SYS_CONSOLE_PRINT("firmware_update: buffered data verified successfully\r\n");
+        // SYS_CONSOLE_PRINT("firmware_update: buffered data verified successfully\r\n");
         
         // Move remaining data to the beginning of the buffer
         uint32_t remaining = *buffer_used - bytes_to_write;
@@ -750,6 +753,7 @@ static bool find_app_info_in_buffer(uint8_t *buffer, uint32_t buffer_size, uint3
     return true;
 }
 
+static http_stream_t stream;
 bool firmware_update_download_binary_to_external_flash(const char *url) {
     SYS_CONSOLE_PRINT("firmware_update: download binary to external flash from %s\r\n", url);
     
@@ -765,8 +769,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         return false;
     }
     
-    // Initialize streaming HTTP client
-    http_stream_t stream;
+    // Initialize streaming HTTP client    
     if (!http_stream_open(url, &stream)) {
         SYS_CONSOLE_PRINT("firmware_update: failed to open HTTP stream\r\n");
         return false;
@@ -775,7 +778,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
     firmware_update_busy = true;
     
     // Prepare firmware info structure (initially with valid=false)
-    firmware_info_t fw_info;
+    // firmware_info_t fw_info;
     memset(&fw_info, 0, sizeof(fw_info));
     strncpy(fw_info.app_name, "unassigned", APPLICATION_NAME_SIZE - 1);
     strncpy(fw_info.app_version, "unassigned", APPLICATION_VERSION_SIZE - 1);
@@ -871,27 +874,27 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         download_buffer_used += bytes_read;
         total_downloaded += bytes_read;
 
-        if(total_downloaded <= 0x1400){
-            for(int i=0; i<bytes_read; i++){
-                SYS_CONSOLE_PRINT("%c", download_buffer[buffer_offset+i]);
-            }
-            SYS_CONSOLE_PRINT("\r\n");
-        }
+        // if(total_downloaded <= 0x1400){
+        //     for(int i=0; i<bytes_read; i++){
+        //         SYS_CONSOLE_PRINT("%c", download_buffer[buffer_offset+i]);
+        //     }
+        //     SYS_CONSOLE_PRINT("\r\n");
+        // }
 
-        // find app_name and app_version
-        // Search for app info in the buffer if we haven't found it yet
-        static bool app_info_found = false;
-        static uint32_t found_name_offset = 0;
-        static uint32_t found_version_offset = 0;
-        uint32_t download_offset = total_downloaded - bytes_read;
+        // // find app_name and app_version
+        // // Search for app info in the buffer if we haven't found it yet
+        // static bool app_info_found = false;
+        // static uint32_t found_name_offset = 0;
+        // static uint32_t found_version_offset = 0;
+        // uint32_t download_offset = total_downloaded - bytes_read;
         
-        if (!app_info_found) { 
-            if (find_app_info_in_buffer(download_buffer, download_buffer_used, download_offset, &found_name_offset, &found_version_offset)) {
-                app_info_found = true;
-                SYS_CONSOLE_PRINT("firmware_update: app info found - name at %lu, version at %lu\r\n", 
-                                 found_name_offset, found_version_offset);
-            }
-        }
+        // if (!app_info_found) { 
+        //     if (find_app_info_in_buffer(download_buffer, download_buffer_used, download_offset, &found_name_offset, &found_version_offset)) {
+        //         app_info_found = true;
+        //         SYS_CONSOLE_PRINT("firmware_update: app info found - name at %lu, version at %lu\r\n", 
+        //                          found_name_offset, found_version_offset);
+        //     }
+        // }
         
         
         // Update checksum for the new data
@@ -902,8 +905,10 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
                        (checksum << 24);
         }
         
-        SYS_CONSOLE_PRINT("firmware_update: received %d bytes, buffer now has %lu bytes, total: %lu\r\n", 
-                         bytes_read, download_buffer_used, total_downloaded);
+        // SYS_CONSOLE_PRINT("firmware_update: received %d bytes, buffer now has %lu bytes, total: %lu\r\n", 
+        //                  bytes_read, download_buffer_used, total_downloaded);
+        SYS_CONSOLE_PRINT("firmware_update: received %d bytes, total: %lu\r\n", 
+            bytes_read, total_downloaded);
         
         // Try to flush buffer to flash if we have enough data for complete pages
         if (!flush_download_buffer_to_flash(download_buffer, download_buffer_size, 
@@ -1029,8 +1034,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
         return false;
     }
     
-    // Verify the update was successful
-    firmware_info_t final_verify_fw_info;
+    // Verify the update was successful    
     if (!flash_read(FLASH_INFO_OFFSET, (uint8_t*)&final_verify_fw_info, sizeof(final_verify_fw_info))) {
         SYS_CONSOLE_PRINT("firmware_update: failed to read back final firmware info\r\n");
         firmware_update_busy = false;
@@ -1299,4 +1303,8 @@ bool firmware_update_get_internal_latest(void) {
     
     // Return true if internal version is greater than or equal to external
     return (comparison >= 0);
+}
+
+bool firmware_update_get_busy(void) {
+    return firmware_update_busy;
 }

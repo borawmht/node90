@@ -33,5 +33,6 @@ bool firmware_update_get_internal_latest(void);
 char * firmware_update_get_external_name(void);
 char * firmware_update_get_external_version(void);
 bool firmware_update_get_external_valid(void);
+bool firmware_update_get_busy(void);
 
 #endif // FIRMWARE_UPDATE_H

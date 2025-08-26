@@ -8,6 +8,7 @@
 #include "ethernet.h"
 #include "coap.h"
 #include "http.h"
+#include "http.h"
 #include "definitions.h"
 #include "config/default/library/tcpip/src/tcpip_private.h"
 #include "third_party/rtos/FreeRTOS/Source/include/queue.h"
@@ -229,13 +230,18 @@ bool ethernet_linkUp(void){
 void ethernet_tx_packet_ack_callback(TCPIP_MAC_PACKET* pPkt, const void* fParam){
     // Packet transmission completed
     // SYS_CONSOLE_PRINT("ethernet: tx packet ack\r\n");    
-    (void)pPkt;
+    TCPIP_PKT_PacketFree(pPkt); // we are responsible for freeing the packet
+    // (void)pPkt;    
     (void)fParam;    
 }
 
 bool ethernet_send(const uint8_t * buf, uint32_t len){
     bool ret = false;
     if(!link_up) return false;
+    if(http_stream_get_open()){ // debug: disable sending packets while http stream is open
+        SYS_CONSOLE_PRINT("ethernet: http stream is open, skipping packet send\r\n");
+        return false;
+    }
     
     // Get the MAC handle directly from the network interface    
     TCPIP_MAC_HANDLE hMac = TCPIP_STACK_NetToMAC(netH);    

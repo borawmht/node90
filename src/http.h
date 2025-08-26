@@ -118,6 +118,8 @@ int http_stream_read(http_stream_t *stream, uint8_t *buffer, size_t buffer_size)
 // Close streaming connection
 void http_stream_close(http_stream_t *stream);
 
+bool http_stream_get_open(void);
+
 // Helper functions for URL parsing and network operations
 bool parse_url(const char *url, char *hostname, uint16_t *port, char *path, bool *is_https);
 bool resolve_hostname(const char *hostname, IPV4_ADDR *ip_addr);

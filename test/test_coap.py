@@ -106,7 +106,7 @@ def test_error_rate(ip_address, path, timeout=1, repeats=10):
 
 if __name__ == "__main__":
     # Test single request first
-    node_ip = '192.168.1.229'
+    node_ip = '192.168.1.148'
     # print("Testing single request...")    
     # result = get(node_ip, '/inx/network', 5)    
     # print(f"Result: {result}")
@@ -127,6 +127,9 @@ if __name__ == "__main__":
     print(f"Result: {result}")
     time.sleep(1)
     result = get(node_ip, '/inx/ota', 5)
+    # result = get(node_ip, '/inx/version', 5)
+    # result = get(node_ip, '/inx/network', 5)
+    # result = put(node_ip, '/inx/event', 'on', '0', confirm=True)
     print(f"Result: {result}")
     try:
         downloading = True if result['e']['downloading']=='true' else False
