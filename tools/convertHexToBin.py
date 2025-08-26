@@ -2,7 +2,7 @@ import sys
 from intelhex import IntelHex
 
 filename = 'node90.X.production.hex'
-start_address = '1D004000'
+start_address = '1D008000'
 end_address = '1D07FFFF'
 ih = IntelHex()
 
