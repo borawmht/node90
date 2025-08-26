@@ -5,6 +5,6 @@
 #define _PROJECT_VERSION_H
 
 #define PROJECT_NAME "node90_bootloader"
-#define PROJECT_VERSION "1.1.1"
+#define PROJECT_VERSION "1.1.2"
 
 #endif

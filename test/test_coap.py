@@ -122,12 +122,21 @@ if __name__ == "__main__":
     print(f"Result: {result}")
     result = get(node_ip, '/inx/ota', 5)
     print(f"Result: {result}")
-    #result = put(node_ip, '/inx/ota', 'start', 'download', confirm=True)
-    result = put(node_ip, '/inx/ota', 'start', 'true', confirm=True)
+    result = put(node_ip, '/inx/ota', 'start', 'download', confirm=True)
+    # result = put(node_ip, '/inx/ota', 'start', 'true', confirm=True)
     print(f"Result: {result}")
     time.sleep(1)
     result = get(node_ip, '/inx/ota', 5)
     print(f"Result: {result}")
+    try:
+        downloading = True if result['e']['downloading']=='true' else False
+        while downloading:
+            time.sleep(3)
+            result = get(node_ip, '/inx/ota', 5)            
+            downloading = True if result['e']['downloading']=='true' else False
+    except Exception as e:
+        print(f"Exception: {e}")
+
     # result = put(node_ip, '/inx/ota', 'start', 'update', confirm=True)
     # print(f"Result: {result}")
     # result = get(node_ip, '/inx/ota', 5)

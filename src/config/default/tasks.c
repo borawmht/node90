@@ -91,6 +91,7 @@ static void lSYS_CMD_Tasks(  void *pvParameters  )
     while(true)
     {
         (void) SYS_CMD_Tasks();
+        WDTCONbits.WDTCLR = 1; // clear the watchdog
         vTaskDelay(10U / portTICK_PERIOD_MS);
     }
 }

@@ -70,7 +70,7 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
    called if a task stack overflow is detected.  Note the system/interrupt
    stack is not checked. */
    SYS_CONSOLE_PRINT("*** vApplicationStackOverflowHook: %s ***\r\n", pcTaskName);   
-   taskDISABLE_INTERRUPTS();   
+   // taskDISABLE_INTERRUPTS();   
    for( ;; )
    {
        /* Do Nothing */
@@ -117,7 +117,7 @@ void vApplicationMallocFailedHook( void )
       to query the size of free heap space that remains (although it does not
       provide information on how the remaining heap might be fragmented). */
    SYS_CONSOLE_PRINT("*** vApplicationMallocFailedHook ***\r\n");   
-   taskDISABLE_INTERRUPTS();   
+   // taskDISABLE_INTERRUPTS();   
    for( ;; )
    {
        /* Do Nothing */

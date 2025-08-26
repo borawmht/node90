@@ -237,6 +237,8 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
             free(binary_buffer);
             return false;
         }
+
+        LED_STAT_Toggle();
     }
     
     SYS_CONSOLE_PRINT("firmware_update: all sectors erased successfully\r\n");
@@ -318,6 +320,8 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         total_copied += chunk_size;
         
         SYS_CONSOLE_PRINT("firmware_update: copied and verified %u bytes, %u remaining\r\n", chunk_size, remaining);
+
+        LED_STAT_Toggle();
     }
     
     free(binary_buffer);
@@ -427,6 +431,8 @@ bool firmware_update_copy_external_flash_to_internal_flash(void){
         
         external_addr += chunk_size;
         remaining -= chunk_size;
+
+        LED_STAT_Toggle();
     }
     
     SYS_CONSOLE_PRINT("firmware_update: calculated external checksum: 0x%08x\r\n", external_checksum);
@@ -479,6 +485,8 @@ bool firmware_update_copy_external_flash_to_internal_flash(void){
         }
         
         erase_addr += NVM_FLASH_PAGESIZE;
+
+        LED_STAT_Toggle();
     }
     
     SYS_CONSOLE_PRINT("firmware_update: all pages erased successfully\r\n");
@@ -574,6 +582,8 @@ bool firmware_update_copy_external_flash_to_internal_flash(void){
         total_copied += chunk_size;
         
         SYS_CONSOLE_PRINT("firmware_update: copied and verified %u bytes, %u remaining\r\n", chunk_size, remaining);
+
+        LED_STAT_Toggle();
     }
     
     free(binary_buffer);
@@ -612,6 +622,8 @@ bool firmware_update_copy_external_flash_to_internal_flash(void){
         
         verify_addr += chunk_size;
         remaining -= chunk_size;
+
+        LED_STAT_Toggle();
     }
     
     free(verify_buffer);
@@ -781,6 +793,8 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
         if (bytes_compared % 16384 == 0) { // Show progress every 16KB
             SYS_CONSOLE_PRINT("firmware_update: compared %u bytes, %u remaining\r\n", bytes_compared, remaining);
         }
+
+        LED_STAT_Toggle();
     }
     
     if (data_mismatch) {
@@ -821,6 +835,8 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
         
         current_addr += chunk_size;
         remaining -= chunk_size;
+
+        LED_STAT_Toggle();
     }
     
     SYS_CONSOLE_PRINT("firmware_update: internal checksum: 0x%08x\r\n", internal_checksum);

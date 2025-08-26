@@ -215,6 +215,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
             return false;
         }
 
+        LED_STAT_Toggle();
         vTaskDelay(1); // yield to other tasks
     }
     
@@ -301,6 +302,7 @@ bool firmware_update_copy_internal_flash_to_external_flash(void){
         
         SYS_CONSOLE_PRINT("firmware_update: copied and verified %lu bytes, %lu remaining\r\n", chunk_size, remaining);
 
+        LED_STAT_Toggle();
         vTaskDelay(1); // yield to other tasks
     }
     
@@ -512,6 +514,7 @@ bool firmware_update_compare_internal_flash_to_external_flash(void){
             SYS_CONSOLE_PRINT("firmware_update: compared %lu bytes, %lu remaining\r\n", bytes_compared, remaining);
         }
 
+        LED_STAT_Toggle();
         vTaskDelay(1); // yield to other tasks
     }
     
@@ -814,6 +817,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
             return false;
         }
 
+        LED_STAT_Toggle();
         vTaskDelay(1); // yield to other tasks
     }
     
@@ -916,6 +920,7 @@ bool firmware_update_download_binary_to_external_flash(const char *url) {
             break;
         }
 
+        LED_STAT_Toggle();
         vTaskDelay(1); // yield to other tasks
     }
     

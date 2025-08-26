@@ -51,10 +51,11 @@ void check_reset_source(void) {
         // RCONbits.SWR = 0;  // Clear the bit        
     }
     
-    // else if (RCONbits.WDT) {
-    //     printf("Watchdog Timer Reset\r\n");
-    //     RCONbits.WDT = 0;  // Clear the bit
-    // }
+    else if (RCONbits.WDTO) {
+        printf("Watchdog Timeout Reset\r\n");
+//         RCONbits.WDTO = 0;  // Clear the bit
+        trigger_pattern = 0; // clear the trigger pattern
+    }
     
     else if (RCONbits.EXTR) {
         printf("External Reset\r\n");
@@ -72,6 +73,8 @@ void check_reset_source(void) {
     RCONbits.SWR = 0;  // Clear the bit
     RCONbits.EXTR = 0;  // Clear the bit
     RCONbits.POR = 0;  // Clear the bit
+    RCONbits.WDTO = 0;
+    
 }
 
 bool check_application_valid(void) {

@@ -2,6 +2,11 @@
 
 Node90 Firmware
 
+# 1.4.3
+- add LED_STAT_Toggle() during firmware update
+- change WDTPS PS8192 8 seconds timeout
+- remove disable interrupts in freertos_hooks
+
 # 1.4.2
 - fix binary size +1
 

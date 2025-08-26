@@ -70,7 +70,7 @@
 #pragma config POSCMOD =    OFF
 #pragma config OSCIOFNC =   OFF
 #pragma config FCKSM =      CSDCMD
-#pragma config WDTPS =      PS1048576
+#pragma config WDTPS =      PS8192
 #pragma config FWDTEN =     OFF
 
 
@@ -549,6 +549,9 @@ void SYS_Initialize ( void* data )
 
 
     EVIC_Initialize();
+
+    WDTCONbits.WDTCLR = 1; // clear the watchdog    
+    WDTCONbits.ON = 1; // enable the watchdog  
 
     /* Enable global interrupts */
     (void)__builtin_enable_interrupts();

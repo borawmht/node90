@@ -69,7 +69,7 @@
 #pragma config POSCMOD =    OFF
 #pragma config OSCIOFNC =   OFF
 #pragma config FCKSM =      CSDCMD
-#pragma config WDTPS =      PS1048576
+#pragma config WDTPS =      PS8192
 #pragma config FWDTEN =     OFF
 
 

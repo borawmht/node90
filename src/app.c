@@ -108,6 +108,7 @@ void APP_Tasks ( void ){
                 app_firmware_download_running = true;
                 app_firmware_download_request = false;
                 bool result = firmware_update_download_binary_to_external_flash(app_firmware_download_url);
+                app_firmware_download_running = false;
                 if(result && app_firmware_update_request && firmware_update_get_external_valid()){
                     trigger_pattern = TRIGGER_UPDATE;
                     SYS_RESET_SoftwareReset();
