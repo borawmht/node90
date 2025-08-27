@@ -15,5 +15,6 @@ void sense_init(void);
 uint16_t sense_get_actuator_current(uint8_t channel);
 uint16_t sense_get_actuator_voltage(uint8_t channel);
 uint16_t sense_get_actuator_power(uint8_t channel);
+uint16_t sense_get_sensor_voltage(uint8_t channel);
 
 #endif

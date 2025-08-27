@@ -313,6 +313,7 @@
         <itemPath>../src/resources/version.h</itemPath>
         <itemPath>../src/resources/ota.h</itemPath>
         <itemPath>../src/resources/actuators.h</itemPath>
+        <itemPath>../src/resources/sensors.h</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/utf8_p.h</itemPath>
@@ -982,6 +983,7 @@
         <itemPath>../src/resources/version.c</itemPath>
         <itemPath>../src/resources/ota.c</itemPath>
         <itemPath>../src/resources/actuators.c</itemPath>
+        <itemPath>../src/resources/sensors.c</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/cborencoder_float.c</itemPath>

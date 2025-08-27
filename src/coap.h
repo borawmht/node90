@@ -18,6 +18,8 @@
 #define COAP_MAX_OPTIONS          16
 #define COAP_MAX_TOKEN_LENGTH     8
 
+#define COAP_MAX_RESOURCES         20
+
 // CoAP message types
 typedef enum {
     COAP_TYPE_CON = 0,    // Confirmable

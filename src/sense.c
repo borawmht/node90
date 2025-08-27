@@ -25,3 +25,8 @@ uint16_t sense_get_actuator_power(uint8_t channel){
     return 0;
 }
 
+uint16_t sense_get_sensor_voltage(uint8_t channel){
+    return 0;
+}
+
+

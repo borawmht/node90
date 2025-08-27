@@ -11,6 +11,7 @@
 #include "resources/version.h"
 #include "resources/ota.h"
 #include "resources/actuators.h"
+#include "resources/sensors.h"
 
 char resource_json_str[RESOURCE_JSON_STR_SIZE];
 char resource_e_json_str[RESOURCE_E_JSON_STR_SIZE];
@@ -26,6 +27,11 @@ const resource_t resources[] = {
     {"/inx/actuators/actuator2", NULL, &actuators_actuator_coap_handler},
     {"/inx/actuators/actuator1/context", NULL, &actuators_actuator_context_coap_handler},
     {"/inx/actuators/actuator2/context", NULL, &actuators_actuator_context_coap_handler},
+    {"/inx/sensors", &sensors_init, &sensors_coap_handler},
+    {"/inx/sensors/sensor1", NULL, &sensors_sensor_coap_handler},
+    {"/inx/sensors/WallSwitch", NULL, &sensors_wallswitch_coap_handler},
+    {"/inx/sensors/sensor1/context", NULL, &sensors_sensor_context_coap_handler},
+    {"/inx/sensors/WallSwitch/context", NULL, &sensors_wallswitch_context_coap_handler},
     {NULL, NULL, NULL}
 }; 
 

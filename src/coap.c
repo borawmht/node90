@@ -31,7 +31,7 @@ static coap_packet_queue_item_t coap_current_packet;
 
 // Global CoAP context
 static coap_context_t coap_ctx = {0};
-static coap_resource_t coap_resources[10] = {0};
+static coap_resource_t coap_resources[COAP_MAX_RESOURCES] = {0};
 static uint8_t coap_resource_count = 0;
 
 // CoAP message parsing
@@ -569,7 +569,7 @@ bool coap_client_init(void) {
 
 // Resource registration
 bool coap_register_resource(const char *path, coap_resource_handler_t handler) {
-    if (coap_resource_count >= 10) {
+    if (coap_resource_count >= COAP_MAX_RESOURCES) {
         SYS_CONSOLE_PRINT("coap: too many resources registered\r\n");
         return false;
     }
