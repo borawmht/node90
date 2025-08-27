@@ -495,7 +495,7 @@ bool sensors_sensor_coap_handler(const coap_message_t *request, coap_message_t *
         SYS_CONSOLE_PRINT("sensors: sensor coap handler: failed to parse uri\r\n");
         return false;
     }
-    // SYS_CONSOLE_PRINT("actuators: actuator%u coap handler\r\n", channel);
+    // SYS_CONSOLE_PRINT("sensors: sensor%u coap handler\r\n", channel);
     if(request->code == COAP_CODE_GET){
         return sensors_sensor_coap_get_handler(channel, response);
     }

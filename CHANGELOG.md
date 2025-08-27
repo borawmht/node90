@@ -3,7 +3,7 @@
 Node90 Firmware
 
 # 1.5.0
-- add actuators and sensors resource
+- add actuators, sensors, policy resources
 
 # 1.4.4
 - fix issue coap response during firmware update, disable ethernet_send if http_stream is open
