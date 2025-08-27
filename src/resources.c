@@ -13,6 +13,7 @@
 #include "resources/actuators.h"
 #include "resources/sensors.h"
 #include "resources/policy.h"
+#include "resources/event.h"
 
 char resource_json_str[RESOURCE_JSON_STR_SIZE];
 char resource_e_json_str[RESOURCE_E_JSON_STR_SIZE];
@@ -35,6 +36,7 @@ const resource_t resources[] = {
     {"/inx/sensors/WallSwitch/context", NULL, &sensors_wallswitch_context_coap_handler},
     {"/inx/policy", &policy_init, &policy_coap_handler},
     {"/inx/policy/policy1", NULL, &policy_coap_handler},
+    {"/inx/event", &event_init, &event_coap_handler},
     {NULL, NULL, NULL}
 }; 
 

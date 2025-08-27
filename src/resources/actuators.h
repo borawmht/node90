@@ -23,11 +23,11 @@ typedef struct {
     uint16_t fadetime;
     char pwm_mode[PWM_MODE_SIZE];
     bool motion_enable;
-    uint8_t dim;
+    // uint8_t dim;
     uint16_t cc;
     uint16_t cv;
     uint16_t cp;
-    uint16_t at;    
+    // uint16_t at;    
 } actuator_t;
 
 void actuators_init(void);

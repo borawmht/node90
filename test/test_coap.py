@@ -174,7 +174,13 @@ if __name__ == "__main__":
     # print(f"Result: {result}")
     
 
-    result = put(node_ip, '/inx/policy', 's1', 'F0,0,50;', confirm=True)
+    # result = put(node_ip, '/inx/policy', 's1', 'F0,0,50;', confirm=True)
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/policy', 5)
+    # print(f"Result: {result}")
+
+    node_ip = '192.168.1.255' # broadcast
+    result = put(node_ip, '/inx/event', 'on', '0', confirm=False, broadcast=True)
     print(f"Result: {result}")
-    result = get(node_ip, '/inx/policy', 5)
-    print(f"Result: {result}")
+    # result = get(node_ip, '/inx/event', 5)
+    # print(f"Result: {result}")

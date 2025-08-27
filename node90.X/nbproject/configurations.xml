@@ -315,6 +315,7 @@
         <itemPath>../src/resources/actuators.h</itemPath>
         <itemPath>../src/resources/sensors.h</itemPath>
         <itemPath>../src/resources/policy.h</itemPath>
+        <itemPath>../src/resources/event.h</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/utf8_p.h</itemPath>
@@ -986,6 +987,7 @@
         <itemPath>../src/resources/actuators.c</itemPath>
         <itemPath>../src/resources/sensors.c</itemPath>
         <itemPath>../src/resources/policy.c</itemPath>
+        <itemPath>../src/resources/event.c</itemPath>
       </logicalFolder>
       <logicalFolder name="tinycbor" displayName="tinycbor" projectFiles="true">
         <itemPath>../src/tinycbor/cborencoder_float.c</itemPath>

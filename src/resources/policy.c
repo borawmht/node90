@@ -89,8 +89,8 @@ bool policy_set_on(uint8_t channel, char *on){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].on,on,POLICY_SIZE) != 0;
-    strncpy(policies[i].on,on,POLICY_SIZE);
+    bool changed = strncmp(policies[i].on,on,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].on,on,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u on: %s\r\n", channel, policies[i].on);
     if(changed){
         return storage_setStr(policies[i].ns, "on", policies[i].on);
@@ -105,8 +105,8 @@ bool policy_set_off(uint8_t channel, char *off){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].off,off,POLICY_SIZE) != 0;
-    strncpy(policies[i].off,off,POLICY_SIZE);
+    bool changed = strncmp(policies[i].off,off,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].off,off,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u off: %s\r\n", channel, policies[i].off);
     if(changed){
         return storage_setStr(policies[i].ns, "off", policies[i].off);
@@ -121,8 +121,8 @@ bool policy_set_up(uint8_t channel, char *up){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].up,up,POLICY_SIZE) != 0;
-    strncpy(policies[i].up,up,POLICY_SIZE);
+    bool changed = strncmp(policies[i].up,up,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].up,up,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u up: %s\r\n", channel, policies[i].up);
     if(changed){
         return storage_setStr(policies[i].ns, "up", policies[i].up);
@@ -137,8 +137,8 @@ bool policy_set_down(uint8_t channel, char *down){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].down,down,POLICY_SIZE) != 0;
-    strncpy(policies[i].down,down,POLICY_SIZE);
+    bool changed = strncmp(policies[i].down,down,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].down,down,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u down: %s\r\n", channel, policies[i].down);
     if(changed){
         return storage_setStr(policies[i].ns, "down", policies[i].down);
@@ -153,8 +153,8 @@ bool policy_set_mot(uint8_t channel, char *mot){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].mot,mot,POLICY_SIZE) != 0;
-    strncpy(policies[i].mot,mot,POLICY_SIZE);
+    bool changed = strncmp(policies[i].mot,mot,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].mot,mot,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u mot: %s\r\n", channel, policies[i].mot);
     if(changed){
         return storage_setStr(policies[i].ns, "mot", policies[i].mot);
@@ -169,8 +169,8 @@ bool policy_set_vac(uint8_t channel, char *vac){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].vac,vac,POLICY_SIZE) != 0;
-    strncpy(policies[i].vac,vac,POLICY_SIZE);
+    bool changed = strncmp(policies[i].vac,vac,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].vac,vac,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u vac: %s\r\n", channel, policies[i].vac);
     if(changed){
         return storage_setStr(policies[i].ns, "vac", policies[i].vac);
@@ -185,8 +185,8 @@ bool policy_set_s1(uint8_t channel, char *s1){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].s1,s1,POLICY_SIZE) != 0;
-    strncpy(policies[i].s1,s1,POLICY_SIZE);
+    bool changed = strncmp(policies[i].s1,s1,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].s1,s1,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u s1: %s\r\n", channel, policies[i].s1);
     if(changed){
         return storage_setStr(policies[i].ns, "s1", policies[i].s1);
@@ -201,8 +201,8 @@ bool policy_set_s2(uint8_t channel, char *s2){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].s2,s2,POLICY_SIZE) != 0;
-    strncpy(policies[i].s2,s2,POLICY_SIZE);
+    bool changed = strncmp(policies[i].s2,s2,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].s2,s2,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u s2: %s\r\n", channel, policies[i].s2);
     if(changed){
         return storage_setStr(policies[i].ns, "s2", policies[i].s2);
@@ -217,8 +217,8 @@ bool policy_set_s3(uint8_t channel, char *s3){
         return false;
     }
     uint8_t i = channel - 1;
-    bool changed = strncmp(policies[i].s3,s3,POLICY_SIZE) != 0;
-    strncpy(policies[i].s3,s3,POLICY_SIZE);
+    bool changed = strncmp(policies[i].s3,s3,POLICY_STR_SIZE) != 0;
+    strncpy(policies[i].s3,s3,POLICY_STR_SIZE);
     SYS_CONSOLE_PRINT("policy: policy%u s3: %s\r\n", channel, policies[i].s3);
     if(changed){
         return storage_setStr(policies[i].ns, "s3", policies[i].s3);

@@ -12,20 +12,20 @@
 #include "resources.h"
 
 #define NUM_POLICIES 1
-#define POLICY_SIZE 128
+#define POLICY_STR_SIZE 128
 
 typedef struct {
     char ns[16];
     uint8_t channel;
-    char on[POLICY_SIZE];
-    char off[POLICY_SIZE];
-    char up[POLICY_SIZE];
-    char down[POLICY_SIZE];
-    char mot[POLICY_SIZE];
-    char vac[POLICY_SIZE];
-    char s1[POLICY_SIZE];
-    char s2[POLICY_SIZE];
-    char s3[POLICY_SIZE];
+    char on[POLICY_STR_SIZE];
+    char off[POLICY_STR_SIZE];
+    char up[POLICY_STR_SIZE];
+    char down[POLICY_STR_SIZE];
+    char mot[POLICY_STR_SIZE];
+    char vac[POLICY_STR_SIZE];
+    char s1[POLICY_STR_SIZE];
+    char s2[POLICY_STR_SIZE];
+    char s3[POLICY_STR_SIZE];
 } policy_t;
 
 void policy_init(void);

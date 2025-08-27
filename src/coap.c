@@ -277,7 +277,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
     // SYS_CONSOLE_PRINT("coap: is_server: %d, resource_count: %d\r\n", coap_ctx.is_server, coap_resource_count);
     
     // Handle the request
-    if (coap_ctx.is_server && request.type == COAP_TYPE_CON) {
+    if (coap_ctx.is_server) {
         // SYS_CONSOLE_PRINT("coap: creating response\r\n");
         
         coap_message_t response = {0};
@@ -305,7 +305,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
             // SYS_CONSOLE_PRINT("coap: checking resource '%s' against '%s'\r\n", coap_resources[i].path, request_uri);
             if (strcmp(coap_resources[i].path, request_uri) == 0) {
                 // SYS_CONSOLE_PRINT("coap: calling resource handler\r\n");
-                SYS_CONSOLE_PRINT("coap: resource handler: %s\r\n", coap_resources[i].path);
+                // SYS_CONSOLE_PRINT("coap: resource handler: %s\r\n", coap_resources[i].path);
                 resource_found = true;
                 resource_result = coap_resources[i].handler(&request, &response);
                 // SYS_CONSOLE_PRINT("coap: resource handler returned: %d\r\n", resource_found);
@@ -367,9 +367,12 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
         memcpy(packet_info.src_ip, dst_ip, 4);
         memcpy(packet_info.dst_ip, src_ip, 4);
         
-        bool send_result = coap_send_packet_response(src_mac, &packet_info, &response);
+        if(request.type == COAP_TYPE_CON){
+            bool send_result = coap_send_packet_response(src_mac, &packet_info, &response);
+        }
         // SYS_CONSOLE_PRINT("coap: send_packet_response returned: %d\r\n", send_result);
-    } else {
+    } 
+    else {
         SYS_CONSOLE_PRINT("coap: not in server mode, ignoring request\r\n");
     }
     

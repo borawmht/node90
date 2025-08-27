@@ -6,6 +6,7 @@
 */
 
 #include "actuators.h"
+#include "control.h"
 #include "resources.h"
 #include "sense.h"
 #include "ethernet.h"
@@ -30,8 +31,8 @@ void actuators_init(void){
         storage_loadU16Index(actuators[i].ns, "cc", &actuators[i].cc, 100, i+1, &actuators_actuator_set_cc); 
         storage_loadU16Index(actuators[i].ns, "cv", &actuators[i].cv, 12000, i+1, &actuators_actuator_set_cv); 
         storage_loadU16Index(actuators[i].ns, "cp", &actuators[i].cp, 100, i+1, &actuators_actuator_set_cp); 
-        actuators[i].dim = 0;
-        actuators[i].at = 4000;
+        control_setDimValue(i+1,0);
+        control_setATValue(4000);
     }    
 }
 
@@ -118,12 +119,12 @@ char * actuators_actuator_get_json_str(uint8_t channel) {
     cJSON_AddStringToObject(root,"pwm_mode",actuators[i].pwm_mode);
     cJSON_AddStringToObject(root,"motion_enable",actuators[i].motion_enable ? "true" : "false");
     cJSON_AddStringToObject(root,"motdsbl",actuators[i].motion_enable ? "33" : "3");
-    cJSON_AddNumberToObject(root,"dim",actuators[i].dim);
-    cJSON_AddNumberToObject(root,"pp",actuators[i].dim);
+    cJSON_AddNumberToObject(root,"dim",actuators_actuator_get_dim(channel));
+    cJSON_AddNumberToObject(root,"pp",actuators_actuator_get_dim(channel));
     cJSON_AddNumberToObject(root,"cc",actuators[i].cc);
     cJSON_AddNumberToObject(root,"cv",actuators[i].cv);
     cJSON_AddNumberToObject(root,"cp",actuators[i].cp);
-    cJSON_AddNumberToObject(root,"at",actuators[i].at);
+    cJSON_AddNumberToObject(root,"at",actuators_actuator_get_at(channel));
     cJSON_AddNumberToObject(root,"current",sense_get_actuator_current(channel));
     cJSON_AddNumberToObject(root,"voltage",sense_get_actuator_voltage(channel));
     cJSON_AddNumberToObject(root,"power",sense_get_actuator_power(channel));
@@ -284,10 +285,11 @@ bool actuators_actuator_set_dim(uint8_t channel, uint8_t dim){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_dim: channel out of range: %d\r\n", channel);
         return false;
     }
-    uint8_t i = channel - 1;
-    bool changed = actuators[i].dim != dim;
-    actuators[i].dim = dim;
-    SYS_CONSOLE_PRINT("actuators: actuator%u dim: %u\r\n", channel, actuators[i].dim);
+    control_setDimValue(channel,dim);
+    // uint8_t i = channel - 1;
+    // bool changed = actuators[i].dim != dim;
+    // actuators[i].dim = dim;
+    // SYS_CONSOLE_PRINT("actuators: actuator%u dim: %u\r\n", channel, actuators[i].dim);
     return true;
 }
 
@@ -341,10 +343,11 @@ bool actuators_actuator_set_at(uint8_t channel, uint16_t at){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_at: channel out of range: %d\r\n", channel);
         return false;
     }
-    uint8_t i = channel - 1;
-    bool changed = actuators[i].at != at;
-    actuators[i].at = at;
-    SYS_CONSOLE_PRINT("actuators: actuator%u at: %u\r\n", channel, actuators[i].at);
+    control_setATValue(at);
+    // uint8_t i = channel - 1;
+    // bool changed = actuators[i].at != at;
+    // actuators[i].at = at;
+    // SYS_CONSOLE_PRINT("actuators: actuator%u at: %u\r\n", channel, actuators[i].at);
     return true;
 }
 
@@ -554,7 +557,7 @@ uint8_t actuators_actuator_get_dim(uint8_t channel){
         SYS_CONSOLE_PRINT("actuators: actuator%u get_dim: channel out of range: %d\r\n", channel);
         return 0;
     }
-    return actuators[channel-1].dim;
+    return control_getDimValue(channel);
 }
 
 uint16_t actuators_actuator_get_cc(uint8_t channel){
@@ -586,7 +589,7 @@ uint16_t actuators_actuator_get_at(uint8_t channel){
         SYS_CONSOLE_PRINT("actuators: actuator%u get_at: channel out of range: %d\r\n", channel);
         return 0;
     }
-    return actuators[channel-1].at;
+    return control_getATValue();
 }
 
 uint16_t actuators_actuator_get_current(uint8_t channel){
