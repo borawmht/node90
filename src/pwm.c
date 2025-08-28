@@ -98,7 +98,7 @@ void pwm_init(void){
 }
 
 void pwm_set_dim(uint8_t channel, uint8_t value){
-    SYS_CONSOLE_PRINT("pwm: set dim: %u, %u\r\n", channel, value);
+    // SYS_CONSOLE_PRINT("pwm: set dim: %u, %u\r\n", channel, value);
     uint32_t new_duty_cycle = PWM_DUTY_CYCLE_MAX * value / 100;
     if(new_duty_cycle > PWM_DUTY_CYCLE_MAX) new_duty_cycle = PWM_DUTY_CYCLE_MAX;
     if(actuators_actuator_get_is_at(channel)){
@@ -111,11 +111,11 @@ void pwm_set_dim(uint8_t channel, uint8_t value){
 }
 
 void pwm_set_at(uint16_t value){
-    SYS_CONSOLE_PRINT("pwm: set at: %u\r\n", value);
+    // SYS_CONSOLE_PRINT("pwm: set at: %u\r\n", value);
     if(value < AT_MIN) value = AT_MIN;
     if(value > AT_MAX) value = AT_MAX;
     at_value = value;
-    pwm_set_dim(1, control_getDimValue(1)); // update duty cycles for this color
+    pwm_set_dim(1, control_get_dim_value(1)); // update duty cycles for this color
 }
 
 uint16_t pwm_get_at(void){

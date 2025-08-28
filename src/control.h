@@ -18,10 +18,11 @@
 
 void control_init(void);
 void control_update_pwm_mode(uint8_t channel);
-uint8_t control_getDimValue(uint8_t channel);
-void control_setDimValue(uint8_t channel, uint8_t new_value);
-uint16_t control_getATValue();
-void control_setATValue(uint16_t new_value);
-void control_setDimDuration(uint8_t channel, int32_t duration, uint8_t default_value);
+uint8_t control_get_dim_value(uint8_t channel);
+void control_set_dim_value(uint8_t channel, uint8_t new_value);
+uint16_t control_get_at_value();
+void control_set_at_value(uint16_t new_value);
+void control_set_dim_duration(uint8_t channel, int32_t duration, uint8_t default_value);
+void control_set_voltage(uint8_t channel, uint16_t voltage);
 
 #endif

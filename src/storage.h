@@ -19,6 +19,7 @@ bool storage_loadBoolIndex(const char * namespace, const char * key, bool * b, b
 bool storage_getU8(const char * namespace, const char * key, uint8_t * value);
 bool storage_setU8(const char * namespace, const char * key, uint8_t value);
 bool storage_loadU8(const char * namespace, const char * key, uint8_t * u8, uint8_t default_value, bool (*func)(uint8_t));
+bool storage_loadU8Index(const char * namespace, const char * key, uint8_t * u8, uint8_t default_value, uint8_t index, bool (*func)(uint8_t, uint8_t));
 
 bool storage_getI8(const char * namespace, const char * key, int8_t * value);
 bool storage_setI8(const char * namespace, const char * key, int8_t value);

@@ -10,6 +10,7 @@
 #include "definitions.h"
 
 uint8_t io_expander_address;
+bool io_expander_initialized = false;
 
 void io_expander_write(uint8_t reg, uint8_t val){
     if(io_expander_address==IO_EXPANDER_NOT_FOUND_ADDRESS){
@@ -38,6 +39,8 @@ uint8_t io_expander_read(uint8_t reg){
 }
 
 void io_expander_init(void){
+    if(io_expander_initialized) return;
+    io_expander_initialized = true;
     SYS_CONSOLE_PRINT("io_expander: init\r\n");
     i2c_init();
     io_expander_address = TCA9534_ADDRESS; // set the address

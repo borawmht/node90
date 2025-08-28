@@ -18,6 +18,18 @@
 
 actuator_t actuators[NUM_ACTUATORS];
 
+const char * actuator_modes[] = {
+    "PWM",
+    "ELS",
+    "BATTERY_BACKUP_CC",
+    "BATTERY_BACKUP_CV",
+    "DESK_CC",
+    "DESK_CV",
+    "MECHO",
+    "SOMFY",
+    NULL
+};
+
 void actuators_init(void){
     SYS_CONSOLE_PRINT("actuators: init\r\n");
     for(int i = 0; i < NUM_ACTUATORS; i++){
@@ -25,15 +37,18 @@ void actuators_init(void){
         sprintf(actuators[i].ns, "actuator%d", i+1);
         storage_loadStrIndex(actuators[i].ns, "cluster", actuators[i].cluster, "group1", i+1, &actuators_actuator_set_cluster); 
         storage_loadStrIndex(actuators[i].ns, "prphtag", actuators[i].prphtag, "0", i+1, &actuators_actuator_set_prphtag); 
+        storage_loadStrIndex(actuators[i].ns, "mode", actuators[i].mode, "PWM", i+1, &actuators_actuator_set_mode); 
         storage_loadU16Index(actuators[i].ns, "fadetime", &actuators[i].fadetime, 2000, i+1, &actuators_actuator_set_fadetime); 
         storage_loadStrIndex(actuators[i].ns, "pwm_mode", actuators[i].pwm_mode, "DIM_CC", i+1, &actuators_actuator_set_pwm_mode); 
         storage_loadBoolIndex(actuators[i].ns, "motion_enable", &actuators[i].motion_enable, true, i+1, &actuators_actuator_set_motion_enable); 
-        storage_loadU16Index(actuators[i].ns, "cc", &actuators[i].cc, 100, i+1, &actuators_actuator_set_cc); 
+        storage_loadU8Index(actuators[i].ns, "dim_els", &actuators[i].dim_els, 25, i+1, &actuators_actuator_set_dim_els); 
+        storage_loadBoolIndex(actuators[i].ns, "cuv_enable", &actuators[i].cuv_enable, false, i+1, &actuators_actuator_set_cuv_enable); 
+        storage_loadU16Index(actuators[i].ns, "cc", &actuators[i].cc, 2500, i+1, &actuators_actuator_set_cc); 
         storage_loadU16Index(actuators[i].ns, "cv", &actuators[i].cv, 12000, i+1, &actuators_actuator_set_cv); 
         storage_loadU16Index(actuators[i].ns, "cp", &actuators[i].cp, 100, i+1, &actuators_actuator_set_cp); 
-        control_setDimValue(i+1,0);
-        control_setATValue(4000);
-    }    
+        control_set_dim_value(i+1,0);
+        control_set_at_value(4000);
+    }
 }
 
 char * actuators_get_json_str(void) {    
@@ -115,12 +130,15 @@ char * actuators_actuator_get_json_str(uint8_t channel) {
     cJSON_AddNumberToObject(root,"channel",actuators[i].channel);
     cJSON_AddStringToObject(root,"cluster",actuators[i].cluster);
     cJSON_AddStringToObject(root,"prphtag",actuators[i].prphtag);
+    cJSON_AddStringToObject(root,"mode",actuators[i].mode);
     cJSON_AddNumberToObject(root,"fadetime",actuators[i].fadetime);
     cJSON_AddStringToObject(root,"pwm_mode",actuators[i].pwm_mode);
     cJSON_AddStringToObject(root,"motion_enable",actuators[i].motion_enable ? "true" : "false");
     cJSON_AddStringToObject(root,"motdsbl",actuators[i].motion_enable ? "33" : "3");
     cJSON_AddNumberToObject(root,"dim",actuators_actuator_get_dim(channel));
     cJSON_AddNumberToObject(root,"pp",actuators_actuator_get_dim(channel));
+    cJSON_AddNumberToObject(root,"dim_els",actuators[i].dim_els);
+    cJSON_AddStringToObject(root,"cuv_enable",actuators[i].cuv_enable ? "true" : "false");
     cJSON_AddNumberToObject(root,"cc",actuators[i].cc);
     cJSON_AddNumberToObject(root,"cv",actuators[i].cv);
     cJSON_AddNumberToObject(root,"cp",actuators[i].cp);
@@ -234,6 +252,22 @@ bool actuators_actuator_set_prphtag(uint8_t channel, char *prphtag){
     return true;
 }
 
+bool actuators_actuator_set_mode(uint8_t channel, char *mode){
+    // TODO: validate mode
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u set_mode: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    uint8_t i = channel - 1;
+    bool changed = strncmp(actuators[i].mode,mode,ACTUATOR_MODE_SIZE) != 0;
+    strncpy(actuators[i].mode,mode,ACTUATOR_MODE_SIZE);
+    SYS_CONSOLE_PRINT("actuators: actuator%u mode: %s\r\n", channel, actuators[i].mode);
+    if(changed){
+        return storage_setStr(actuators[i].ns, "mode", actuators[i].mode);
+    }
+    return true;
+}
+
 bool actuators_actuator_set_fadetime(uint8_t channel, uint16_t fadetime){
     // TODO: validate fadetime
     if(channel<1 || channel>NUM_ACTUATORS){
@@ -251,6 +285,7 @@ bool actuators_actuator_set_fadetime(uint8_t channel, uint16_t fadetime){
 }
 
 bool actuators_actuator_set_pwm_mode(uint8_t channel, char *pwm_mode){
+    // TODO: validate pwm_mode
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_pwm_mode: channel out of range: %d\r\n", channel);
         return false;
@@ -267,6 +302,7 @@ bool actuators_actuator_set_pwm_mode(uint8_t channel, char *pwm_mode){
 }
 
 bool actuators_actuator_set_motion_enable(uint8_t channel, bool motion_enable){
+    // TODO: validate motion_enable
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_motion_enable: channel out of range: %d\r\n", channel);
         return false;
@@ -282,19 +318,52 @@ bool actuators_actuator_set_motion_enable(uint8_t channel, bool motion_enable){
 }
 
 bool actuators_actuator_set_dim(uint8_t channel, uint8_t dim){
+    // TODO: validate dim
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_dim: channel out of range: %d\r\n", channel);
         return false;
     }
-    control_setDimValue(channel,dim);
-    // uint8_t i = channel - 1;
-    // bool changed = actuators[i].dim != dim;
-    // actuators[i].dim = dim;
-    // SYS_CONSOLE_PRINT("actuators: actuator%u dim: %u\r\n", channel, actuators[i].dim);
+    control_set_dim_value(channel,dim);
+    return true;
+}
+
+bool actuators_actuator_set_dim_els(uint8_t channel, uint8_t dim_els){
+    // TODO: validate dim_els
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u set_dim_els: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    uint8_t i = channel - 1;
+    bool changed = actuators[i].dim_els != dim_els;
+    actuators[i].dim_els = dim_els;
+    SYS_CONSOLE_PRINT("actuators: actuator%u dim_els: %u\r\n", channel, actuators[i].dim_els);
+    if(changed){
+        return storage_setU8(actuators[i].ns, "dim_els", actuators[i].dim_els);
+    }
+    return true;
+}
+
+bool actuators_actuator_set_cuv_enable(uint8_t channel, bool cuv_enable){
+    // TODO: validate cuv_enable
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u set_cuv_enable: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    uint8_t i = channel - 1;
+    bool changed = actuators[0].cuv_enable != cuv_enable;
+    changed |= actuators[1].cuv_enable != cuv_enable;
+    actuators[0].cuv_enable = cuv_enable;
+    actuators[1].cuv_enable = cuv_enable;
+    SYS_CONSOLE_PRINT("actuators: cuv_enable: %s\r\n", actuators[i].cuv_enable ? "true" : "false");
+    if(changed){        
+        return storage_setBool(actuators[0].ns, "cuv_enable", actuators[0].cuv_enable) &&
+               storage_setBool(actuators[1].ns, "cuv_enable", actuators[1].cuv_enable);
+    }    
     return true;
 }
 
 bool actuators_actuator_set_cc(uint8_t channel, uint16_t cc){
+    // TODO: validate cc
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_cc: channel out of range: %d\r\n", channel);
         return false;
@@ -306,10 +375,12 @@ bool actuators_actuator_set_cc(uint8_t channel, uint16_t cc){
     if(changed){
         return storage_setU16(actuators[i].ns, "cc", actuators[i].cc);
     }
+    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle and dac level
     return true;
 }
 
 bool actuators_actuator_set_cv(uint8_t channel, uint16_t cv){
+    // TODO: validate cv
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_cv: channel out of range: %d\r\n", channel);
         return false;
@@ -321,10 +392,12 @@ bool actuators_actuator_set_cv(uint8_t channel, uint16_t cv){
     if(changed){
         return storage_setU16(actuators[i].ns, "cv", actuators[i].cv);
     }
+    control_set_voltage(channel,cv);
     return true;
 }
 
 bool actuators_actuator_set_cp(uint8_t channel, uint16_t cp){
+    // TODO: validate cp
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_cp: channel out of range: %d\r\n", channel);
         return false;
@@ -336,19 +409,17 @@ bool actuators_actuator_set_cp(uint8_t channel, uint16_t cp){
     if(changed){
         return storage_setU16(actuators[i].ns, "cp", actuators[i].cp);
     }
+    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle
     return true;
 }
 
 bool actuators_actuator_set_at(uint8_t channel, uint16_t at){
+    // TODO: validate at
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u set_at: channel out of range: %d\r\n", channel);
         return false;
     }
-    control_setATValue(at);
-    // uint8_t i = channel - 1;
-    // bool changed = actuators[i].at != at;
-    // actuators[i].at = at;
-    // SYS_CONSOLE_PRINT("actuators: actuator%u at: %u\r\n", channel, actuators[i].at);
+    control_set_at_value(at);
     return true;
 }
 
@@ -371,6 +442,11 @@ bool actuators_actuator_put_json_str(uint8_t channel, char * json_str){
     cJSON * prphtag = cJSON_GetObjectItem(map,"prphtag");    
     if(prphtag){
         ret &= actuators_actuator_set_prphtag(channel,prphtag->valuestring);
+        found = true;
+    }
+    cJSON * mode = cJSON_GetObjectItem(map,"mode");    
+    if(mode){
+        ret &= actuators_actuator_set_mode(channel,mode->valuestring);
         found = true;
     }
     cJSON * fadetime = cJSON_GetObjectItem(map,"fadetime");    
@@ -401,6 +477,16 @@ bool actuators_actuator_put_json_str(uint8_t channel, char * json_str){
     cJSON * pp = cJSON_GetObjectItem(map,"pp");    
     if(pp){
         ret &= actuators_actuator_set_dim(channel,pp->valueint);
+        found = true;
+    }
+    cJSON * dim_els = cJSON_GetObjectItem(map,"dim_els");    
+    if(dim_els){
+        ret &= actuators_actuator_set_dim_els(channel,dim_els->valueint);
+        found = true;
+    }
+    cJSON * cuv_enable = cJSON_GetObjectItem(map,"cuv_enable");    
+    if(cuv_enable){
+        ret &= actuators_actuator_set_cuv_enable(channel,strcmp(cuv_enable->valuestring,"true") == 0);
         found = true;
     }
     cJSON * cc = cJSON_GetObjectItem(map,"cc");    
@@ -529,6 +615,14 @@ char * actuators_actuator_get_prphtag(uint8_t channel){
     return actuators[channel-1].prphtag;
 }
 
+char * actuators_actuator_get_mode(uint8_t channel){
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u get_mode: channel out of range: %d\r\n", channel);
+        return NULL;
+    }
+    return actuators[channel-1].mode;
+}
+
 uint16_t actuators_actuator_get_fadetime(uint8_t channel){
     if(channel<1 || channel>NUM_ACTUATORS){
         SYS_CONSOLE_PRINT("actuators: actuator%u get_fadetime: channel out of range: %d\r\n", channel);
@@ -558,7 +652,23 @@ uint8_t actuators_actuator_get_dim(uint8_t channel){
         SYS_CONSOLE_PRINT("actuators: actuator%u get_dim: channel out of range: %d\r\n", channel);
         return 0;
     }
-    return control_getDimValue(channel);
+    return control_get_dim_value(channel);
+}
+
+uint8_t actuators_actuator_get_dim_els(uint8_t channel){
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u get_dim_els: channel out of range: %d\r\n", channel);
+        return 0;
+    }
+    return actuators[channel-1].dim_els;
+}
+
+bool actuators_actuator_get_cuv_enable(uint8_t channel){
+    if(channel<1 || channel>NUM_ACTUATORS){
+        SYS_CONSOLE_PRINT("actuators: actuator%u get_cuv_enable: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    return actuators[channel-1].cuv_enable;
 }
 
 uint16_t actuators_actuator_get_cc(uint8_t channel){
@@ -590,7 +700,7 @@ uint16_t actuators_actuator_get_at(uint8_t channel){
         SYS_CONSOLE_PRINT("actuators: actuator%u get_at: channel out of range: %d\r\n", channel);
         return 0;
     }
-    return control_getATValue();
+    return control_get_at_value();
 }
 
 uint16_t actuators_actuator_get_current(uint8_t channel){

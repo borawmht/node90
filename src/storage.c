@@ -283,6 +283,21 @@ bool storage_loadU8(const char *namespace, const char *key, uint8_t *u8, uint8_t
     return ret;
 }
 
+bool storage_loadU8Index(const char *namespace, const char *key, uint8_t *u8, uint8_t default_value, uint8_t index, bool (*func)(uint8_t, uint8_t)) {
+    uint8_t value = default_value;
+    *u8 = value;
+    bool ret = storage_getU8(namespace, key, &value);
+    if (!ret) {
+        ret = storage_setU8(namespace, key, value); // save default value
+    } else {
+        *u8 = value; // set value if load OK
+    }
+    if (func != NULL) {
+        func(index, *u8);
+    }
+    return ret;
+}
+
 // I8 functions
 bool storage_getI8(const char *namespace, const char *key, int8_t *value) {
     uint16_t data_len = sizeof(int8_t);

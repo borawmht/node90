@@ -497,6 +497,7 @@
       <itemPath>../src/pwm.h</itemPath>
       <itemPath>../src/i2c.h</itemPath>
       <itemPath>../src/io_expander.h</itemPath>
+      <itemPath>../src/dac.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -1140,6 +1141,7 @@
       <itemPath>../src/pwm.c</itemPath>
       <itemPath>../src/i2c.c</itemPath>
       <itemPath>../src/io_expander.c</itemPath>
+      <itemPath>../src/dac.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

@@ -97,8 +97,8 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             for(i=0;i<NUM_ACTUATORS;i++){
                 bool match = event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
                 if(match && (channel==i+1 || channel==0)){
-                    if(dim<DIM_NO_CHANGE) control_setDimValue(i+1,dim);
-                    control_setDimDuration(i+1,dim_duration,dim_default); // cancel any existing dim duration                    
+                    if(dim<DIM_NO_CHANGE) control_set_dim_value(i+1,dim);
+                    control_set_dim_duration(i+1,dim_duration,dim_default); // cancel any existing dim duration                    
                 }
             }
         }
@@ -119,8 +119,8 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             for(i=0;i<NUM_ACTUATORS;i++){
                 bool match = event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
                 if(match && (channel==i+1 || channel==0)){
-                    if(dim<DIM_NO_CHANGE) control_setDimValue(i+1,dim);
-                    control_setDimDuration(i+1,dim_duration,dim_default); // cancel any existing dim duration
+                    if(dim<DIM_NO_CHANGE) control_set_dim_value(i+1,dim);
+                    control_set_dim_duration(i+1,dim_duration,dim_default); // cancel any existing dim duration
                 }
             }
         }
@@ -137,13 +137,13 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             for(i=0;i<NUM_ACTUATORS;i++){
                 bool match = event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
                 if(match && (channel==i+1 || channel==0)){
-                    if(DIM_MAX>=(control_getDimValue(i+1)+value)){
-                        control_setDimValue(i+1,control_getDimValue(i+1)+value);
+                    if(DIM_MAX>=(control_get_dim_value(i+1)+value)){
+                        control_set_dim_value(i+1,control_get_dim_value(i+1)+value);
                     }
                     else{
-                        control_setDimValue(i+1,DIM_MAX);
+                        control_set_dim_value(i+1,DIM_MAX);
                     }
-                    control_setDimDuration(i+1,dim_duration,dim_default); // cancel any existing dim duration
+                    control_set_dim_duration(i+1,dim_duration,dim_default); // cancel any existing dim duration
                 }
             }
         }
@@ -160,13 +160,13 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             for(i=0;i<NUM_ACTUATORS;i++){
                 bool match = event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
                 if(match && (channel==i+1 || channel==0)){
-                    if(control_getDimValue(i+1)>=(DIM_MIN+value)){
-                        control_setDimValue(i+1,control_getDimValue(i+1)-value);
+                    if(control_get_dim_value(i+1)>=(DIM_MIN+value)){
+                        control_set_dim_value(i+1,control_get_dim_value(i+1)-value);
                     }
                     else{
-                        control_setDimValue(i+1,DIM_MIN);
+                        control_set_dim_value(i+1,DIM_MIN);
                     }
-                    control_setDimDuration(i+1,dim_duration,dim_default); // cancel any existing dim duration
+                    control_set_dim_duration(i+1,dim_duration,dim_default); // cancel any existing dim duration
                 }
             }
         }
@@ -207,7 +207,7 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             }
             else{                
                 if((at_value<AT_MIN)||(at_value>AT_MAX)) break;
-                control_setATValue(at_value);
+                control_set_at_value(at_value);
             }
         }
         else if(strcmp(tok,"F10")==0){ // at color up
@@ -222,11 +222,11 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             tok = strtok(NULL,",;");
             if(tok!=NULL) value = atoi(tok);
             else break;
-            if(AT_MAX>=(control_getATValue()+value)){
-                control_setATValue(control_getATValue()+value);
+            if(AT_MAX>=(control_get_at_value()+value)){
+                control_set_at_value(control_get_at_value()+value);
             }
             else{
-                control_setATValue(AT_MAX);
+                control_set_at_value(AT_MAX);
             }
         }
         else if(strcmp(tok,"F11")==0){ // at color down
@@ -241,11 +241,11 @@ bool event_execute_policy_command(char * policy_command, char * cluster){
             tok = strtok(NULL,",;");
             if(tok!=NULL) value = atoi(tok);
             else break;
-            if(control_getATValue()>=(AT_MIN+value)){
-                control_setATValue(control_getATValue()-value);
+            if(control_get_at_value()>=(AT_MIN+value)){
+                control_set_at_value(control_get_at_value()-value);
             }
             else{
-                control_setATValue(AT_MIN);
+                control_set_at_value(AT_MIN);
             }
         }
         tok = strtok(NULL,",;");
@@ -315,10 +315,10 @@ bool event_execute_special(const char * key, const char * value){
             bool match = event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
             if(match && (channel==i+1 || channel==0)){
                 if(dim < DIM_NO_CHANGE){
-                    control_setDimValue(i+1,dim);
+                    control_set_dim_value(i+1,dim);
                 }
                 if((dim_default < DIM_NO_CHANGE)&&(dim_duration>=0)){
-                    control_setDimDuration(i+1,dim_duration,dim_default);
+                    control_set_dim_duration(i+1,dim_duration,dim_default);
                 }
             }
         }
@@ -338,11 +338,11 @@ bool event_execute_special(const char * key, const char * value){
             tok = strtok(NULL,","); // next parameter
         }
         if(dim < DIM_NO_CHANGE){
-            control_setDimValue(0,dim);
-            control_setDimValue(1,dim);
+            control_set_dim_value(0,dim);
+            control_set_dim_value(1,dim);
         }
         if((at_value>=AT_MIN)&&(at_value<=AT_MAX)){
-            control_setATValue(at_value);
+            control_set_at_value(at_value);
         }
     }
     // else if(strcmp(key,"rgbw")==0){
@@ -353,7 +353,7 @@ bool event_execute_special(const char * key, const char * value){
     //         tok = strtok(NULL,","); // next parameter
     //     }
     //     if(dim < DIM_NO_CHANGE){
-    //         control_setDimValue(dim);
+    //         control_set_dim_value(dim);
     //     }
     //     bool color_changed = true;
     //     rgbw_value = 0;
