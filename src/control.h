@@ -15,16 +15,13 @@
 #define DIM_MAX 100
 #define DIM_MIN 0
 #define COLOR_NO_CHANGE 256
-#define AT_MIN 3000
-#define AT_MAX 5000
-#define AT_RANGE (AT_MAX-AT_MIN)
 
 void control_init(void);
+void control_update_pwm_mode(uint8_t channel);
 uint8_t control_getDimValue(uint8_t channel);
 void control_setDimValue(uint8_t channel, uint8_t new_value);
 uint16_t control_getATValue();
 void control_setATValue(uint16_t new_value);
 void control_setDimDuration(uint8_t channel, int32_t duration, uint8_t default_value);
-void control_setFadeTime(uint8_t channel, uint16_t new_value);
 
 #endif

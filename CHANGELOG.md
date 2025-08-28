@@ -2,6 +2,9 @@
 
 Node90 Firmware
 
+# 1.6.0
+- add pwm, i2c, io_expander
+
 # 1.5.0
 - add actuators, sensors, policy, and event resources
 

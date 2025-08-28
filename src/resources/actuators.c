@@ -26,7 +26,7 @@ void actuators_init(void){
         storage_loadStrIndex(actuators[i].ns, "cluster", actuators[i].cluster, "group1", i+1, &actuators_actuator_set_cluster); 
         storage_loadStrIndex(actuators[i].ns, "prphtag", actuators[i].prphtag, "0", i+1, &actuators_actuator_set_prphtag); 
         storage_loadU16Index(actuators[i].ns, "fadetime", &actuators[i].fadetime, 2000, i+1, &actuators_actuator_set_fadetime); 
-        storage_loadStrIndex(actuators[i].ns, "pwm_mode", actuators[i].pwm_mode, "ALL_ON", i+1, &actuators_actuator_set_pwm_mode); 
+        storage_loadStrIndex(actuators[i].ns, "pwm_mode", actuators[i].pwm_mode, "DIM_CC", i+1, &actuators_actuator_set_pwm_mode); 
         storage_loadBoolIndex(actuators[i].ns, "motion_enable", &actuators[i].motion_enable, true, i+1, &actuators_actuator_set_motion_enable); 
         storage_loadU16Index(actuators[i].ns, "cc", &actuators[i].cc, 100, i+1, &actuators_actuator_set_cc); 
         storage_loadU16Index(actuators[i].ns, "cv", &actuators[i].cv, 12000, i+1, &actuators_actuator_set_cv); 
@@ -262,6 +262,7 @@ bool actuators_actuator_set_pwm_mode(uint8_t channel, char *pwm_mode){
     if(changed){
         return storage_setStr(actuators[i].ns, "pwm_mode", actuators[i].pwm_mode);
     }
+    control_update_pwm_mode(channel);
     return true;
 }
 
@@ -614,4 +615,28 @@ uint16_t actuators_actuator_get_power(uint8_t channel){
         return 0;
     }
     return sense_get_actuator_power(channel);
+}
+
+bool actuators_actuator_get_is_cc(uint8_t channel){
+    return !actuators_actuator_get_is_cv(channel);
+}
+
+bool actuators_actuator_get_is_cv(uint8_t channel){
+    if(strcmp(actuators_actuator_get_pwm_mode(channel),"DIM_CV")==0){
+        return true;
+    }
+    else if(strcmp(actuators_actuator_get_pwm_mode(channel),"AT_CV")==0){
+        return true;
+    }
+    return false;
+}
+
+bool actuators_actuator_get_is_at(uint8_t channel){
+    if(strcmp(actuators_actuator_get_pwm_mode(channel),"AT_CC")==0){
+        return true;
+    }
+    else if(strcmp(actuators_actuator_get_pwm_mode(channel),"AT_CV")==0){
+        return true;
+    }
+    return false;
 }

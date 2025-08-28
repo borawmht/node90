@@ -11,9 +11,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "resources.h"
+#include "pwm.h"
 
 #define NUM_ACTUATORS 2
-#define PWM_MODE_SIZE 16
 
 typedef struct {
     char ns[16];
@@ -60,5 +60,8 @@ uint16_t actuators_actuator_get_cv(uint8_t channel);
 uint16_t actuators_actuator_get_cp(uint8_t channel);
 uint8_t actuators_actuator_get_dim(uint8_t channel);
 uint16_t actuators_actuator_get_at(uint8_t channel);
+bool actuators_actuator_get_is_cc(uint8_t channel);
+bool actuators_actuator_get_is_cv(uint8_t channel);
+bool actuators_actuator_get_is_at(uint8_t channel);
 
 #endif // ACTUATORS_H

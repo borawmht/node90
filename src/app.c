@@ -13,6 +13,8 @@
 #include "commands.h"
 #include "flash.h"
 #include "firmware_update.h"
+#include "control.h"
+#include "sense.h"
 
 // Application signature for bootloader validation
 __attribute__((section(".app_signature")))
@@ -81,6 +83,8 @@ void APP_Tasks ( void ){
             commands_init();
             flash_init();
             firmware_update_init();
+            control_init();
+            sense_init();
             led_stat_period = SLOW_LED_PERIOD;
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
             appData.state = APP_STATE_RUN;

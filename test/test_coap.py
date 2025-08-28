@@ -180,7 +180,8 @@ if __name__ == "__main__":
     # print(f"Result: {result}")
 
     node_ip = '192.168.1.255' # broadcast
-    result = put(node_ip, '/inx/event', 'on', '0', confirm=False, broadcast=True)
+    # result = put(node_ip, '/inx/event', 'vac', '0', confirm=False, broadcast=True)
+    result = put(node_ip, '/inx/event', 'fl', '0,0,50', confirm=False, broadcast=True)
     print(f"Result: {result}")
     # result = get(node_ip, '/inx/event', 5)
     # print(f"Result: {result}")

@@ -6,14 +6,14 @@
 */
 
 #include "control.h"
+#include "pwm.h"
+#include "io_expander.h"
 #include "resources/actuators.h"
 #include "definitions.h"
 
 uint8_t dim_values[NUM_ACTUATORS];
 int32_t dim_duration[NUM_ACTUATORS];
 uint8_t dim_default[NUM_ACTUATORS];
-uint16_t fade_times[NUM_ACTUATORS];
-uint16_t at_value;
 
 void control_update_actuator_LEDs(void){
     if(dim_values[0]>0) DRV1_LED_Set();
@@ -24,6 +24,13 @@ void control_update_actuator_LEDs(void){
 
 void control_init(void){
     SYS_CONSOLE_PRINT("control: init\r\n");
+    io_expander_init();
+    pwm_init();
+    EN_48V_Set();
+}
+
+void control_update_pwm_mode(uint8_t channel){
+    pwm_update_mode(channel);
 }
 
 uint8_t control_getDimValue(uint8_t channel){
@@ -31,7 +38,7 @@ uint8_t control_getDimValue(uint8_t channel){
 }
 
 void control_setDimValue(uint8_t channel, uint8_t new_value){
-    if(strncmp(actuators_actuator_get_pwm_mode(channel),"AT",2)==0){
+    if(actuators_actuator_get_is_at(channel)){
         dim_values[0] = new_value;
         dim_values[1] = new_value;
         SYS_CONSOLE_PRINT("control: set dim value: %u, AT\r\n", new_value);
@@ -40,23 +47,20 @@ void control_setDimValue(uint8_t channel, uint8_t new_value){
         dim_values[channel-1] = new_value;
         SYS_CONSOLE_PRINT("control: set dim value: %u, actuator%u\r\n", new_value, channel);
     }
+    pwm_set_dim(channel, new_value);
     control_update_actuator_LEDs();
 }
 
 uint16_t control_getATValue(void){
-    return at_value;
+    return pwm_get_at();
 }
 
 void control_setATValue(uint16_t new_value){
-    at_value = new_value;
     SYS_CONSOLE_PRINT("control: set AT value: %u\r\n", new_value);
+    pwm_set_at(new_value);
 }
 
 void control_setDimDuration(uint8_t channel, int32_t duration, uint8_t default_value){
     dim_duration[channel-1] = duration;
     dim_default[channel-1] = default_value;
-}
-
-void control_setFadeTime(uint8_t channel, uint16_t new_value){
-    fade_times[channel-1] = new_value;
 }

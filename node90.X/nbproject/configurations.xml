@@ -494,6 +494,9 @@
       <itemPath>../src/http.h</itemPath>
       <itemPath>../src/control.h</itemPath>
       <itemPath>../src/sense.h</itemPath>
+      <itemPath>../src/pwm.h</itemPath>
+      <itemPath>../src/i2c.h</itemPath>
+      <itemPath>../src/io_expander.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -1134,6 +1137,9 @@
       <itemPath>../src/http.c</itemPath>
       <itemPath>../src/control.c</itemPath>
       <itemPath>../src/sense.c</itemPath>
+      <itemPath>../src/pwm.c</itemPath>
+      <itemPath>../src/i2c.c</itemPath>
+      <itemPath>../src/io_expander.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

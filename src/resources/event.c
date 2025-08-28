@@ -328,7 +328,7 @@ bool event_execute_special(const char * key, const char * value){
         bool autotune = true;
         for(i=0;i<NUM_ACTUATORS;i++){
             match &= event_get_cluster_match(cluster, actuators_actuator_get_cluster(i+1));
-            autotune &= (strncmp(actuators_actuator_get_pwm_mode(i+1),"AT",2)==0);
+            autotune &= actuators_actuator_get_is_at(i+1);
         }
         if(!match || !autotune) return false;
         for(i=0; i<2; i++){
