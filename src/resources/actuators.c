@@ -46,9 +46,9 @@ void actuators_init(void){
         storage_loadU16Index(actuators[i].ns, "cc", &actuators[i].cc, 2500, i+1, &actuators_actuator_set_cc); 
         storage_loadU16Index(actuators[i].ns, "cv", &actuators[i].cv, 12000, i+1, &actuators_actuator_set_cv); 
         storage_loadU16Index(actuators[i].ns, "cp", &actuators[i].cp, 100, i+1, &actuators_actuator_set_cp); 
-        control_set_dim_value(i+1,0);
-        control_set_at_value(4000);
+        control_set_dim_value(i+1,0);        
     }
+    control_set_at_value(4000);
 }
 
 char * actuators_get_json_str(void) {    
@@ -746,6 +746,13 @@ bool actuators_actuator_get_is_at(uint8_t channel){
         return true;
     }
     else if(strcmp(actuators_actuator_get_pwm_mode(channel),"AT_CV")==0){
+        return true;
+    }
+    return false;
+}
+
+bool actuators_actuator_get_is_els(uint8_t channel){
+    if(strcmp(actuators_actuator_get_mode(channel),"ELS")==0){
         return true;
     }
     return false;

@@ -54,7 +54,7 @@
 #include "definitions.h"
 #include "sys_tasks.h"
 #include "pwm.h"
-
+#include "sense.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -94,6 +94,7 @@ static void lSYS_CMD_Tasks(  void *pvParameters  )
         (void) SYS_CMD_Tasks();
         WDTCONbits.WDTCLR = 1; // clear the watchdog
         pwm_fade_task();
+        sense_adc_task();
         vTaskDelay(10U / portTICK_PERIOD_MS);
     }
 }

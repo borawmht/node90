@@ -3,7 +3,7 @@
 Node90 Firmware
 
 # 1.6.0
-- add pwm, i2c, io_expander, dac
+- add pwm, i2c, io_expander, dac, adc
 - add actuator mode, dim_els, cuv_enable
 
 # 1.5.0

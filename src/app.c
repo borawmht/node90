@@ -46,6 +46,55 @@ bool app_firmware_download_running = false;
 char app_firmware_download_url[256];
 bool app_firmware_update_request = false;
 
+void app_led_task(void){
+    // toggle status LED
+    if(led_stat_counter<led_stat_period/2){
+        led_stat_counter++;
+    }
+    else{
+        led_stat_counter = 0;
+        LED_STAT_Toggle();
+    }  
+}
+
+
+void app_firmware_update_task(void){
+    if(app_firmware_download_request == true && 
+        app_firmware_download_running == false &&
+        ethernet_linkUp() && ethernet_hasIP()){
+        app_firmware_download_running = true;
+        app_firmware_download_request = false;
+        bool result = firmware_update_download_binary_to_external_flash(app_firmware_download_url);
+        app_firmware_download_running = false;
+        if(result && app_firmware_update_request && firmware_update_get_external_valid()){
+            trigger_pattern = TRIGGER_UPDATE;
+            SYS_RESET_SoftwareReset();
+        }
+    }
+}
+
+bool app_start_firmware_download(char* url, bool update){
+    if(app_firmware_download_request == false && app_firmware_download_running == false){
+        if(url == NULL){
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
+            strncpy(app_firmware_download_url, "https://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.1.0.bin", 256);
+            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/tools/node90.X.production.bin", 256);
+        }
+        else{
+            strncpy(app_firmware_download_url, url, 256);
+        }
+        app_firmware_update_request = update;
+        app_firmware_download_request = true;        
+        return true;
+    }
+    return false;
+}
+
+bool app_firmware_downloading(void){
+    return app_firmware_download_running;
+}
+
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
 void APP_Initialize ( void ){
@@ -64,14 +113,7 @@ void APP_Initialize ( void ){
 // this is the main application loop
 // the task period is 100ms
 void APP_Tasks ( void ){
-    // toggle status LED
-    if(led_stat_counter<led_stat_period/2){
-        led_stat_counter++;
-    }
-    else{
-        led_stat_counter = 0;
-        LED_STAT_Toggle();
-    }  
+    app_led_task(); 
     
     switch ( appData.state )
     {        
@@ -93,7 +135,11 @@ void APP_Tasks ( void ){
 
         case APP_STATE_RUN:
         {            
-            // TODO: add main application logic here    
+            // TODO: add main application logic here   
+            sense_app_task();
+            app_firmware_update_task();
+            
+            // TODO: remove this test code
             if(app_test_counter<60){
                 app_test_counter++;
             }
@@ -105,19 +151,7 @@ void APP_Tasks ( void ){
                 // http_client_get("http://52.1.207.236/get", NULL, NULL);
                 // http_client_get("https://52.1.207.236/get", NULL, NULL);
                 // firmware_update_download_binary_to_external_flash("http://192.168.1.68:8080/release/node90_1.0.1.bin");
-            } 
-            if(app_firmware_download_request == true && 
-                app_firmware_download_running == false &&
-                ethernet_linkUp() && ethernet_hasIP()){
-                app_firmware_download_running = true;
-                app_firmware_download_request = false;
-                bool result = firmware_update_download_binary_to_external_flash(app_firmware_download_url);
-                app_firmware_download_running = false;
-                if(result && app_firmware_update_request && firmware_update_get_external_valid()){
-                    trigger_pattern = TRIGGER_UPDATE;
-                    SYS_RESET_SoftwareReset();
-                }
-            }
+            }             
             break;
         }
 
@@ -126,28 +160,4 @@ void APP_Tasks ( void ){
             break;
         }
     }
-}
-
-
-bool app_start_firmware_download(char* url, bool update)
-{
-    if(app_firmware_download_request == false && app_firmware_download_running == false){
-        if(url == NULL){
-            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
-            strncpy(app_firmware_download_url, "https://192.168.1.65:8080/release/node90_1.2.0.bin", 256);
-            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/release/node90_1.1.0.bin", 256);
-            // strncpy(app_firmware_download_url, "http://192.168.1.65:8080/tools/node90.X.production.bin", 256);
-        }
-        else{
-            strncpy(app_firmware_download_url, url, 256);
-        }
-        app_firmware_update_request = update;
-        app_firmware_download_request = true;        
-        return true;
-    }
-    return false;
-}
-
-bool app_firmware_downloading(void){
-    return app_firmware_download_running;
 }

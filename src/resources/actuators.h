@@ -74,5 +74,6 @@ uint16_t actuators_actuator_get_at(uint8_t channel);
 bool actuators_actuator_get_is_cc(uint8_t channel);
 bool actuators_actuator_get_is_cv(uint8_t channel);
 bool actuators_actuator_get_is_at(uint8_t channel);
+bool actuators_actuator_get_is_els(uint8_t channel);
 
 #endif // ACTUATORS_H

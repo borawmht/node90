@@ -498,6 +498,7 @@
       <itemPath>../src/i2c.h</itemPath>
       <itemPath>../src/io_expander.h</itemPath>
       <itemPath>../src/dac.h</itemPath>
+      <itemPath>../src/adc.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -1142,6 +1143,7 @@
       <itemPath>../src/i2c.c</itemPath>
       <itemPath>../src/io_expander.c</itemPath>
       <itemPath>../src/dac.c</itemPath>
+      <itemPath>../src/adc.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
