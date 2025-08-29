@@ -14,6 +14,7 @@
 #include "jsoncbor.h"
 #include "cborjson.h"
 #include "definitions.h"
+#include "coap.h"
 
 bool event_get_cluster_match(char * event_cluster, char * cluster_to_match){
     char *broadcast_cluster="0";
@@ -484,4 +485,47 @@ bool event_coap_handler(const coap_message_t *request, coap_message_t *response)
         return event_coap_put_handler(request, response);
     }
     return false;
+}
+
+coap_message_t event_coap_message;
+char event_json_str[256];
+#define URI_INX_EVENT "/inx/event"
+bool event_send_key_value_coap_message(char * ip, char * key, char * value, bool broadcast){
+    // build the event key value json string
+    sprintf(event_json_str,"{\"e\":{\"%s\":\"%s\"}}",key,value);     
+    size_t encoded_size = 0;
+    CborError error = json_to_cbor(event_json_str, resource_cbor_buffer, RESOURCE_CBOR_BUFFER_SIZE, &encoded_size);
+    if (error != CborNoError) {
+        SYS_CONSOLE_PRINT("event: json_to_cbor error: %d\r\n", error);
+        return false;      
+    }    
+    
+    // Initialize the CoAP message
+    memset(&event_coap_message, 0, sizeof(coap_message_t));
+    event_coap_message.version = 1;
+    event_coap_message.type = COAP_TYPE_NON;
+    event_coap_message.code = COAP_CODE_CONTENT;
+    event_coap_message.token_length = 0;
+    event_coap_message.message_id = 0; // Let coap_send_message auto-assign
+    event_coap_message.content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
+    event_coap_message.payload_length = encoded_size;
+    memcpy(event_coap_message.payload, resource_cbor_buffer, event_coap_message.payload_length);
+    
+    // Add URI_PATH option
+    coap_add_uri_path_options(&event_coap_message, URI_INX_EVENT);
+    coap_set_content_format_option(&event_coap_message, event_coap_message.content_format);
+    
+    // Send the message
+    bool result = coap_send_message(ip, &event_coap_message, broadcast);
+    if (!result) {
+        SYS_CONSOLE_PRINT("event: failed to send coap message\r\n");
+        return false;
+    }
+    
+    return true;
+}
+
+bool event_send_key_value(char * ip, char * key, char * value, bool broadcast){
+    event_send_key_value_coap_message(ip, key, value, broadcast);    
+    return true;
 }

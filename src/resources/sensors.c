@@ -907,3 +907,28 @@ char * sensors_wallswitch_get_prphtag(uint8_t channel){
     }
     return wallswitches[channel-1].prphtag;
 }
+
+bool sensors_sensor_get_is_input_type(uint8_t channel){
+    if(channel<1 || channel>NUM_SENSORS){
+        SYS_CONSOLE_PRINT("sensors: sensor%u get_is_input_type: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    return  !sensors_sensor_get_is_occupancy_type(channel) && 
+            !sensors_sensor_get_is_toggle_type(channel);
+}
+
+bool sensors_sensor_get_is_occupancy_type(uint8_t channel){
+    if(channel<1 || channel>NUM_SENSORS){
+        SYS_CONSOLE_PRINT("sensors: sensor%u get_is_occupancy_type: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    return strcmp(sensors[channel-1].type,"OCCUPANCY_LH") == 0;
+}
+
+bool sensors_sensor_get_is_toggle_type(uint8_t channel){
+    if(channel<1 || channel>NUM_SENSORS){
+        SYS_CONSOLE_PRINT("sensors: sensor%u get_is_toggle_type: channel out of range: %d\r\n", channel);
+        return false;
+    }
+    return strcmp(sensors[channel-1].type,"TOGGLE_LH") == 0;
+}

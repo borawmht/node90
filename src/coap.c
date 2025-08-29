@@ -714,23 +714,23 @@ bool coap_set_content_format_option(coap_message_t *message, coap_content_format
     if (!message || message->options_count >= COAP_MAX_OPTIONS) {
         return false;
     }
+
+    message->content_format = format;
     
     // Find if content format option already exists
     for (int i = 0; i < message->options_count; i++) {
         if (message->options[i].number == COAP_OPTION_CONTENT_FORMAT) {
-            // Update existing option
-            uint16_t format_value = format;
-            message->options[i].length = 2;
-            message->options[i].value = (uint8_t*)&format_value;
+            // Update existing option            
+            message->options[i].length = 1;
+            message->options[i].value = (uint8_t*)&message->content_format;
             return true;
         }
     }
     
     // Add new content format option
-    uint16_t format_value = format;
     message->options[message->options_count].number = COAP_OPTION_CONTENT_FORMAT;
-    message->options[message->options_count].length = 2;
-    message->options[message->options_count].value = (uint8_t*)&format_value;
+    message->options[message->options_count].length = 1;
+    message->options[message->options_count].value = (uint8_t*)&message->content_format;
     message->options_count++;
     
     return true;
@@ -743,8 +743,8 @@ coap_content_format_t coap_get_content_format_option(const coap_message_t *messa
     
     for (int i = 0; i < message->options_count; i++) {
         if (message->options[i].number == COAP_OPTION_CONTENT_FORMAT) {
-            if (message->options[i].length == 2) {
-                return (coap_content_format_t)*(uint16_t*)message->options[i].value;
+            if (message->options[i].length == 1) {
+                return (coap_content_format_t)*message->options[i].value;
             }
         }
     }
@@ -885,5 +885,147 @@ void coap_server_init(void) {
                 coap_register_resource(resources[i].path, resources[i].coap_server_handler);
             }
         }
+    }
+}
+
+bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
+    if (ip == NULL || message == NULL) {
+        SYS_CONSOLE_PRINT("coap: invalid parameters\r\n");
+        return false;
+    }
+    
+    // Check if ethernet is ready
+    if (!ethernet_hasIP()) {
+        SYS_CONSOLE_PRINT("coap: ethernet not ready\r\n");
+        return false;
+    }
+    
+    // Parse IP address string (format: "192.168.1.100")
+    uint8_t dst_ip[4];
+    char ip_copy[16];  // Make a copy since strtok modifies the string
+    strncpy(ip_copy, ip, sizeof(ip_copy) - 1);
+    ip_copy[sizeof(ip_copy) - 1] = '\0';
+    
+    char *token = strtok(ip_copy, ".");
+    if (token == NULL) {
+        SYS_CONSOLE_PRINT("coap: invalid IP format\r\n");
+        return false;
+    }
+    dst_ip[0] = atoi(token);
+    
+    for (int i = 1; i < 4; i++) {
+        token = strtok(NULL, ".");
+        if (token == NULL) {
+            SYS_CONSOLE_PRINT("coap: invalid IP format\r\n");
+            return false;
+        }
+        dst_ip[i] = atoi(token);
+    }
+    
+    // Get source IP and MAC
+    uint8_t *src_ip = ethernet_getIPAddress();
+    uint8_t *src_mac = ethernet_getMACAddress();
+
+    // Use message_id if set, otherwise use global counter
+    if (message->message_id == 0) {
+        message->message_id = coap_ctx.message_id_counter++;
+    }
+    
+    // Build CoAP message
+    uint8_t coap_buffer[COAP_MAX_PAYLOAD_SIZE];
+    uint16_t coap_length;
+    if (!coap_build_message(message, coap_buffer, &coap_length)) {
+        SYS_CONSOLE_PRINT("coap: failed to build message\r\n");
+        return false;
+    }
+    
+    // Create packet using the same structure as coap_send_packet_response
+    coap_packet_t packet = {0};
+    
+    // Fill Ethernet header
+    if (broadcast) {
+        // Broadcast MAC address
+        uint8_t broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+        memcpy(packet.eth.dst_mac, broadcast_mac, 6);
+    } else {
+        // For unicast, we'll need to resolve the MAC address
+        // For now, we'll use a placeholder - in a real implementation you'd need ARP
+        uint8_t default_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        memcpy(packet.eth.dst_mac, default_mac, 6);
+    }
+    memcpy(packet.eth.src_mac, src_mac, 6);
+    packet.eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
+    
+    // Fill IP header
+    packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
+    packet.ip.tos = 0x00;          // Type of Service
+    packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    
+    packet.ip.identification = TCPIP_Helper_htons(message->message_id);
+    packet.ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
+    packet.ip.ttl = 100;              // Time to Live
+    packet.ip.protocol = 17;         // Protocol (UDP)
+    packet.ip.checksum = 0;          // Will be calculated
+    memcpy(packet.ip.src_ip, src_ip, 4);
+    memcpy(packet.ip.dst_ip, dst_ip, 4);
+    
+    // Fill UDP header
+    packet.udp.src_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
+    packet.udp.dst_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
+    packet.udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
+    packet.udp.checksum = 0;  // Will be calculated
+    
+    // Copy CoAP payload
+    memcpy(packet.payload, coap_buffer, coap_length);
+    
+    // Calculate IP checksum
+    packet.ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t)));
+    
+    // Calculate UDP checksum
+    net_checksum_calculate((uint8_t*)&packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    
+    // Send the packet
+    size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;
+    
+    if (broadcast) {
+        // For broadcast, we need to send to broadcast MAC
+        uint8_t broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+        if (!ethernet_send_to(broadcast_mac, 
+                             (uint8_t*)&packet.ip, 
+                             packet_length - sizeof(ethernet_header_t), 
+                             0x0800)) {
+            SYS_CONSOLE_PRINT("coap: failed to send broadcast packet\r\n");
+            return false;
+        }
+    } else {
+        // For unicast, send the complete packet
+        if (!ethernet_send((uint8_t*)&packet, packet_length)) {
+            SYS_CONSOLE_PRINT("coap: failed to send unicast packet\r\n");
+            return false;
+        }
+    }
+    
+    SYS_CONSOLE_PRINT("coap: message sent to %s\r\n", ip);
+    return true;
+}
+
+// Helper function to add URI_PATH options from a path string
+void coap_add_uri_path_options(coap_message_t *message, const char *path) {
+    char path_copy[64];
+    strncpy(path_copy, path, sizeof(path_copy) - 1);
+    path_copy[sizeof(path_copy) - 1] = '\0';
+    
+    // Skip leading slash
+    if (path_copy[0] == '/') {
+        memmove(path_copy, path_copy + 1, strlen(path_copy));
+    }
+    
+    char *token = strtok(path_copy, "/");
+    while (token != NULL && message->options_count < COAP_MAX_OPTIONS) {
+        message->options[message->options_count].number = COAP_OPTION_URI_PATH;
+        message->options[message->options_count].length = strlen(token);
+        message->options[message->options_count].value = (uint8_t*)token;
+        message->options_count++;
+        token = strtok(NULL, "/");
     }
 }

@@ -6,6 +6,7 @@ Node90 Firmware
 - add pwm, i2c, io_expander, dac, adc
 - add actuator mode, dim_els, cuv_enable
 - add output enable protection delay
+- add send event and coap send message
 
 # 1.5.0
 - add actuators, sensors, policy, and event resources

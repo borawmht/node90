@@ -9,6 +9,7 @@
 #include "adc.h"
 #include "resources/actuators.h"
 #include "resources/sensors.h"
+#include "resources/event.h"
 #include "definitions.h"
 
 uint8_t adc_scan_index = 0;
@@ -148,12 +149,28 @@ void sense_sensor1_task(void){
     if(sensor1_voltage > sensors_sensor_get_high_threshold(1) && !sensor1_input_state){
         sensor1_input_state = true;
         SYS_CONSOLE_PRINT("sense: sensor1: input state: true\r\n");
+        if(sensors_sensor_get_is_input_type(1)){
+            event_send_key_value(
+                ethernet_getBroadcastAddressString(), 
+                sensors_sensor_get_eventlh(1), 
+                sensors_sensor_get_cluster(1), 
+                true
+            );
+        }
     }
     else if(sensor1_voltage < sensors_sensor_get_low_threshold(1) && sensor1_input_state){
         sensor1_input_state = false;
         SYS_CONSOLE_PRINT("sense: sensor1: input state: false\r\n");
+        if(sensors_sensor_get_is_input_type(1)){
+            event_send_key_value(
+                ethernet_getBroadcastAddressString(), 
+                sensors_sensor_get_eventhl(1), 
+                sensors_sensor_get_cluster(1), 
+                true
+            );
+        }
     }
-    sense_sensor1_counter++;
+    sense_sensor1_counter++; // 100ms
     if(sense_sensor1_counter>=30){
         //SYS_CONSOLE_PRINT("sense: sensor1: %u mV\r\n", sensor1_voltage);
         sense_sensor1_counter = 0;

@@ -76,6 +76,9 @@ uint16_t sensors_sensor_get_high_threshold(uint8_t channel);
 uint16_t sensors_sensor_get_low_threshold(uint8_t channel);
 bool sensors_sensor_get_input_state(uint8_t channel);
 bool sensors_sensor_get_logical_state(uint8_t channel);
+bool sensors_sensor_get_is_input_type(uint8_t channel);
+bool sensors_sensor_get_is_occupancy_type(uint8_t channel);
+bool sensors_sensor_get_is_toggle_type(uint8_t channel);
 
 bool sensors_wallswitch_put_json_str(uint8_t channel, char * json_str);
 char * sensors_wallswitch_get_json_str(uint8_t channel);

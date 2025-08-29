@@ -187,4 +187,7 @@ coap_content_format_t coap_get_content_format_option(const coap_message_t *messa
 void coap_debug_packet(const coap_packet_t *packet, uint16_t payload_length);
 void debug_udp_checksum(void);
 
+bool coap_send_message(char * ip, coap_message_t *message, bool broadcast);
+void coap_add_uri_path_options(coap_message_t *message, const char *path);
+
 #endif /* COAP_H */ 

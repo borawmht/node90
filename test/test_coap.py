@@ -186,4 +186,6 @@ if __name__ == "__main__":
     # result = get(node_ip, '/inx/event', 5)
     # print(f"Result: {result}")
 
-    result = put(node_ip, '/inx/actuators/actuator1', 'pwm_mode', 'DIM_CC', confirm=True)
+    # result = put(node_ip, '/inx/actuators/actuator1', 'pwm_mode', 'DIM_CC', confirm=True)
+
+    result = put(node_ip, '/inx/network', 'inx_ip', '192.168.1.65', confirm=True)
