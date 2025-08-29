@@ -257,8 +257,9 @@ bool ethernet_send(const uint8_t * buf, uint32_t len){
         return false;
     }
 
-    // Allocate a proper MAC packet using the stack's allocation function
-    TCPIP_MAC_PACKET* pPkt = TCPIP_PKT_SocketAlloc(len, 0, 0, TCPIP_MAC_PKT_FLAG_TX);
+    // Use TCPIP_PKT_PacketAlloc instead of TCPIP_PKT_SocketAlloc
+    // pktLen = total packet size, segLoadLen = payload size
+    TCPIP_MAC_PACKET* pPkt = TCPIP_PKT_PacketAlloc(len, len, TCPIP_MAC_PKT_FLAG_TX);
     if(pPkt == NULL){
         SYS_CONSOLE_PRINT("ethernet: failed to allocate packet\r\n");
         return false;

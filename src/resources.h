@@ -19,7 +19,7 @@ typedef struct {
     coap_resource_handler_t coap_server_handler;
 } resource_t;
 
-#define RESOURCE_JSON_STR_SIZE 2048
+#define RESOURCE_JSON_STR_SIZE 1014 // 2038 // 2048
 #define RESOURCE_E_JSON_STR_SIZE RESOURCE_JSON_STR_SIZE+10
 #define RESOURCE_CBOR_BUFFER_SIZE RESOURCE_JSON_STR_SIZE
 extern char resource_json_str[];

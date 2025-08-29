@@ -9,6 +9,8 @@ Node90 Firmware
 - add send event and coap send message
 - add execute event
 - add send status and tag request
+- fix ethernet send packet allocation
+- reduce resource str sizes from 2048 to 1014 to match coap payload size 1024
 
 # 1.5.0
 - add actuators, sensors, policy, and event resources

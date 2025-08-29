@@ -135,7 +135,7 @@ char * sensors_sensor_get_json_str(uint8_t channel) {
     cJSON_AddStringToObject(root,"type",sensors[i].type);
     cJSON_AddStringToObject(root,"eventlh",sensors[i].eventlh);
     cJSON_AddStringToObject(root,"eventhl",sensors[i].eventhl);
-    cJSON_AddNumberToObject(root,"holdtime",sensors[i].holdtime);
+    // cJSON_AddNumberToObject(root,"holdtime",sensors[i].holdtime);
     cJSON_AddNumberToObject(root,"occupiedtimeout",sensors[i].occupiedtimeout);
     cJSON_AddNumberToObject(root,"vaccanttimeout",sensors[i].vaccanttimeout);
     cJSON_AddNumberToObject(root,"high_threshold",sensors[i].high_threshold);
@@ -147,6 +147,7 @@ char * sensors_sensor_get_json_str(uint8_t channel) {
     strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
     cJSON_free(print_str);
     cJSON_Delete(root);
+    SYS_CONSOLE_PRINT("sensors: sensor%u json str length: %d\r\n", channel, strlen(resource_json_str));
     return resource_json_str;
 }
 

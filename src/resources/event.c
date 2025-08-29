@@ -487,7 +487,6 @@ bool event_coap_handler(const coap_message_t *request, coap_message_t *response)
     return false;
 }
 
-coap_message_t event_coap_message;
 char event_json_str[256];
 #define URI_INX_EVENT "/inx/event"
 bool event_send_key_value_coap_message(char * ip, char * key, char * value, bool broadcast){
@@ -501,22 +500,22 @@ bool event_send_key_value_coap_message(char * ip, char * key, char * value, bool
     }    
     
     // Initialize the CoAP message
-    memset(&event_coap_message, 0, sizeof(coap_message_t));
-    event_coap_message.version = 1;
-    event_coap_message.type = COAP_TYPE_NON;
-    event_coap_message.code = COAP_CODE_CONTENT;
-    event_coap_message.token_length = 0;
-    event_coap_message.message_id = 0; // Let coap_send_message auto-assign
-    event_coap_message.content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
-    event_coap_message.payload_length = encoded_size;
-    memcpy(event_coap_message.payload, resource_cbor_buffer, event_coap_message.payload_length);
+    memset(&coap_request_message, 0, sizeof(coap_message_t));
+    coap_request_message.version = 1;
+    coap_request_message.type = COAP_TYPE_NON;
+    coap_request_message.code = COAP_CODE_CONTENT;
+    coap_request_message.token_length = 0;
+    coap_request_message.message_id = 0; // Let coap_send_message auto-assign
+    coap_request_message.content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
+    coap_request_message.payload_length = encoded_size;
+    memcpy(coap_request_message.payload, resource_cbor_buffer, coap_request_message.payload_length);
     
     // Add URI_PATH option
-    coap_add_uri_path_options(&event_coap_message, URI_INX_EVENT);
-    coap_set_content_format_option(&event_coap_message, event_coap_message.content_format);
+    coap_add_uri_path_options(&coap_request_message, URI_INX_EVENT);
+    coap_set_content_format_option(&coap_request_message, coap_request_message.content_format);
     
     // Send the message
-    bool result = coap_send_message(ip, &event_coap_message, broadcast);
+    bool result = coap_send_message(ip, &coap_request_message, broadcast);
     if (!result) {
         SYS_CONSOLE_PRINT("event: failed to send coap message\r\n");
         return false;

@@ -151,8 +151,11 @@ if __name__ == "__main__":
 
     # result = put(node_ip, '/inx/actuators/actuator1', 'cluster', 'new_group', confirm=True)
     # print(f"Result: {result}")
+    result = get(node_ip, '/inx/actuators/actuator1', 5)
+    print(f"Result: {result}")
     # result = get(node_ip, '/inx/actuators/actuator1', 5)
     # print(f"Result: {result}")
+    # time.sleep(5)
     # result = get(node_ip, '/inx/actuators/actuator1/context', 5)
     # print(f"Result: {result}")
     # result = get(node_ip, '/inx/actuators/actuator2/context', 5)
@@ -161,6 +164,8 @@ if __name__ == "__main__":
     # print(f"Result: {result}")
 
     # result = put(node_ip, '/inx/sensors/sensor1', 'cluster', 'new_group', confirm=True)
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/sensors/sensor1', 5)
     # print(f"Result: {result}")
     # result = get(node_ip, '/inx/sensors/sensor1', 5)
     # print(f"Result: {result}")
@@ -190,4 +195,4 @@ if __name__ == "__main__":
 
     # result = put(node_ip, '/inx/network', 'inx_ip', '192.168.1.65', confirm=True)
 
-    result = put(node_ip, '/inx/network', 'tag', '0', confirm=True)
+    # result = put(node_ip, '/inx/network', 'tag', '0', confirm=True)

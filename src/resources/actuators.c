@@ -134,9 +134,9 @@ char * actuators_actuator_get_json_str(uint8_t channel) {
     cJSON_AddNumberToObject(root,"fadetime",actuators[i].fadetime);
     cJSON_AddStringToObject(root,"pwm_mode",actuators[i].pwm_mode);
     cJSON_AddStringToObject(root,"motion_enable",actuators[i].motion_enable ? "true" : "false");
-    cJSON_AddStringToObject(root,"motdsbl",actuators[i].motion_enable ? "33" : "3");
+    // cJSON_AddStringToObject(root,"motdsbl",actuators[i].motion_enable ? "33" : "3");
     cJSON_AddNumberToObject(root,"dim",actuators_actuator_get_dim(channel));
-    cJSON_AddNumberToObject(root,"pp",actuators_actuator_get_dim(channel));
+    // cJSON_AddNumberToObject(root,"pp",actuators_actuator_get_dim(channel));
     cJSON_AddNumberToObject(root,"dim_els",actuators[i].dim_els);
     cJSON_AddStringToObject(root,"cuv_enable",actuators[i].cuv_enable ? "true" : "false");
     cJSON_AddNumberToObject(root,"cc",actuators[i].cc);
@@ -150,6 +150,7 @@ char * actuators_actuator_get_json_str(uint8_t channel) {
     strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
     cJSON_free(print_str);
     cJSON_Delete(root);
+    SYS_CONSOLE_PRINT("actuators: actuator%u json str length: %d\r\n", channel, strlen(resource_json_str));
     return resource_json_str;
 }
 

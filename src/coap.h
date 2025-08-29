@@ -112,6 +112,8 @@ typedef struct {
     } options[COAP_MAX_OPTIONS];
 } coap_message_t;
 
+extern coap_message_t coap_request_message;
+
 // CoAP packet context (for packet-based approach)
 typedef struct {
     uint8_t src_ip[4];

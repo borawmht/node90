@@ -14,6 +14,8 @@
 #include <string.h>
 #include "config/default/library/tcpip/tcpip_helpers.h"
 
+coap_message_t coap_request_message;
+
 // Add queue structures for packet processing
 typedef struct {
     uint8_t packet_data[COAP_MAX_PAYLOAD_SIZE];

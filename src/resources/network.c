@@ -181,30 +181,30 @@ char * network_get_status_request_json_str(void){
     cJSON * root = cJSON_CreateObject();
     cJSON_AddStringToObject(root,"tag",network.tag);
     cJSON_AddNumberToObject(root,"SN",atoi(network.serial_number));
-    // cJSON_AddStringToObject(root,"app_name",PROJECT_NAME);
-    // cJSON_AddStringToObject(root,"app_version",PROJECT_VERSION);    
+    cJSON_AddStringToObject(root,"app_name",PROJECT_NAME);
+    cJSON_AddStringToObject(root,"app_version",PROJECT_VERSION);    
     // cJSON_AddStringToObject(root,"app_build_date",PROJECT_BUILD_DATE);
     // cJSON_AddStringToObject(root,"app_build_time",PROJECT_BUILD_TIME);
-    // cJSON_AddNumberToObject(root,"pp1",actuators_actuator_get_dim(1));
-    // cJSON_AddNumberToObject(root,"pp2",actuators_actuator_get_dim(2));
+    cJSON_AddNumberToObject(root,"pp1",actuators_actuator_get_dim(1));
+    cJSON_AddNumberToObject(root,"pp2",actuators_actuator_get_dim(2));
     // cJSON_AddNumberToObject(root,"cp1",actuators_actuator_get_cp(1));
     // cJSON_AddNumberToObject(root,"cp2",actuators_actuator_get_cp(2)); 
     // cJSON_AddNumberToObject(root,"cv1",actuators_actuator_get_cv(1));
     // cJSON_AddNumberToObject(root,"cv2",actuators_actuator_get_cv(2));
     // cJSON_AddNumberToObject(root,"cc1",actuators_actuator_get_cc(1));
     // cJSON_AddNumberToObject(root,"cc2",actuators_actuator_get_cc(2));
-    // cJSON_AddNumberToObject(root,"at",actuators_actuator_get_at(1));
-    // cJSON_AddStringToObject(root,"motion_enable1",actuators_actuator_get_motion_enable(1)?"true":"false");
-    // cJSON_AddStringToObject(root,"motion_enable2",actuators_actuator_get_motion_enable(2)?"true":"false");
-    // cJSON_AddStringToObject(root,"actuator1_cluster",actuators_actuator_get_cluster(1));
-    // cJSON_AddStringToObject(root,"actuator2_cluster",actuators_actuator_get_cluster(2));
-    // cJSON_AddStringToObject(root,"sensor1_cluster",sensors_sensor_get_cluster(1));
-    // cJSON_AddStringToObject(root,"WallSwitch_cluster",sensors_wallswitch_get_cluster(1));    
+    cJSON_AddNumberToObject(root,"at",actuators_actuator_get_at(1));
+    cJSON_AddStringToObject(root,"motion_enable1",actuators_actuator_get_motion_enable(1)?"true":"false");
+    cJSON_AddStringToObject(root,"motion_enable2",actuators_actuator_get_motion_enable(2)?"true":"false");
+    cJSON_AddStringToObject(root,"actuator1_cluster",actuators_actuator_get_cluster(1));
+    cJSON_AddStringToObject(root,"actuator2_cluster",actuators_actuator_get_cluster(2));
+    cJSON_AddStringToObject(root,"sensor1_cluster",sensors_sensor_get_cluster(1));
+    cJSON_AddStringToObject(root,"WallSwitch_cluster",sensors_wallswitch_get_cluster(1));    
     char * print_str = cJSON_PrintUnformatted(root);
     strncpy(network_request_json_str,print_str,RESOURCE_JSON_STR_SIZE);
     cJSON_free(print_str);
     cJSON_Delete(root); 
-    // SYS_CONSOLE_PRINT("network: status request json str: %s\r\n", network_request_json_str);
+    SYS_CONSOLE_PRINT("network: status request json str length: %d\r\n", strlen(network_request_json_str));
     return network_request_json_str;
 }
 
@@ -220,7 +220,6 @@ char * network_get_tag_request_json_str(void){
     return network_request_json_str;
 }
 
-coap_message_t network_request_coap_message;
 bool network_send_request_coap_message(char * uri, char * json_str){
     snprintf(resource_e_json_str,RESOURCE_E_JSON_STR_SIZE,"{\"e\":%s}",json_str);    
     
@@ -232,22 +231,22 @@ bool network_send_request_coap_message(char * uri, char * json_str){
     }    
     
     // Initialize the CoAP message
-    memset(&network_request_coap_message, 0, sizeof(coap_message_t));
-    network_request_coap_message.version = 1;
-    network_request_coap_message.type = COAP_TYPE_NON;
-    network_request_coap_message.code = COAP_CODE_CONTENT;
-    network_request_coap_message.token_length = 0;
-    network_request_coap_message.message_id = 0; // Let coap_send_message auto-assign
-    network_request_coap_message.content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
-    network_request_coap_message.payload_length = encoded_size;
-    memcpy(network_request_coap_message.payload, resource_cbor_buffer, network_request_coap_message.payload_length);
+    memset(&coap_request_message, 0, sizeof(coap_message_t));
+    coap_request_message.version = 1;
+    coap_request_message.type = COAP_TYPE_NON;
+    coap_request_message.code = COAP_CODE_CONTENT;
+    coap_request_message.token_length = 0;
+    coap_request_message.message_id = 0; // Let coap_send_message auto-assign
+    coap_request_message.content_format = COAP_CONTENT_FORMAT_APPLICATION_CBOR;
+    coap_request_message.payload_length = encoded_size;
+    memcpy(coap_request_message.payload, resource_cbor_buffer, coap_request_message.payload_length);
     
     // Add URI_PATH option
-    coap_add_uri_path_options(&network_request_coap_message, uri);
-    coap_set_content_format_option(&network_request_coap_message, network_request_coap_message.content_format);
+    coap_add_uri_path_options(&coap_request_message, uri);
+    coap_set_content_format_option(&coap_request_message, coap_request_message.content_format);
     
     // Send the message
-    bool result = coap_send_message(network.inx_ip, &network_request_coap_message, true);
+    bool result = coap_send_message(network.inx_ip, &coap_request_message, true);
     if (!result) {
         SYS_CONSOLE_PRINT("network: failed to send coap message\r\n");
         return false;
