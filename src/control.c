@@ -15,6 +15,8 @@
 uint8_t dim_values[NUM_ACTUATORS];
 int32_t dim_duration[NUM_ACTUATORS];
 uint8_t dim_default[NUM_ACTUATORS];
+bool channel_enabled[NUM_ACTUATORS];
+bool channel_enable_request[NUM_ACTUATORS];
 
 void control_update_actuator_LEDs(void){
     if(dim_values[0]>0) DRV1_LED_Set();
@@ -23,16 +25,38 @@ void control_update_actuator_LEDs(void){
     else DRV2_LED_Clear();
 }
 
+void control_output_enable_task(void){
+    for(int i=0;i<NUM_ACTUATORS;i++){
+        if(channel_enable_request[i]){
+            control_output_enable(i+1, true);
+            channel_enable_request[i] = false;
+        }
+    }
+}
+
 void control_init(void){
     SYS_CONSOLE_PRINT("control: init\r\n");
     io_expander_init();
+    for(int i=0;i<NUM_ACTUATORS;i++){
+        channel_enabled[i] = false;
+        channel_enable_request[i] = false;
+        dim_values[i] = 0;
+        dim_duration[i] = DIM_DURATION_DISABLED;
+        dim_default[i] = DIM_NO_CHANGE;
+        //control_output_enable(i+1, false);
+    }    
     dac_init();
     pwm_init();
     EN_48V_Set();
+    for(int i=0;i<NUM_ACTUATORS;i++){
+        channel_enable_request[i] = true;
+    }
 }
 
 void control_update_pwm_mode(uint8_t channel){
-    pwm_update_mode(channel);
+    if(channel_enabled[channel-1]){
+        channel_enable_request[channel-1] = true;
+    }
 }
 
 uint8_t control_get_dim_value(uint8_t channel){
@@ -150,4 +174,69 @@ void control_set_voltage(uint8_t channel, uint16_t voltage){
             io_expander_set(VCV_36V, true);
         }
     }
+}
+
+void control_output_protection_delay(int32_t delay){
+    while(delay>0){
+        SYS_CONSOLE_PRINT("control: output protection delay: %d\r\n", delay/1000);
+        vTaskDelay(1000/portTICK_PERIOD_MS);
+        delay -= 1000;
+    }
+    SYS_CONSOLE_PRINT("control: output protection delay: done\r\n");
+}
+
+void control_output_enable(uint8_t channel, bool enable){
+    if(!enable){
+        SYS_CONSOLE_PRINT("control: actuator%u enable: %s\r\n", channel, enable ? "true" : "false");
+    }
+    bool is_cc = actuators_actuator_get_is_cc(channel);
+    if(is_cc){
+        if(channel == 1){
+            io_expander_set(VCV1_EN, 0);
+            io_expander_set(VCC1_EN, 0);
+            if(!enable) return;
+            if(channel_enabled[0]){
+                control_output_protection_delay(6000);
+                pwm_set_present_duty_cycle(1, 0);
+            }
+            io_expander_set(VCC1_EN, 1);
+            channel_enabled[0] = true;
+        }
+        if(channel == 2){
+            io_expander_set(VCV2_EN, 0);
+            io_expander_set(VCC2_EN, 0);
+            if(!enable) return;
+            if(channel_enabled[1]){
+                control_output_protection_delay(6000);
+                pwm_set_present_duty_cycle(2, 0);
+            }
+            io_expander_set(VCC2_EN, 1);
+            channel_enabled[1] = true;
+        }
+    }
+    else{
+        if(channel == 1){
+            io_expander_set(VCC1_EN, 0);
+            io_expander_set(VCV1_EN, 0);
+            if(!enable) return;
+            if(channel_enabled[0]){
+                control_output_protection_delay(6000);
+                pwm_set_present_duty_cycle(1, 0);
+            }
+            io_expander_set(VCV1_EN, 1);
+            channel_enabled[0] = true;            
+        }
+        if(channel == 2){
+            io_expander_set(VCC2_EN, 0);
+            io_expander_set(VCV2_EN, 0);
+            if(!enable) return;
+            if(channel_enabled[1]){
+                control_output_protection_delay(6000);
+                pwm_set_present_duty_cycle(2, 0);
+            }
+            io_expander_set(VCV2_EN, 1);
+            channel_enabled[1] = true;
+        }
+    }
+    SYS_CONSOLE_PRINT("control: actuator%u enable: %s, %s\r\n", channel, enable ? "true" : "false", is_cc ? "CC" : "CV");
 }

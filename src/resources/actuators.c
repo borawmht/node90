@@ -293,11 +293,11 @@ bool actuators_actuator_set_pwm_mode(uint8_t channel, char *pwm_mode){
     uint8_t i = channel - 1;
     bool changed = strncmp(actuators[i].pwm_mode,pwm_mode,16) != 0;
     strncpy(actuators[i].pwm_mode,pwm_mode,16);
-    SYS_CONSOLE_PRINT("actuators: actuator%u pwm_mode: %s\r\n", channel, actuators[i].pwm_mode);
+    SYS_CONSOLE_PRINT("actuators: actuator%u pwm_mode: %s\r\n", channel, actuators[i].pwm_mode);    
     if(changed){
+        control_update_pwm_mode(channel);
         return storage_setStr(actuators[i].ns, "pwm_mode", actuators[i].pwm_mode);
-    }
-    control_update_pwm_mode(channel);
+    }    
     return true;
 }
 
@@ -372,10 +372,10 @@ bool actuators_actuator_set_cc(uint8_t channel, uint16_t cc){
     bool changed = actuators[i].cc != cc;
     actuators[i].cc = cc;
     SYS_CONSOLE_PRINT("actuators: actuator%u cc: %u\r\n", channel, actuators[i].cc);
+    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle and dac level
     if(changed){
         return storage_setU16(actuators[i].ns, "cc", actuators[i].cc);
-    }
-    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle and dac level
+    }    
     return true;
 }
 
@@ -389,10 +389,10 @@ bool actuators_actuator_set_cv(uint8_t channel, uint16_t cv){
     bool changed = actuators[i].cv != cv;
     actuators[i].cv = cv;
     SYS_CONSOLE_PRINT("actuators: actuator%u cv: %u\r\n", channel, actuators[i].cv);
+    control_set_voltage(channel,cv);
     if(changed){
         return storage_setU16(actuators[i].ns, "cv", actuators[i].cv);
-    }
-    control_set_voltage(channel,cv);
+    }    
     return true;
 }
 
@@ -406,10 +406,10 @@ bool actuators_actuator_set_cp(uint8_t channel, uint16_t cp){
     bool changed = actuators[i].cp != cp;
     actuators[i].cp = cp;
     SYS_CONSOLE_PRINT("actuators: actuator%u cp: %u\r\n", channel, actuators[i].cp);
+    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle
     if(changed){
         return storage_setU16(actuators[i].ns, "cp", actuators[i].cp);
-    }
-    control_set_dim_value(channel,control_get_dim_value(channel)); // update the pwm duty cycle
+    }    
     return true;
 }
 

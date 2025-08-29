@@ -125,8 +125,8 @@ void APP_Tasks ( void ){
             commands_init();
             flash_init();
             firmware_update_init();
-            control_init();
             sense_init();
+            control_init();            
             led_stat_period = SLOW_LED_PERIOD;
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
             appData.state = APP_STATE_RUN;
@@ -137,6 +137,7 @@ void APP_Tasks ( void ){
         {            
             // TODO: add main application logic here   
             sense_app_task();
+            control_output_enable_task();
             app_firmware_update_task();
             
             // TODO: remove this test code

@@ -16,6 +16,8 @@ uint16_t present_duty_cycles[NUM_ACTUATORS];
 uint16_t at_value;
 uint16_t pwm_frequency;
 
+bool pwm_initialized = false;
+
 const char * PWM_MODES[] = {
     "DIM_CC",
     "DIM_CV",
@@ -27,6 +29,7 @@ const char * PWM_MODES[] = {
 #define PWM_FADE_TIME_STEP 10 // 10ms using CMD task
 
 void pwm_set_duty_cycle(uint8_t channel, uint16_t value){    
+    if(!pwm_initialized) return;
     uint32_t value_max_watt = actuators_actuator_get_cp(channel) * value / 713;
     if(value_max_watt > PWM_DUTY_CYCLE_MAX) value = PWM_DUTY_CYCLE_MAX;
     else value = (uint16_t)value_max_watt;
@@ -39,6 +42,7 @@ void pwm_set_duty_cycle(uint8_t channel, uint16_t value){
 }
 
 void pwm_fade_task(void){
+    if(!pwm_initialized) return;
     uint32_t duty_cycle_step;
     for(int i=0;i<NUM_ACTUATORS;i++){
         if(present_duty_cycles[i] == duty_cycles[i]) continue;
@@ -71,6 +75,8 @@ void pwm_fade_task(void){
 }
 
 void pwm_init(void){
+    if(pwm_initialized) return;
+    pwm_initialized = true;
     SYS_CONSOLE_PRINT("pwm: init\r\n");    
     // Use Timer2
     pwm_frequency = 20000; // 010 = 1:4 prescale value
@@ -91,10 +97,9 @@ void pwm_init(void){
     at_value = 4000;
     for(int i=0;i<NUM_ACTUATORS;i++){
         duty_cycles[i] = 0;
-        present_duty_cycles[i] = 0;   
-        pwm_set_duty_cycle(i+1, 0);
-        pwm_update_mode(i+1);
+        pwm_set_present_duty_cycle(i+1, 0);      
     }        
+    pwm_initialized = true;
 }
 
 void pwm_set_dim(uint8_t channel, uint8_t value){
@@ -122,25 +127,7 @@ uint16_t pwm_get_at(void){
     return at_value;
 }
 
-void pwm_update_mode(uint8_t channel){
-    if(actuators_actuator_get_is_cc(channel)){
-        if(channel == 1){
-            io_expander_set(VCV1_EN, 0);
-            io_expander_set(VCC1_EN, 1);
-        }
-        if(channel == 2){
-            io_expander_set(VCV2_EN, 0);
-            io_expander_set(VCC2_EN, 1);
-        }
-    }
-    else{
-        if(channel == 1){
-            io_expander_set(VCC1_EN, 0);
-            io_expander_set(VCV1_EN, 1);
-        }
-        if(channel == 2){
-            io_expander_set(VCC2_EN, 0);
-            io_expander_set(VCV2_EN, 1);
-        }
-    }
+void pwm_set_present_duty_cycle(uint8_t channel, uint16_t value){
+    present_duty_cycles[channel-1] = value;
+    pwm_set_duty_cycle(channel, value);
 }

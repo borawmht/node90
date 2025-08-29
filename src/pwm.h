@@ -21,10 +21,10 @@
 #define AT_RANGE (AT_MAX-AT_MIN)
 
 void pwm_init(void);
-void pwm_update_mode(uint8_t channel);
 void pwm_fade_task(void);
 void pwm_set_dim(uint8_t channel, uint8_t value);
 void pwm_set_at(uint16_t value);
 uint16_t pwm_get_at(void);
+void pwm_set_present_duty_cycle(uint8_t channel, uint16_t value);
 
 #endif // PWM_H
