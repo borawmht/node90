@@ -28,5 +28,7 @@ char * network_get_serial_number(void);
 bool network_put_json_str(char * json_str);
 char * network_get_json_str(void);
 bool network_coap_handler(const coap_message_t *request, coap_message_t *response);
+bool network_send_status_request(void);
+bool network_send_tag_request(void);
 
 #endif /* NETWORK_H */

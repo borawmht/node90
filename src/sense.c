@@ -156,6 +156,10 @@ void sense_sensor1_task(void){
                 sensors_sensor_get_cluster(1), 
                 true
             );
+            event_execute_key_value(
+                sensors_sensor_get_eventlh(1), 
+                sensors_sensor_get_cluster(1)
+            );
         }
     }
     else if(sensor1_voltage < sensors_sensor_get_low_threshold(1) && sensor1_input_state){
@@ -167,6 +171,10 @@ void sense_sensor1_task(void){
                 sensors_sensor_get_eventhl(1), 
                 sensors_sensor_get_cluster(1), 
                 true
+            );
+            event_execute_key_value(
+                sensors_sensor_get_eventhl(1), 
+                sensors_sensor_get_cluster(1)
             );
         }
     }

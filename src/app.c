@@ -15,6 +15,7 @@
 #include "firmware_update.h"
 #include "control.h"
 #include "sense.h"
+#include "resources/network.h"
 
 // Application signature for bootloader validation
 __attribute__((section(".app_signature")))
@@ -45,6 +46,29 @@ bool app_firmware_download_request = false;
 bool app_firmware_download_running = false;
 char app_firmware_download_url[256];
 bool app_firmware_update_request = false;
+
+#define APP_SEND_STATUS_PERIOD 30 // 1800 // 3 minutes at 100ms ticks
+uint32_t app_send_status_counter = 0;
+uint32_t app_send_status_debug_count = 0;
+
+void app_send_status_task(void){
+    if(app_send_status_counter<APP_SEND_STATUS_PERIOD){
+        app_send_status_counter++;
+    }
+    else{
+        if(ethernet_linkUp() && ethernet_hasIP()){
+            SYS_CONSOLE_PRINT("app: send status (%u)\r\n", ++app_send_status_debug_count);
+            app_send_status_counter = 0;
+            network_send_status_request();
+            if(strcmp(network_get_tag(),"0")==0){
+                vTaskDelay(100);
+                SYS_CONSOLE_PRINT("app: send tag\r\n");
+                network_send_tag_request();
+                // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
+            }  
+        }    
+    }
+}
 
 void app_led_task(void){
     // toggle status LED
@@ -138,6 +162,7 @@ void APP_Tasks ( void ){
             // TODO: add main application logic here   
             sense_app_task();
             control_output_enable_task();
+            app_send_status_task();
             app_firmware_update_task();
             
             // TODO: remove this test code

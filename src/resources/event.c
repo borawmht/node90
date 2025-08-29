@@ -526,6 +526,14 @@ bool event_send_key_value_coap_message(char * ip, char * key, char * value, bool
 }
 
 bool event_send_key_value(char * ip, char * key, char * value, bool broadcast){
+    // 1. Send CoAP message if not MQTT enabled
     event_send_key_value_coap_message(ip, key, value, broadcast);    
+    // 2. Send MQTT message if MQTT enabled
+    // TODO: send mqtt message
     return true;
+}
+
+bool event_execute_key_value(char * key, char * value){
+    sprintf(event_json_str,"{\"%s\":\"%s\"}",key,value); 
+    return event_put_json_str(event_json_str);
 }

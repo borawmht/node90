@@ -18,5 +18,6 @@ char * event_get_json_str(void);
 bool event_coap_handler(const coap_message_t *request, coap_message_t *response);
 bool event_send_key_value(char * ip, char * key, char * value, bool broadcast);
 bool event_send_key_value_coap_message(char * ip, char * key, char * value, bool broadcast);
+bool event_execute_key_value(char * key, char * value);
 
 #endif

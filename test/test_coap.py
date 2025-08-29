@@ -106,7 +106,7 @@ def test_error_rate(ip_address, path, timeout=1, repeats=10):
 
 if __name__ == "__main__":
     # Test single request first
-    node_ip = '192.168.1.148'
+    node_ip = '192.168.1.230'
     # print("Testing single request...")    
     # result = get(node_ip, '/inx/network', 5)    
     # print(f"Result: {result}")
@@ -188,4 +188,6 @@ if __name__ == "__main__":
 
     # result = put(node_ip, '/inx/actuators/actuator1', 'pwm_mode', 'DIM_CC', confirm=True)
 
-    result = put(node_ip, '/inx/network', 'inx_ip', '192.168.1.65', confirm=True)
+    # result = put(node_ip, '/inx/network', 'inx_ip', '192.168.1.65', confirm=True)
+
+    result = put(node_ip, '/inx/network', 'tag', '0', confirm=True)
