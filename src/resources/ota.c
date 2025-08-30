@@ -32,9 +32,7 @@ char * ota_get_json_str(void) {
     cJSON_AddStringToObject(root,"version",firmware_update_get_external_version());
     cJSON_AddStringToObject(root,"valid",firmware_update_get_external_valid() ? "true" : "false");
     cJSON_AddStringToObject(root,"downloading",app_firmware_downloading() ? "true" : "false");
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }

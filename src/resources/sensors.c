@@ -65,9 +65,7 @@ char * sensors_get_json_str(void) {
         cJSON_AddItemToArray(wallswitches_array, wallswitch);
     }    
     cJSON_AddItemToObject(root, "wallswitches", wallswitches_array);
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }
@@ -143,9 +141,7 @@ char * sensors_sensor_get_json_str(uint8_t channel) {
     cJSON_AddNumberToObject(root,"voltage",sense_get_sensor_voltage(channel));
     cJSON_AddStringToObject(root,"input_state",sensors[i].input_state ? "true" : "false");
     cJSON_AddStringToObject(root,"logical_state",sensors[i].logical_state ? "true" : "false");
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     SYS_CONSOLE_PRINT("sensors: sensor%u json str length: %d\r\n", channel, strlen(resource_json_str));
     return resource_json_str;
@@ -185,9 +181,7 @@ char * sensors_sensor_context_get_json_str(uint8_t channel) {
     cJSON_AddItemToArray(keyw_array, cJSON_CreateString(sensors[channel-1].cluster));
     
     cJSON_AddItemToObject(root, "keyw", keyw_array);
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }
@@ -674,9 +668,7 @@ char * sensors_wallswitch_get_json_str(uint8_t channel) {
     cJSON_AddNumberToObject(root,"channel",wallswitches[i].channel);
     cJSON_AddStringToObject(root,"cluster",wallswitches[i].cluster);
     cJSON_AddStringToObject(root,"prphtag",wallswitches[i].prphtag);
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }
@@ -715,9 +707,7 @@ char * sensors_wallswitch_context_get_json_str(uint8_t channel) {
     cJSON_AddItemToArray(keyw_array, cJSON_CreateString(wallswitches[channel-1].cluster));
     
     cJSON_AddItemToObject(root, "keyw", keyw_array);
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }

@@ -11,6 +11,7 @@ Node90 Firmware
 - add send status and tag request
 - fix ethernet send packet allocation
 - reduce resource str sizes from 2048 to 1014 to match coap payload size 1024
+- fix json print allocation stack overflow
 
 # 1.5.0
 - add actuators, sensors, policy, and event resources

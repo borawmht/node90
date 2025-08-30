@@ -13,6 +13,9 @@
 #include "definitions.h"
 #include <string.h>
 #include "config/default/library/tcpip/tcpip_helpers.h"
+#include "app.h"
+
+bool coap_send_busy = false;
 
 coap_message_t coap_request_message;
 
@@ -261,7 +264,7 @@ bool coap_handle_packet(const uint8_t *packet_data, uint16_t packet_length,
     if (dst_port != COAP_DEFAULT_PORT && src_port != COAP_DEFAULT_PORT) {
         return false;  // Not a CoAP packet
     }
-    
+
     // SYS_CONSOLE_PRINT("coap: packet from %d.%d.%d.%d:%d\r\n", 
     //                   src_ip[0], src_ip[1], src_ip[2], src_ip[3], src_port);
     
@@ -471,11 +474,25 @@ void net_checksum_calculate(uint8_t *data, int length)
 // Send CoAP response as raw packet
 coap_packet_t coap_response_packet;
 uint8_t coap_response_buffer[COAP_MAX_PAYLOAD_SIZE];
+
+void coap_cleanup_response_buffers(void) {
+    // Clear response buffers after use
+    memset(&coap_response_packet, 0, sizeof(coap_response_packet));
+    memset(coap_response_buffer, 0, COAP_MAX_PAYLOAD_SIZE);
+}
+
 bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packet_info, 
                               const coap_message_t *response) {
     if (packet_info == NULL || response == NULL) {
         return false;
     }
+
+    while(coap_send_busy){
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+    coap_send_busy = true;
+
+    coap_cleanup_response_buffers();
     
     // Build CoAP message
     //uint8_t coap_buffer[COAP_MAX_PAYLOAD_SIZE];
@@ -483,6 +500,7 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     uint16_t coap_length;
     if (!coap_build_message(response, coap_buffer, &coap_length)) {
         SYS_CONSOLE_PRINT("coap: build failed\r\n");
+        coap_send_busy = false;
         return false;
     }
     
@@ -536,10 +554,12 @@ bool coap_send_packet_response(uint8_t *src_mac, const coap_packet_info_t *packe
     size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;    
     if (!ethernet_send((uint8_t*)packet, packet_length)) {
         SYS_CONSOLE_PRINT("coap: failed to send packet\r\n");
+        coap_send_busy = false;
         return false;
     }    
     
     // SYS_CONSOLE_PRINT("coap: response sent successfully\r\n");
+    coap_send_busy = false;
     return true;
 }
 
@@ -647,7 +667,7 @@ void coap_task(void *pvParameters) {
             coap_packet_ready = false;
             
             // SYS_CONSOLE_PRINT("coap: packet processed\r\n");
-        }
+        }        
         
         vTaskDelay(10 / portTICK_PERIOD_MS);  // Small delay
     }
@@ -900,7 +920,14 @@ bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
     if (!ethernet_hasIP()) {
         SYS_CONSOLE_PRINT("coap: ethernet not ready\r\n");
         return false;
+    }    
+
+    while(coap_send_busy){
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+    coap_send_busy = true;
+
+    coap_cleanup_response_buffers();
     
     // Parse IP address string (format: "192.168.1.100")
     uint8_t dst_ip[4];
@@ -911,6 +938,7 @@ bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
     char *token = strtok(ip_copy, ".");
     if (token == NULL) {
         SYS_CONSOLE_PRINT("coap: invalid IP format\r\n");
+        coap_send_busy = false;
         return false;
     }
     dst_ip[0] = atoi(token);
@@ -919,6 +947,7 @@ bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
         token = strtok(NULL, ".");
         if (token == NULL) {
             SYS_CONSOLE_PRINT("coap: invalid IP format\r\n");
+            coap_send_busy = false;
             return false;
         }
         dst_ip[i] = atoi(token);
@@ -934,57 +963,59 @@ bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
     }
     
     // Build CoAP message
-    uint8_t coap_buffer[COAP_MAX_PAYLOAD_SIZE];
+    uint8_t *coap_buffer = &coap_response_buffer[0];
     uint16_t coap_length;
     if (!coap_build_message(message, coap_buffer, &coap_length)) {
         SYS_CONSOLE_PRINT("coap: failed to build message\r\n");
+        coap_send_busy = false;
         return false;
     }
     
     // Create packet using the same structure as coap_send_packet_response
-    coap_packet_t packet = {0};
+    // coap_packet_t packet = {0};
+    coap_packet_t *packet = &coap_response_packet;
     
     // Fill Ethernet header
     if (broadcast) {
         // Broadcast MAC address
         uint8_t broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-        memcpy(packet.eth.dst_mac, broadcast_mac, 6);
+        memcpy(packet->eth.dst_mac, broadcast_mac, 6);
     } else {
         // For unicast, we'll need to resolve the MAC address
         // For now, we'll use a placeholder - in a real implementation you'd need ARP
         uint8_t default_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        memcpy(packet.eth.dst_mac, default_mac, 6);
+        memcpy(packet->eth.dst_mac, default_mac, 6);
     }
-    memcpy(packet.eth.src_mac, src_mac, 6);
-    packet.eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
+    memcpy(packet->eth.src_mac, src_mac, 6);
+    packet->eth.ethertype = TCPIP_Helper_htons(0x0800);  // IPv4
     
     // Fill IP header
-    packet.ip.version_ihl = 0x45;  // Version 4, header length 5 words
-    packet.ip.tos = 0x00;          // Type of Service
-    packet.ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    packet->ip.version_ihl = 0x45;  // Version 4, header length 5 words
+    packet->ip.tos = 0x00;          // Type of Service
+    packet->ip.total_length = TCPIP_Helper_htons(sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
     
-    packet.ip.identification = TCPIP_Helper_htons(message->message_id);
-    packet.ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
-    packet.ip.ttl = 100;              // Time to Live
-    packet.ip.protocol = 17;         // Protocol (UDP)
-    packet.ip.checksum = 0;          // Will be calculated
-    memcpy(packet.ip.src_ip, src_ip, 4);
-    memcpy(packet.ip.dst_ip, dst_ip, 4);
+    packet->ip.identification = TCPIP_Helper_htons(message->message_id);
+    packet->ip.flags_offset = 0x0000;  // Don't Fragment, Fragment Offset: 0
+    packet->ip.ttl = 100;              // Time to Live
+    packet->ip.protocol = 17;         // Protocol (UDP)
+    packet->ip.checksum = 0;          // Will be calculated
+    memcpy(packet->ip.src_ip, src_ip, 4);
+    memcpy(packet->ip.dst_ip, dst_ip, 4);
     
     // Fill UDP header
-    packet.udp.src_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
-    packet.udp.dst_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
-    packet.udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
-    packet.udp.checksum = 0;  // Will be calculated
+    packet->udp.src_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
+    packet->udp.dst_port = TCPIP_Helper_htons(COAP_DEFAULT_PORT);
+    packet->udp.length = TCPIP_Helper_htons(sizeof(udp_header_t) + coap_length);
+    packet->udp.checksum = 0;  // Will be calculated
     
     // Copy CoAP payload
-    memcpy(packet.payload, coap_buffer, coap_length);
+    memcpy(packet->payload, coap_buffer, coap_length);
     
     // Calculate IP checksum
-    packet.ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet.ip, sizeof(ip_header_t)));
+    packet->ip.checksum = TCPIP_Helper_htons(calculate_ip_checksum((uint8_t*)&packet->ip, sizeof(ip_header_t)));
     
     // Calculate UDP checksum
-    net_checksum_calculate((uint8_t*)&packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
+    net_checksum_calculate((uint8_t*)packet, sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length);
     
     // Send the packet
     size_t packet_length = sizeof(ethernet_header_t) + sizeof(ip_header_t) + sizeof(udp_header_t) + coap_length;
@@ -993,21 +1024,24 @@ bool coap_send_message(char * ip, coap_message_t *message, bool broadcast) {
         // For broadcast, we need to send to broadcast MAC
         uint8_t broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
         if (!ethernet_send_to(broadcast_mac, 
-                             (uint8_t*)&packet.ip, 
+                             (uint8_t*)&packet->ip, 
                              packet_length - sizeof(ethernet_header_t), 
                              0x0800)) {
             SYS_CONSOLE_PRINT("coap: failed to send broadcast packet\r\n");
+            coap_send_busy = false;
             return false;
         }
     } else {
         // For unicast, send the complete packet
-        if (!ethernet_send((uint8_t*)&packet, packet_length)) {
+        if (!ethernet_send((uint8_t*)packet, packet_length)) {
             SYS_CONSOLE_PRINT("coap: failed to send unicast packet\r\n");
+            coap_send_busy = false;
             return false;
         }
     }
     
     SYS_CONSOLE_PRINT("coap: message sent to %s\r\n", ip);
+    coap_send_busy = false;
     return true;
 }
 

@@ -109,6 +109,11 @@ if __name__ == "__main__":
     node_ip = '192.168.1.230'
     # print("Testing single request...")    
     # result = get(node_ip, '/inx/network', 5)    
+    # result = get(node_ip, '/inx/network', 5)
+    # result = get(node_ip, '/inx/network', 5)
+    # result = get(node_ip, '/inx/network', 5)
+    # result = get(node_ip, '/inx/network', 5)
+    # result = get(node_ip, '/inx/network', 5)
     # print(f"Result: {result}")
     # result = "confirmed" if put(node_ip, '/inx/network', 'tag', '3', confirm=True) else "not confirmed"
     # print(f"Result: {result}")
@@ -152,8 +157,8 @@ if __name__ == "__main__":
     # result = put(node_ip, '/inx/actuators/actuator1', 'cluster', 'new_group', confirm=True)
     # print(f"Result: {result}")
     result = get(node_ip, '/inx/actuators/actuator1', 5)
-    print(f"Result: {result}")
-    # result = get(node_ip, '/inx/actuators/actuator1', 5)
+    # print(f"Result: {result}")
+    # result = get(node_ip, '/inx/actuators/actuator2', 5)
     # print(f"Result: {result}")
     # time.sleep(5)
     # result = get(node_ip, '/inx/actuators/actuator1/context', 5)

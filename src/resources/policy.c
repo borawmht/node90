@@ -49,9 +49,7 @@ char * policy_get_json_str(uint8_t channel) {
     cJSON_AddStringToObject(root,"s1",policies[i].s1);
     cJSON_AddStringToObject(root,"s2",policies[i].s2);
     cJSON_AddStringToObject(root,"s3",policies[i].s3);    
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
     return resource_json_str;
 }

@@ -33,5 +33,6 @@ void APP_Initialize(void); // initialize before task scheduler starts
 void APP_Tasks(void); // called by task scheduler
 bool app_start_firmware_download(char* url, bool update);
 bool app_firmware_downloading(void);
+void app_send_status_task(void);
 
 #endif

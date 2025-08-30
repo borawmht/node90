@@ -45,10 +45,9 @@ char * network_get_json_str(void) {
     cJSON_AddStringToObject(root,"broadcast_ip",ethernet_getBroadcastAddressString());
     cJSON_AddStringToObject(root,"inx_ip",network.inx_ip);
     cJSON_AddStringToObject(root,"inxip",network.inx_ip); 
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(resource_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
+    // SYS_CONSOLE_PRINT("network: json str length: %d\r\n", strlen(resource_json_str));
     return resource_json_str;
 }
 
@@ -182,29 +181,27 @@ char * network_get_status_request_json_str(void){
     cJSON_AddStringToObject(root,"tag",network.tag);
     cJSON_AddNumberToObject(root,"SN",atoi(network.serial_number));
     cJSON_AddStringToObject(root,"app_name",PROJECT_NAME);
-    cJSON_AddStringToObject(root,"app_version",PROJECT_VERSION);    
-    // cJSON_AddStringToObject(root,"app_build_date",PROJECT_BUILD_DATE);
-    // cJSON_AddStringToObject(root,"app_build_time",PROJECT_BUILD_TIME);
+    cJSON_AddStringToObject(root,"app_version",PROJECT_VERSION);
     cJSON_AddNumberToObject(root,"pp1",actuators_actuator_get_dim(1));
     cJSON_AddNumberToObject(root,"pp2",actuators_actuator_get_dim(2));
-    // cJSON_AddNumberToObject(root,"cp1",actuators_actuator_get_cp(1));
-    // cJSON_AddNumberToObject(root,"cp2",actuators_actuator_get_cp(2)); 
-    // cJSON_AddNumberToObject(root,"cv1",actuators_actuator_get_cv(1));
-    // cJSON_AddNumberToObject(root,"cv2",actuators_actuator_get_cv(2));
-    // cJSON_AddNumberToObject(root,"cc1",actuators_actuator_get_cc(1));
-    // cJSON_AddNumberToObject(root,"cc2",actuators_actuator_get_cc(2));
+    cJSON_AddStringToObject(root,"pwm_mode1",actuators_actuator_get_pwm_mode(1));
+    cJSON_AddStringToObject(root,"pwm_mode2",actuators_actuator_get_pwm_mode(2));
+    cJSON_AddNumberToObject(root,"cp1",actuators_actuator_get_cp(1));
+    cJSON_AddNumberToObject(root,"cp2",actuators_actuator_get_cp(2)); 
+    cJSON_AddNumberToObject(root,"cv1",actuators_actuator_get_cv(1));
+    cJSON_AddNumberToObject(root,"cv2",actuators_actuator_get_cv(2));
+    cJSON_AddNumberToObject(root,"cc1",actuators_actuator_get_cc(1));
+    cJSON_AddNumberToObject(root,"cc2",actuators_actuator_get_cc(2));
     cJSON_AddNumberToObject(root,"at",actuators_actuator_get_at(1));
     cJSON_AddStringToObject(root,"motion_enable1",actuators_actuator_get_motion_enable(1)?"true":"false");
     cJSON_AddStringToObject(root,"motion_enable2",actuators_actuator_get_motion_enable(2)?"true":"false");
     cJSON_AddStringToObject(root,"actuator1_cluster",actuators_actuator_get_cluster(1));
     cJSON_AddStringToObject(root,"actuator2_cluster",actuators_actuator_get_cluster(2));
     cJSON_AddStringToObject(root,"sensor1_cluster",sensors_sensor_get_cluster(1));
-    cJSON_AddStringToObject(root,"WallSwitch_cluster",sensors_wallswitch_get_cluster(1));    
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(network_request_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
+    cJSON_AddStringToObject(root,"WallSwitch_cluster",sensors_wallswitch_get_cluster(1)); 
+    cJSON_PrintPreallocated(root,network_request_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root); 
-    SYS_CONSOLE_PRINT("network: status request json str length: %d\r\n", strlen(network_request_json_str));
+    // SYS_CONSOLE_PRINT("network: status request json str length: %d\r\n", strlen(network_request_json_str));
     return network_request_json_str;
 }
 
@@ -212,11 +209,8 @@ char * network_get_tag_request_json_str(void){
     cJSON * root = cJSON_CreateObject();
     cJSON_AddStringToObject(root,"param","10");
     cJSON_AddNumberToObject(root,"SN",atoi(network.serial_number));
-    char * print_str = cJSON_PrintUnformatted(root);
-    strncpy(network_request_json_str,print_str,RESOURCE_JSON_STR_SIZE);
-    cJSON_free(print_str);
-    cJSON_Delete(root);
-    // SYS_CONSOLE_PRINT("network: tag request json str: %s\r\n", network_request_json_str);
+    cJSON_PrintPreallocated(root,network_request_json_str,RESOURCE_JSON_STR_SIZE,false);
+    cJSON_Delete(root);    
     return network_request_json_str;
 }
 
@@ -256,7 +250,7 @@ bool network_send_request_coap_message(char * uri, char * json_str){
 }
 
 bool network_send_status_request(void){
-    SYS_CONSOLE_PRINT("network: send status request\r\n");
+    SYS_CONSOLE_PRINT("network: send status request\r\n");       
     // 1. Send CoAP message if not MQTT enabled
     network_send_request_coap_message(
         NETWORK_SEND_STATUS_REQUEST_URI, 
