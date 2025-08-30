@@ -184,8 +184,10 @@ char * network_get_status_request_json_str(void){
     cJSON_AddStringToObject(root,"app_version",PROJECT_VERSION);
     cJSON_AddNumberToObject(root,"pp1",actuators_actuator_get_dim(1));
     cJSON_AddNumberToObject(root,"pp2",actuators_actuator_get_dim(2));
-    cJSON_AddStringToObject(root,"pwm_mode1",actuators_actuator_get_pwm_mode(1));
-    cJSON_AddStringToObject(root,"pwm_mode2",actuators_actuator_get_pwm_mode(2));
+    // cJSON_AddStringToObject(root,"mode1",actuators_actuator_get_mode(1));
+    // cJSON_AddStringToObject(root,"mode2",actuators_actuator_get_mode(2));    
+    // cJSON_AddStringToObject(root,"pwm_mode1",actuators_actuator_get_pwm_mode(1));
+    // cJSON_AddStringToObject(root,"pwm_mode2",actuators_actuator_get_pwm_mode(2));
     cJSON_AddNumberToObject(root,"cp1",actuators_actuator_get_cp(1));
     cJSON_AddNumberToObject(root,"cp2",actuators_actuator_get_cp(2)); 
     cJSON_AddNumberToObject(root,"cv1",actuators_actuator_get_cv(1));
@@ -220,7 +222,7 @@ bool network_send_request_coap_message(char * uri, char * json_str){
     size_t encoded_size = 0;
     CborError error = json_to_cbor(resource_e_json_str, resource_cbor_buffer, RESOURCE_CBOR_BUFFER_SIZE, &encoded_size);
     if (error != CborNoError) {
-        SYS_CONSOLE_PRINT("event: json_to_cbor error: %d\r\n", error);
+        SYS_CONSOLE_PRINT("network: json_to_cbor error: %d\r\n", error);
         return false;      
     }    
     

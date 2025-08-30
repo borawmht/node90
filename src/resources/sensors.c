@@ -143,7 +143,7 @@ char * sensors_sensor_get_json_str(uint8_t channel) {
     cJSON_AddStringToObject(root,"logical_state",sensors[i].logical_state ? "true" : "false");
     cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
-    SYS_CONSOLE_PRINT("sensors: sensor%u json str length: %d\r\n", channel, strlen(resource_json_str));
+    // SYS_CONSOLE_PRINT("sensors: sensor%u json str length: %d\r\n", channel, strlen(resource_json_str));
     return resource_json_str;
 }
 

@@ -651,42 +651,22 @@ bool coap_queue_packet(const uint8_t *packet_data, uint16_t packet_length,
 }
 
 // CoAP task function
-void coap_task(void *pvParameters) {
-    SYS_CONSOLE_PRINT("coap: start task\r\n");
-    
-    while (1) {
-        if (coap_packet_ready) {
-            // SYS_CONSOLE_PRINT("coap: processing packet\r\n");                        
-            
-            // Process the packet
-            coap_handle_packet(coap_current_packet.packet_data, coap_current_packet.packet_length,
-                             coap_current_packet.src_ip, coap_current_packet.dst_ip, 
-                             coap_current_packet.src_port, coap_current_packet.dst_port,
-                             coap_current_packet.src_mac);
+void coap_packet_queue_task(void ) {    
+    if (coap_packet_ready) {        
+        // Process the packet
+        coap_handle_packet(coap_current_packet.packet_data, coap_current_packet.packet_length,
+                            coap_current_packet.src_ip, coap_current_packet.dst_ip, 
+                            coap_current_packet.src_port, coap_current_packet.dst_port,
+                            coap_current_packet.src_mac);
 
-            coap_packet_ready = false;
-            
-            // SYS_CONSOLE_PRINT("coap: packet processed\r\n");
-        }        
-        
-        vTaskDelay(10 / portTICK_PERIOD_MS);  // Small delay
-    }
+        coap_packet_ready = false;                        
+    }        
 }
 
 // Initialize CoAP
 void coap_init(void) {
     SYS_CONSOLE_PRINT("coap: init\r\n");
-
     coap_packet_ready = false;    
-    
-    // Create CoAP task
-    (void) xTaskCreate(
-        (TaskFunction_t) coap_task,
-        "coap_task",
-        2 * 1024,  // Larger stack for CoAP processing
-        NULL,
-        1U,
-        (TaskHandle_t*) NULL);
 }
 
 // Parse URI from CoAP options

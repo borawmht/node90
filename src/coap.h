@@ -147,7 +147,7 @@ bool coap_client_init(void);
 void coap_server_init(void);
 
 // Task-based processing
-void coap_task(void *pvParameters);
+void coap_packet_queue_task(void);
 bool coap_queue_packet(const uint8_t *packet_data, uint16_t packet_length, 
                       const uint8_t *src_ip, const uint8_t *dst_ip,
                       uint16_t src_port, uint16_t dst_port, uint8_t *src_mac);

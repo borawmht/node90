@@ -146,7 +146,7 @@ char * actuators_actuator_get_json_str(uint8_t channel) {
     cJSON_AddNumberToObject(root,"power",sense_get_actuator_power(channel));    
     cJSON_PrintPreallocated(root,resource_json_str,RESOURCE_JSON_STR_SIZE,false);
     cJSON_Delete(root);
-    SYS_CONSOLE_PRINT("actuators: actuator%u json str length: %d\r\n", channel, strlen(resource_json_str));
+    // SYS_CONSOLE_PRINT("actuators: actuator%u json str length: %d\r\n", channel, strlen(resource_json_str));
     return resource_json_str;
 }
 

@@ -15,6 +15,7 @@
 #include "firmware_update.h"
 #include "control.h"
 #include "sense.h"
+#include "pwm.h"
 #include "resources/network.h"
 
 // Application signature for bootloader validation
@@ -119,6 +120,20 @@ bool app_firmware_downloading(void){
     return app_firmware_download_running;
 }
 
+void app_10ms_task(void){
+    pwm_fade_task();
+    sense_adc_task();
+    coap_packet_queue_task();
+}
+
+void app_100ms_task(void){
+    app_led_task();
+    sense_app_task();
+    control_output_enable_task();
+    app_send_status_task();
+    app_firmware_update_task();
+}
+
 // this runs before task scheduler starts
 // create all tasks before starting task scheduler
 void APP_Initialize ( void ){
@@ -136,9 +151,7 @@ void APP_Initialize ( void ){
 // called by task scheduler
 // this is the main application loop
 // the task period is 100ms
-void APP_Tasks ( void ){
-    app_led_task(); 
-    
+void APP_Tasks ( void ){    
     switch ( appData.state )
     {        
         case APP_STATE_INIT:
@@ -159,11 +172,8 @@ void APP_Tasks ( void ){
 
         case APP_STATE_RUN:
         {            
-            // TODO: add main application logic here   
-            sense_app_task();
-            control_output_enable_task();
-            app_send_status_task();
-            app_firmware_update_task();
+            // TODO: add main application logic here               
+            app_100ms_task();
             
             // TODO: remove this test code
             if(app_test_counter<60){
