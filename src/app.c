@@ -47,7 +47,7 @@ bool app_firmware_download_running = false;
 char app_firmware_download_url[256];
 bool app_firmware_update_request = false;
 
-#define APP_SEND_STATUS_PERIOD 30 // 1800 // 3 minutes at 100ms ticks
+#define APP_SEND_STATUS_PERIOD 1800 // 3 minutes at 100ms ticks
 uint32_t app_send_status_counter = 0;
 uint32_t app_send_status_debug_count = 0;
 
