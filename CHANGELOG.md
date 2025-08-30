@@ -13,7 +13,7 @@ Node90 Firmware
 - reduce resource str sizes from 2048 to 1014 to match coap payload size 1024
 - fix json print allocation stack overflow
 - remove coap_task, instead call coap_packet_queue_task from app_10ms_task
-- reduce FreeRTOS heap from 44000 to 30000, 
+- reduce FreeRTOS heap from 44000 to 30000 
 
 # 1.5.0
 - add actuators, sensors, policy, and event resources
