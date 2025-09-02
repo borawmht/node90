@@ -14,7 +14,9 @@
 
 uint8_t dim_values[NUM_ACTUATORS];
 int32_t dim_duration[NUM_ACTUATORS];
+uint16_t dim_duration_seconds[NUM_ACTUATORS];
 uint8_t dim_default[NUM_ACTUATORS];
+uint8_t dim_duration_task_counter = 0;
 bool channel_enabled[NUM_ACTUATORS];
 bool channel_enable_request[NUM_ACTUATORS];
 
@@ -25,6 +27,7 @@ void control_update_actuator_LEDs(void){
     else DRV2_LED_Clear();
 }
 
+// output enable task runs every 100ms
 void control_output_enable_task(void){
     for(int i=0;i<NUM_ACTUATORS;i++){
         if(channel_enable_request[i]){
@@ -34,15 +37,40 @@ void control_output_enable_task(void){
     }
 }
 
+// dim duration task runs every 100ms
+void control_dim_duration_task(void){
+    dim_duration_task_counter++;
+    if(dim_duration_task_counter<10) return;
+    dim_duration_task_counter = 0;
+    for(int i=0;i<NUM_ACTUATORS;i++){
+        if(dim_duration[i]>=0 && dim_default[i]!=DIM_NO_CHANGE){
+            dim_duration_seconds[i]++;
+            if(dim_duration_seconds[i]==60){
+                dim_duration_seconds[i] = 0;
+                if(dim_duration[i]>0) dim_duration[i]--;                
+                if(dim_duration[i]>=0){
+                    SYS_CONSOLE_PRINT("control: actuator%u dim duration %d, dim default %u\r\n",i+1,dim_duration[i],dim_default[i]);
+                }
+                if((dim_duration[i]==0)&&(dim_default[i]<DIM_NO_CHANGE)){
+                    control_set_dim_value(i+1, dim_default[i]);
+                    dim_default[i] = DIM_NO_CHANGE;
+                }
+            }
+        }
+    }
+}
+
 void control_init(void){
     SYS_CONSOLE_PRINT("control: init\r\n");
     io_expander_init();
+    dim_duration_task_counter = 0;
     for(int i=0;i<NUM_ACTUATORS;i++){
         channel_enabled[i] = false;
         channel_enable_request[i] = false;
         dim_values[i] = 0;
         dim_duration[i] = DIM_DURATION_DISABLED;
         dim_default[i] = DIM_NO_CHANGE;
+        dim_duration_seconds[i] = 0;
         //control_output_enable(i+1, false);
     }    
     dac_init();

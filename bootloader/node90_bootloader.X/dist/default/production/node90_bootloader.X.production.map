@@ -1,115 +1,115 @@
 Archive member included to satisfy reference by file (symbol)
 
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
-                              /tmp/ccICOehh.o (_on_reset)
+                              /tmp/cc8XwV2S.o (_on_reset)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
-                              /tmp/ccICOehh.o (_on_bootstrap)
+                              /tmp/cc8XwV2S.o (_on_bootstrap)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-nmi-handler.o)
-                              /tmp/ccICOehh.o (_nmi_handler)
+                              /tmp/cc8XwV2S.o (_nmi_handler)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(pic32_data_init_core.o)
-                              /tmp/ccICOehh.o (__pic32_data_init)
+                              /tmp/cc8XwV2S.o (__pic32_data_init)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(general-exception.o)
-                              /tmp/ccICOehh.o (_general_exception_context)
+                              /tmp/cc8XwV2S.o (_general_exception_context)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector0.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_0)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_0)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector1.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_1)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_1)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector2.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_2)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_2)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector3.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_3)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_3)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector4.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_4)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_4)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector5.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_5)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_5)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector6.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_6)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_6)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector7.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_7)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_7)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector8.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_8)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_8)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector9.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_9)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_9)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector10.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_10)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_10)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector11.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_11)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_11)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector12.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_12)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_12)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector13.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_13)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_13)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector14.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_14)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_14)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector15.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_15)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_15)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector16.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_16)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_16)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector17.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_17)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_17)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector18.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_18)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_18)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector19.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_19)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_19)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector20.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_20)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_20)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector21.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_21)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_21)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector22.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_22)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_22)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector23.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_23)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_23)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector24.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_24)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_24)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector25.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_25)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_25)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector26.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_26)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_26)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector27.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_27)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_27)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector28.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_28)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_28)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector29.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_29)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_29)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector30.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_30)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_30)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector32.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_32)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_32)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector33.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_33)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_33)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector34.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_34)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_34)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector35.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_35)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_35)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector36.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_36)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_36)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector37.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_37)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_37)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector38.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_38)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_38)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector39.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_39)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_39)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector40.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_40)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_40)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector41.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_41)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_41)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector42.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_42)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_42)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector43.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_43)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_43)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector45.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_45)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_45)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector46.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_46)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_46)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector47.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_47)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_47)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector48.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_48)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_48)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector49.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_49)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_49)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector50.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_50)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_50)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector51.o)
-                              /tmp/cckm8ZSW.o (__vector_dispatch_51)
+                              /tmp/ccSKDtP5.o (__vector_dispatch_51)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
                               /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(vector0.o) (_DefaultInterrupt)
 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libc-size-musl.a(memcpy.o)
@@ -567,7 +567,7 @@ Microchip PIC32 Memory-Usage Report By Module
          592           0           0         592         250    interrupts.o             build/default/production/_ext/1171490990/interrupts.o
          536           0           0         536         218    __stdio_write.o          libc-musl.a
          512           0           0         512         200    __fmt_x.o                libc-musl.a
-         484           0           0         484         1e4    ccICOehh.o               /tmp/ccICOehh.o
+         484           0           0         484         1e4    cc8XwV2S.o               /tmp/cc8XwV2S.o
          432           0           0         432         1b0    data_init                data_init
          408           0           0         408         198    plib_uart2.o             build/default/production/_ext/1865657120/plib_uart2.o
          392           0           0         392         188    __pop_int.o              libc-musl.a
@@ -814,6 +814,30 @@ Discarded input sections
  .reginfo       0x0000000000000000       0x18 build/default/production/_ext/163028504/xc32_monitor.o
  .MIPS.abiflags
                 0x0000000000000000       0x18 build/default/production/_ext/163028504/xc32_monitor.o
+ .text          0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
+ .data          0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
+ .bss           0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
+ .reginfo       0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
+ .MIPS.abiflags
+                0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
+ .text.SYS_INT_Enable
+                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
+ .text.SYS_INT_Disable
+                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
+ .text.SYS_INT_Restore
+                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
+ .text.SYS_INT_SourceDisable
+                0x0000000000000000       0x50 build/default/production/_ext/1881668453/sys_int.o
+ .text.SYS_INT_SourceRestore
+                0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
+ .text          0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
+ .data          0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
+ .bss           0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
+ .reginfo       0x0000000000000000       0x18 build/default/production/_ext/1000052432/sys_reset.o
+ .MIPS.abiflags
+                0x0000000000000000       0x18 build/default/production/_ext/1000052432/sys_reset.o
+ .text.SYS_RESET_SoftwareReset
+                0x0000000000000000       0x44 build/default/production/_ext/1000052432/sys_reset.o
  .text          0x0000000000000000        0x0 build/default/production/_ext/1171490990/interrupts.o
  .data          0x0000000000000000        0x0 build/default/production/_ext/1171490990/interrupts.o
  .bss           0x0000000000000000        0x0 build/default/production/_ext/1171490990/interrupts.o
@@ -935,49 +959,25 @@ Discarded input sections
                 0x0000000000000000       0x4c build/default/production/_ext/1360937237/spi_coordinator.o
  .text.spi_coordinator_cs_eeprom_high
                 0x0000000000000000       0x4c build/default/production/_ext/1360937237/spi_coordinator.o
- .text          0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
- .data          0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
- .bss           0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
- .reginfo       0x0000000000000000       0x18 build/default/production/_ext/1000052432/sys_reset.o
+ .text          0x0000000000000000        0x0 /tmp/cc8XwV2S.o
+ .data          0x0000000000000000        0x0 /tmp/cc8XwV2S.o
+ .bss           0x0000000000000000        0x0 /tmp/cc8XwV2S.o
+ .reginfo       0x0000000000000000       0x18 /tmp/cc8XwV2S.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 build/default/production/_ext/1000052432/sys_reset.o
- .text.SYS_RESET_SoftwareReset
-                0x0000000000000000       0x44 build/default/production/_ext/1000052432/sys_reset.o
- .text          0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
- .data          0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
- .bss           0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
- .reginfo       0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
+                0x0000000000000000       0x18 /tmp/cc8XwV2S.o
+ .text          0x0000000000000000        0x0 /tmp/ccpcB4kC.o
+ .data          0x0000000000000000        0x0 /tmp/ccpcB4kC.o
+ .bss           0x0000000000000000        0x0 /tmp/ccpcB4kC.o
+ .reginfo       0x0000000000000000       0x18 /tmp/ccpcB4kC.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
- .text.SYS_INT_Enable
-                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
- .text.SYS_INT_Disable
-                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
- .text.SYS_INT_Restore
-                0x0000000000000000        0x8 build/default/production/_ext/1881668453/sys_int.o
- .text.SYS_INT_SourceDisable
-                0x0000000000000000       0x50 build/default/production/_ext/1881668453/sys_int.o
- .text.SYS_INT_SourceRestore
-                0x0000000000000000       0x18 build/default/production/_ext/1881668453/sys_int.o
- .text          0x0000000000000000        0x0 /tmp/ccICOehh.o
- .data          0x0000000000000000        0x0 /tmp/ccICOehh.o
- .bss           0x0000000000000000        0x0 /tmp/ccICOehh.o
- .reginfo       0x0000000000000000       0x18 /tmp/ccICOehh.o
+                0x0000000000000000       0x18 /tmp/ccpcB4kC.o
+ .text          0x0000000000000000        0x0 /tmp/ccSKDtP5.o
+ .data          0x0000000000000000        0x0 /tmp/ccSKDtP5.o
+ .bss           0x0000000000000000        0x0 /tmp/ccSKDtP5.o
+ .reginfo       0x0000000000000000       0x18 /tmp/ccSKDtP5.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 /tmp/ccICOehh.o
- .text          0x0000000000000000        0x0 /tmp/cc2o20I3.o
- .data          0x0000000000000000        0x0 /tmp/cc2o20I3.o
- .bss           0x0000000000000000        0x0 /tmp/cc2o20I3.o
- .reginfo       0x0000000000000000       0x18 /tmp/cc2o20I3.o
- .MIPS.abiflags
-                0x0000000000000000       0x18 /tmp/cc2o20I3.o
- .text          0x0000000000000000        0x0 /tmp/cckm8ZSW.o
- .data          0x0000000000000000        0x0 /tmp/cckm8ZSW.o
- .bss           0x0000000000000000        0x0 /tmp/cckm8ZSW.o
- .reginfo       0x0000000000000000       0x18 /tmp/cckm8ZSW.o
- .MIPS.abiflags
-                0x0000000000000000       0x18 /tmp/cckm8ZSW.o
- .discard       0x0000000000000000       0xd0 /tmp/cckm8ZSW.o
+                0x0000000000000000       0x18 /tmp/ccSKDtP5.o
+ .discard       0x0000000000000000       0xd0 /tmp/ccSKDtP5.o
  .data          0x0000000000000000        0x0 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/pic32_software_reset.o
  .bss           0x0000000000000000        0x0 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/pic32_software_reset.o
  .reginfo       0x0000000000000000       0x18 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/pic32_software_reset.o
@@ -2675,6 +2675,8 @@ LOAD build/default/production/_ext/60176403/plib_nvm.o
 LOAD build/default/production/_ext/298189674/plib_spi2_master.o
 LOAD build/default/production/_ext/1865657120/plib_uart2.o
 LOAD build/default/production/_ext/163028504/xc32_monitor.o
+LOAD build/default/production/_ext/1881668453/sys_int.o
+LOAD build/default/production/_ext/1000052432/sys_reset.o
 LOAD build/default/production/_ext/1171490990/interrupts.o
 LOAD build/default/production/_ext/1171490990/exceptions.o
 LOAD build/default/production/_ext/1171490990/initialization.o
@@ -2682,8 +2684,6 @@ LOAD build/default/production/_ext/1360937237/main.o
 LOAD build/default/production/_ext/1360937237/firmware_update.o
 LOAD build/default/production/_ext/1360937237/flash.o
 LOAD build/default/production/_ext/1360937237/spi_coordinator.o
-LOAD build/default/production/_ext/1000052432/sys_reset.o
-LOAD build/default/production/_ext/1881668453/sys_int.o
                 0x0000000000000001                __MPLAB_BUILD = 0x1
                 0x0000000000000400                PROVIDE (_min_stack_size = 0x400)
                 0x0000000000000001                PROVIDE (_vector_spacing = 0x1)
@@ -2722,16 +2722,16 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
 
 .reset          0x00000000bfc00000      0x170
  *(.reset)
- .reset         0x00000000bfc00000        0x8 /tmp/ccICOehh.o
+ .reset         0x00000000bfc00000        0x8 /tmp/cc8XwV2S.o
                 0x00000000bfc00000                _reset
  *(.reset.startup)
  .reset.startup
-                0x00000000bfc00008      0x168 /tmp/ccICOehh.o
+                0x00000000bfc00008      0x168 /tmp/cc8XwV2S.o
                 0x00000000bfc00008                _startup
 
 .bev_excpt      0x00000000bfc00380       0x10
  *(.bev_handler)
- .bev_handler   0x00000000bfc00380       0x10 /tmp/ccICOehh.o
+ .bev_handler   0x00000000bfc00380       0x10 /tmp/cc8XwV2S.o
 
 .dbg_excpt      0x00000000bfc00480        0x0
                 0x00000000bfc00480                . = (. + DEFINED (_DEBUGGER)?0x8:0x0)
@@ -2741,7 +2741,7 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
 
 .app_excpt      0x000000009fc01180       0x10
  *(.gen_handler)
- .gen_handler   0x000000009fc01180       0x10 /tmp/ccICOehh.o
+ .gen_handler   0x000000009fc01180       0x10 /tmp/cc8XwV2S.o
 
 .vector_0       0x000000009fc01200        0x8
  *(.vector_0)
@@ -3297,6 +3297,8 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/298189674/plib_spi2_master.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1865657120/plib_uart2.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/163028504/xc32_monitor.o
+ .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
+ .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1171490990/interrupts.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1171490990/exceptions.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1171490990/initialization.o
@@ -3304,8 +3306,6 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1360937237/firmware_update.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1360937237/flash.o
  .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1360937237/spi_coordinator.o
- .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1000052432/sys_reset.o
- .mdebug.abi32  0x0000000000000000        0x0 build/default/production/_ext/1881668453/sys_int.o
  .mdebug.abi32  0x0000000000000000        0x0 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .mdebug.abi32  0x0000000000000000        0x0 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .mdebug.abi32  0x0000000000000000        0x0 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -3444,6 +3444,8 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/298189674/plib_spi2_master.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1865657120/plib_uart2.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/163028504/xc32_monitor.o
+ .comment       0x000000000000002b       0x2c build/default/production/_ext/1881668453/sys_int.o
+ .comment       0x000000000000002b       0x2c build/default/production/_ext/1000052432/sys_reset.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1171490990/interrupts.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1171490990/exceptions.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1171490990/initialization.o
@@ -3451,8 +3453,6 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1360937237/firmware_update.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1360937237/flash.o
  .comment       0x000000000000002b       0x2c build/default/production/_ext/1360937237/spi_coordinator.o
- .comment       0x000000000000002b       0x2c build/default/production/_ext/1000052432/sys_reset.o
- .comment       0x000000000000002b       0x2c build/default/production/_ext/1881668453/sys_int.o
  .comment       0x000000000000002b       0x2c /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .comment       0x000000000000002b       0x2c /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .comment       0x000000000000002b       0x2c /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -3579,23 +3579,23 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_aranges
                 0x0000000000000328       0x28 build/default/production/_ext/163028504/xc32_monitor.o
  .debug_aranges
-                0x0000000000000350       0x28 build/default/production/_ext/1171490990/interrupts.o
+                0x0000000000000350       0x40 build/default/production/_ext/1881668453/sys_int.o
  .debug_aranges
-                0x0000000000000378       0x20 build/default/production/_ext/1171490990/exceptions.o
+                0x0000000000000390       0x20 build/default/production/_ext/1000052432/sys_reset.o
  .debug_aranges
-                0x0000000000000398       0x20 build/default/production/_ext/1171490990/initialization.o
+                0x00000000000003b0       0x28 build/default/production/_ext/1171490990/interrupts.o
  .debug_aranges
-                0x00000000000003b8       0x40 build/default/production/_ext/1360937237/main.o
+                0x00000000000003d8       0x20 build/default/production/_ext/1171490990/exceptions.o
  .debug_aranges
-                0x00000000000003f8       0xa0 build/default/production/_ext/1360937237/firmware_update.o
+                0x00000000000003f8       0x20 build/default/production/_ext/1171490990/initialization.o
  .debug_aranges
-                0x0000000000000498       0x68 build/default/production/_ext/1360937237/flash.o
+                0x0000000000000418       0x40 build/default/production/_ext/1360937237/main.o
  .debug_aranges
-                0x0000000000000500       0x60 build/default/production/_ext/1360937237/spi_coordinator.o
+                0x0000000000000458       0xa0 build/default/production/_ext/1360937237/firmware_update.o
  .debug_aranges
-                0x0000000000000560       0x20 build/default/production/_ext/1000052432/sys_reset.o
+                0x00000000000004f8       0x68 build/default/production/_ext/1360937237/flash.o
  .debug_aranges
-                0x0000000000000580       0x40 build/default/production/_ext/1881668453/sys_int.o
+                0x0000000000000560       0x60 build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_aranges
                 0x00000000000005c0       0x20 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_aranges
@@ -3783,15 +3783,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_info    0x0000000000002b9b      0x721 build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_info    0x00000000000032bc      0x747 build/default/production/_ext/1865657120/plib_uart2.o
  .debug_info    0x0000000000003a03      0x1d1 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_info    0x0000000000003bd4       0xee build/default/production/_ext/1171490990/interrupts.o
- .debug_info    0x0000000000003cc2       0xd2 build/default/production/_ext/1171490990/exceptions.o
- .debug_info    0x0000000000003d94      0x790 build/default/production/_ext/1171490990/initialization.o
- .debug_info    0x0000000000004524      0x4aa build/default/production/_ext/1360937237/main.o
- .debug_info    0x00000000000049ce     0x2571 build/default/production/_ext/1360937237/firmware_update.o
- .debug_info    0x0000000000006f3f      0xb19 build/default/production/_ext/1360937237/flash.o
- .debug_info    0x0000000000007a58      0x2a0 build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_info    0x0000000000007cf8       0xd3 build/default/production/_ext/1000052432/sys_reset.o
- .debug_info    0x0000000000007dcb      0x29e build/default/production/_ext/1881668453/sys_int.o
+ .debug_info    0x0000000000003bd4      0x29e build/default/production/_ext/1881668453/sys_int.o
+ .debug_info    0x0000000000003e72       0xd3 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_info    0x0000000000003f45       0xee build/default/production/_ext/1171490990/interrupts.o
+ .debug_info    0x0000000000004033       0xd2 build/default/production/_ext/1171490990/exceptions.o
+ .debug_info    0x0000000000004105      0x790 build/default/production/_ext/1171490990/initialization.o
+ .debug_info    0x0000000000004895      0x4aa build/default/production/_ext/1360937237/main.o
+ .debug_info    0x0000000000004d3f     0x2571 build/default/production/_ext/1360937237/firmware_update.o
+ .debug_info    0x00000000000072b0      0xb19 build/default/production/_ext/1360937237/flash.o
+ .debug_info    0x0000000000007dc9      0x2a0 build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_info    0x0000000000008069       0x3f /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_info    0x00000000000080a8       0x3f /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_info    0x00000000000080e7       0x40 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -3890,15 +3890,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_abbrev  0x0000000000000a47      0x23b build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_abbrev  0x0000000000000c82      0x22f build/default/production/_ext/1865657120/plib_uart2.o
  .debug_abbrev  0x0000000000000eb1       0xc7 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_abbrev  0x0000000000000f78       0x67 build/default/production/_ext/1171490990/interrupts.o
- .debug_abbrev  0x0000000000000fdf       0x7b build/default/production/_ext/1171490990/exceptions.o
- .debug_abbrev  0x000000000000105a      0x25b build/default/production/_ext/1171490990/initialization.o
- .debug_abbrev  0x00000000000012b5      0x1c6 build/default/production/_ext/1360937237/main.o
- .debug_abbrev  0x000000000000147b      0x38a build/default/production/_ext/1360937237/firmware_update.o
- .debug_abbrev  0x0000000000001805      0x239 build/default/production/_ext/1360937237/flash.o
- .debug_abbrev  0x0000000000001a3e      0x16f build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_abbrev  0x0000000000001bad       0x72 build/default/production/_ext/1000052432/sys_reset.o
- .debug_abbrev  0x0000000000001c1f      0x15a build/default/production/_ext/1881668453/sys_int.o
+ .debug_abbrev  0x0000000000000f78      0x15a build/default/production/_ext/1881668453/sys_int.o
+ .debug_abbrev  0x00000000000010d2       0x72 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_abbrev  0x0000000000001144       0x67 build/default/production/_ext/1171490990/interrupts.o
+ .debug_abbrev  0x00000000000011ab       0x7b build/default/production/_ext/1171490990/exceptions.o
+ .debug_abbrev  0x0000000000001226      0x25b build/default/production/_ext/1171490990/initialization.o
+ .debug_abbrev  0x0000000000001481      0x1c6 build/default/production/_ext/1360937237/main.o
+ .debug_abbrev  0x0000000000001647      0x38a build/default/production/_ext/1360937237/firmware_update.o
+ .debug_abbrev  0x00000000000019d1      0x239 build/default/production/_ext/1360937237/flash.o
+ .debug_abbrev  0x0000000000001c0a      0x16f build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_abbrev  0x0000000000001d79       0x2e /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_abbrev  0x0000000000001da7       0x2e /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_abbrev  0x0000000000001dd5       0x31 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -3997,15 +3997,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_line    0x00000000000019b6      0x859 build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_line    0x000000000000220f      0x4ec build/default/production/_ext/1865657120/plib_uart2.o
  .debug_line    0x00000000000026fb      0x181 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_line    0x000000000000287c       0xb0 build/default/production/_ext/1171490990/interrupts.o
- .debug_line    0x000000000000292c       0xd1 build/default/production/_ext/1171490990/exceptions.o
- .debug_line    0x00000000000029fd      0x4ea build/default/production/_ext/1171490990/initialization.o
- .debug_line    0x0000000000002ee7      0x305 build/default/production/_ext/1360937237/main.o
- .debug_line    0x00000000000031ec      0xf90 build/default/production/_ext/1360937237/firmware_update.o
- .debug_line    0x000000000000417c      0x679 build/default/production/_ext/1360937237/flash.o
- .debug_line    0x00000000000047f5      0x2cb build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_line    0x0000000000004ac0      0x158 build/default/production/_ext/1000052432/sys_reset.o
- .debug_line    0x0000000000004c18      0x1b1 build/default/production/_ext/1881668453/sys_int.o
+ .debug_line    0x000000000000287c      0x1b1 build/default/production/_ext/1881668453/sys_int.o
+ .debug_line    0x0000000000002a2d      0x158 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_line    0x0000000000002b85       0xb0 build/default/production/_ext/1171490990/interrupts.o
+ .debug_line    0x0000000000002c35       0xd1 build/default/production/_ext/1171490990/exceptions.o
+ .debug_line    0x0000000000002d06      0x4ea build/default/production/_ext/1171490990/initialization.o
+ .debug_line    0x00000000000031f0      0x305 build/default/production/_ext/1360937237/main.o
+ .debug_line    0x00000000000034f5      0xf90 build/default/production/_ext/1360937237/firmware_update.o
+ .debug_line    0x0000000000004485      0x679 build/default/production/_ext/1360937237/flash.o
+ .debug_line    0x0000000000004afe      0x2cb build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_line    0x0000000000004dc9       0xa5 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_line    0x0000000000004e6e       0xa9 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_line    0x0000000000004f17       0xc8 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -4105,15 +4105,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_frame   0x00000000000004ec       0xf4 build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_frame   0x00000000000005e0       0xfc build/default/production/_ext/1865657120/plib_uart2.o
  .debug_frame   0x00000000000006dc       0x50 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_frame   0x000000000000072c       0xd0 build/default/production/_ext/1171490990/interrupts.o
- .debug_frame   0x00000000000007fc       0x40 build/default/production/_ext/1171490990/exceptions.o
- .debug_frame   0x000000000000083c       0x2c build/default/production/_ext/1171490990/initialization.o
- .debug_frame   0x0000000000000868       0x9c build/default/production/_ext/1360937237/main.o
- .debug_frame   0x0000000000000904      0x22c build/default/production/_ext/1360937237/firmware_update.o
- .debug_frame   0x0000000000000b30      0x144 build/default/production/_ext/1360937237/flash.o
- .debug_frame   0x0000000000000c74       0xdc build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_frame   0x0000000000000d50       0x28 build/default/production/_ext/1000052432/sys_reset.o
- .debug_frame   0x0000000000000d78       0x70 build/default/production/_ext/1881668453/sys_int.o
+ .debug_frame   0x000000000000072c       0x70 build/default/production/_ext/1881668453/sys_int.o
+ .debug_frame   0x000000000000079c       0x28 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_frame   0x00000000000007c4       0xd0 build/default/production/_ext/1171490990/interrupts.o
+ .debug_frame   0x0000000000000894       0x40 build/default/production/_ext/1171490990/exceptions.o
+ .debug_frame   0x00000000000008d4       0x2c build/default/production/_ext/1171490990/initialization.o
+ .debug_frame   0x0000000000000900       0x9c build/default/production/_ext/1360937237/main.o
+ .debug_frame   0x000000000000099c      0x22c build/default/production/_ext/1360937237/firmware_update.o
+ .debug_frame   0x0000000000000bc8      0x144 build/default/production/_ext/1360937237/flash.o
+ .debug_frame   0x0000000000000d0c       0xdc build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_frame   0x0000000000000de8       0x20 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_frame   0x0000000000000e08       0x20 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_frame   0x0000000000000e28       0x20 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -4212,15 +4212,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_str     0x0000000000003047      0x6bb build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_str     0x0000000000003702      0x5d9 build/default/production/_ext/1865657120/plib_uart2.o
  .debug_str     0x0000000000003cdb      0x327 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_str     0x0000000000004002      0x319 build/default/production/_ext/1171490990/interrupts.o
- .debug_str     0x000000000000431b      0x335 build/default/production/_ext/1171490990/exceptions.o
- .debug_str     0x0000000000004650      0x9a1 build/default/production/_ext/1171490990/initialization.o
- .debug_str     0x0000000000004ff1      0x495 build/default/production/_ext/1360937237/main.o
- .debug_str     0x0000000000005486      0x99e build/default/production/_ext/1360937237/firmware_update.o
- .debug_str     0x0000000000005e24      0x7dd build/default/production/_ext/1360937237/flash.o
- .debug_str     0x0000000000006601      0x46d build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_str     0x0000000000006a6e      0x306 build/default/production/_ext/1000052432/sys_reset.o
- .debug_str     0x0000000000006d74      0x3eb build/default/production/_ext/1881668453/sys_int.o
+ .debug_str     0x0000000000004002      0x3eb build/default/production/_ext/1881668453/sys_int.o
+ .debug_str     0x00000000000043ed      0x306 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_str     0x00000000000046f3      0x319 build/default/production/_ext/1171490990/interrupts.o
+ .debug_str     0x0000000000004a0c      0x335 build/default/production/_ext/1171490990/exceptions.o
+ .debug_str     0x0000000000004d41      0x9a1 build/default/production/_ext/1171490990/initialization.o
+ .debug_str     0x00000000000056e2      0x495 build/default/production/_ext/1360937237/main.o
+ .debug_str     0x0000000000005b77      0x99e build/default/production/_ext/1360937237/firmware_update.o
+ .debug_str     0x0000000000006515      0x7dd build/default/production/_ext/1360937237/flash.o
+ .debug_str     0x0000000000006cf2      0x46d build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_str     0x000000000000715f      0x331 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_str     0x0000000000007490      0x339 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_str     0x00000000000077c9      0x34b /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -4319,11 +4319,11 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_loc     0x0000000000000ddb      0x467 build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_loc     0x0000000000001242      0x387 build/default/production/_ext/1865657120/plib_uart2.o
  .debug_loc     0x00000000000015c9      0x1a0 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_loc     0x0000000000001769       0x25 build/default/production/_ext/1171490990/initialization.o
- .debug_loc     0x000000000000178e     0x13ae build/default/production/_ext/1360937237/firmware_update.o
- .debug_loc     0x0000000000002b3c      0x43e build/default/production/_ext/1360937237/flash.o
- .debug_loc     0x0000000000002f7a       0x3f build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_loc     0x0000000000002fb9      0x109 build/default/production/_ext/1881668453/sys_int.o
+ .debug_loc     0x0000000000001769      0x109 build/default/production/_ext/1881668453/sys_int.o
+ .debug_loc     0x0000000000001872       0x25 build/default/production/_ext/1171490990/initialization.o
+ .debug_loc     0x0000000000001897     0x13ae build/default/production/_ext/1360937237/firmware_update.o
+ .debug_loc     0x0000000000002c45      0x43e build/default/production/_ext/1360937237/flash.o
+ .debug_loc     0x0000000000003083       0x3f build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_loc     0x00000000000030c2       0xd6 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libc-size-musl.a(memcpy.o)
  .debug_loc     0x0000000000003198       0xb6 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libc-size-musl.a(memset.o)
  .debug_loc     0x000000000000324e       0x44 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libc-size-musl.a(strcmp.o)
@@ -4425,15 +4425,15 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .debug_ranges  0x0000000000000258       0xe8 build/default/production/_ext/298189674/plib_spi2_master.o
  .debug_ranges  0x0000000000000340       0x70 build/default/production/_ext/1865657120/plib_uart2.o
  .debug_ranges  0x00000000000003b0       0x18 build/default/production/_ext/163028504/xc32_monitor.o
- .debug_ranges  0x00000000000003c8       0x18 build/default/production/_ext/1171490990/interrupts.o
- .debug_ranges  0x00000000000003e0       0x10 build/default/production/_ext/1171490990/exceptions.o
- .debug_ranges  0x00000000000003f0       0x10 build/default/production/_ext/1171490990/initialization.o
- .debug_ranges  0x0000000000000400       0x30 build/default/production/_ext/1360937237/main.o
- .debug_ranges  0x0000000000000430      0x2b8 build/default/production/_ext/1360937237/firmware_update.o
- .debug_ranges  0x00000000000006e8       0xc8 build/default/production/_ext/1360937237/flash.o
- .debug_ranges  0x00000000000007b0       0xb0 build/default/production/_ext/1360937237/spi_coordinator.o
- .debug_ranges  0x0000000000000860       0x10 build/default/production/_ext/1000052432/sys_reset.o
- .debug_ranges  0x0000000000000870       0x30 build/default/production/_ext/1881668453/sys_int.o
+ .debug_ranges  0x00000000000003c8       0x30 build/default/production/_ext/1881668453/sys_int.o
+ .debug_ranges  0x00000000000003f8       0x10 build/default/production/_ext/1000052432/sys_reset.o
+ .debug_ranges  0x0000000000000408       0x18 build/default/production/_ext/1171490990/interrupts.o
+ .debug_ranges  0x0000000000000420       0x10 build/default/production/_ext/1171490990/exceptions.o
+ .debug_ranges  0x0000000000000430       0x10 build/default/production/_ext/1171490990/initialization.o
+ .debug_ranges  0x0000000000000440       0x30 build/default/production/_ext/1360937237/main.o
+ .debug_ranges  0x0000000000000470      0x2b8 build/default/production/_ext/1360937237/firmware_update.o
+ .debug_ranges  0x0000000000000728       0xc8 build/default/production/_ext/1360937237/flash.o
+ .debug_ranges  0x00000000000007f0       0xb0 build/default/production/_ext/1360937237/spi_coordinator.o
  .debug_ranges  0x00000000000008a0       0x10 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-reset.o)
  .debug_ranges  0x00000000000008b0       0x10 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(default-on-bootstrap.o)
  .debug_ranges  0x00000000000008c0       0x10 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(defaultinterrupt.o)
@@ -4542,29 +4542,29 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .gnu.attributes
                 0x0000000000000090       0x10 build/default/production/_ext/163028504/xc32_monitor.o
  .gnu.attributes
-                0x00000000000000a0       0x10 build/default/production/_ext/1171490990/interrupts.o
+                0x00000000000000a0       0x10 build/default/production/_ext/1881668453/sys_int.o
  .gnu.attributes
-                0x00000000000000b0       0x10 build/default/production/_ext/1171490990/exceptions.o
+                0x00000000000000b0       0x10 build/default/production/_ext/1000052432/sys_reset.o
  .gnu.attributes
-                0x00000000000000c0       0x10 build/default/production/_ext/1171490990/initialization.o
+                0x00000000000000c0       0x10 build/default/production/_ext/1171490990/interrupts.o
  .gnu.attributes
-                0x00000000000000d0       0x10 build/default/production/_ext/1360937237/main.o
+                0x00000000000000d0       0x10 build/default/production/_ext/1171490990/exceptions.o
  .gnu.attributes
-                0x00000000000000e0       0x10 build/default/production/_ext/1360937237/firmware_update.o
+                0x00000000000000e0       0x10 build/default/production/_ext/1171490990/initialization.o
  .gnu.attributes
-                0x00000000000000f0       0x10 build/default/production/_ext/1360937237/flash.o
+                0x00000000000000f0       0x10 build/default/production/_ext/1360937237/main.o
  .gnu.attributes
-                0x0000000000000100       0x10 build/default/production/_ext/1360937237/spi_coordinator.o
+                0x0000000000000100       0x10 build/default/production/_ext/1360937237/firmware_update.o
  .gnu.attributes
-                0x0000000000000110       0x10 build/default/production/_ext/1000052432/sys_reset.o
+                0x0000000000000110       0x10 build/default/production/_ext/1360937237/flash.o
  .gnu.attributes
-                0x0000000000000120       0x10 build/default/production/_ext/1881668453/sys_int.o
+                0x0000000000000120       0x10 build/default/production/_ext/1360937237/spi_coordinator.o
  .gnu.attributes
-                0x0000000000000130       0x10 /tmp/ccICOehh.o
+                0x0000000000000130       0x10 /tmp/cc8XwV2S.o
  .gnu.attributes
-                0x0000000000000140       0x10 /tmp/cc2o20I3.o
+                0x0000000000000140       0x10 /tmp/ccpcB4kC.o
  .gnu.attributes
-                0x0000000000000150       0x10 /tmp/cckm8ZSW.o
+                0x0000000000000150       0x10 /tmp/ccSKDtP5.o
  .gnu.attributes
                 0x0000000000000160       0x10 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/pic32_software_reset.o
  .gnu.attributes
@@ -4852,9 +4852,9 @@ LOAD build/default/production/_ext/1881668453/sys_int.o
  .gnu.attributes
                 0x0000000000000a40       0x10 /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/libpic32.a(pic32_data_init_copy.o)
                 0x0000000000002000                _min_heap_size = 0x2000
-LOAD /tmp/ccICOehh.o
-LOAD /tmp/cc2o20I3.o
-LOAD /tmp/cckm8ZSW.o
+LOAD /tmp/cc8XwV2S.o
+LOAD /tmp/ccpcB4kC.o
+LOAD /tmp/ccSKDtP5.o
 LOAD /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/pic32_software_reset.o
 LOAD /opt/microchip/xc32/v4.60/bin/bin/../../lib/gcc/pic32mx/8.3.1/libgcc.a
 START GROUP
@@ -5431,7 +5431,7 @@ __xc_reference_data
 .text.main_entry
                 0x000000009d006c0c       0x54
  .text.main_entry
-                0x000000009d006c0c       0x54 /tmp/ccICOehh.o
+                0x000000009d006c0c       0x54 /tmp/cc8XwV2S.o
                 0x000000009d006c40                __crt0_exit
 
 .text.__pop_float

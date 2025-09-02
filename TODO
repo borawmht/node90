@@ -1,0 +1,28 @@
+Node90 ToDo:
+
+PDLINE
+
+Sensor OCCUPANCY_LH
+Sensor TOGGLE_LH
+
+RS485
+DESK_CC and DESK_CV
+MECHO
+SOMFY
+BATTERY_BACKUP_CC and BATTERY_BACKUP_CV
+
+Send Desk Status
+Send Sensor Status
+
+LLDP
+CDP
+
+Commands
+
+Static IP
+
+
+HTTP Server
+MQTT
+
+802.1x

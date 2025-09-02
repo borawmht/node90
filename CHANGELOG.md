@@ -2,6 +2,10 @@
 
 Node90 Firmware
 
+# 1.7.0
+- add dim duration
+- 
+
 # 1.6.0
 - add pwm, i2c, io_expander, dac, adc
 - add actuator mode, dim_els, cuv_enable

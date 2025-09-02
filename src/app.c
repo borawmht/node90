@@ -130,6 +130,7 @@ void app_100ms_task(void){
     app_led_task();
     sense_app_task();
     control_output_enable_task();
+    control_dim_duration_task();
     app_send_status_task();
     app_firmware_update_task();
 }
