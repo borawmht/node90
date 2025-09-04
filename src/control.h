@@ -19,6 +19,7 @@
 
 void control_init(void);
 void control_output_enable_task(void);
+void control_dim_duration_task(void);
 void control_output_enable(uint8_t channel, bool enable);
 void control_output_protection_delay(int32_t delay);
 void control_update_pwm_mode(uint8_t channel);

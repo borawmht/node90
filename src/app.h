@@ -34,6 +34,7 @@ void APP_Tasks(void); // called by task scheduler
 bool app_start_firmware_download(char* url, bool update);
 bool app_firmware_downloading(void);
 void app_send_status_task(void);
+void app_10us_task(void);
 void app_10ms_task(void);
 void app_100ms_task(void);
 

@@ -16,6 +16,7 @@
 #include "control.h"
 #include "sense.h"
 #include "pwm.h"
+#include "pdline.h"
 #include "resources/network.h"
 
 // Application signature for bootloader validation
@@ -120,10 +121,15 @@ bool app_firmware_downloading(void){
     return app_firmware_download_running;
 }
 
+void app_10us_task(void){
+    pdline_task();
+}
+
 void app_10ms_task(void){
     pwm_fade_task();
     sense_adc_task();
     coap_packet_queue_task();
+    pdline_data_ready_task();
 }
 
 void app_100ms_task(void){
@@ -164,7 +170,10 @@ void APP_Tasks ( void ){
             flash_init();
             firmware_update_init();
             sense_init();
-            control_init();            
+            control_init();
+            TMR3_CallbackRegister((TMR_CALLBACK)app_10us_task, 0);
+            TMR3_Start();
+            pdline_init();
             led_stat_period = SLOW_LED_PERIOD;
             // SYS_CONSOLE_PRINT("Free heap: %d bytes\r\n", xPortGetFreeHeapSize());
             appData.state = APP_STATE_RUN;

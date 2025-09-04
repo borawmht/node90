@@ -49,11 +49,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "driver/ethmac/drv_ethmac.h"
-#include "system/time/sys_time.h"
 #include "peripheral/nvm/plib_nvm.h"
+#include "system/time/sys_time.h"
 #include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/uart/plib_uart1.h"
 #include "peripheral/uart/plib_uart2.h"
+#include "peripheral/tmr/plib_tmr3.h"
 #include "peripheral/spi/spi_master/plib_spi2_master.h"
 #include "library/tcpip/tcpip.h"
 #include "system/sys_time_h2_adapter.h"
@@ -71,7 +72,6 @@
 #include "driver/sst26/drv_sst26.h"
 #include "driver/ethphy/drv_ethphy.h"
 #include "driver/ethphy/drv_extphy_lan8720.h"
-#include "wolfssl/wolfcrypt/port/pic32/crypt_wolfcryptcb.h"
 #include "system/console/sys_console.h"
 #include "system/console/src/sys_console_uart_definitions.h"
 #include "FreeRTOS.h"

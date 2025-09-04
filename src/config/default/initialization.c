@@ -500,6 +500,8 @@ void SYS_Initialize ( void* data )
 
 	UART2_Initialize();
 
+    TMR3_Initialize();
+
 	SPI2_Initialize();
 
 
@@ -542,7 +544,6 @@ void SYS_Initialize ( void* data )
    SYS_ASSERT(sysObj.tcpip != SYS_MODULE_OBJ_INVALID, "TCPIP_STACK_Init Failed" );
 
 
-    CRYPT_WCCB_Initialize();
 
     /* MISRAC 2012 deviation block end */
     APP_Initialize();

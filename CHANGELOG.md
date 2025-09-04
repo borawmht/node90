@@ -4,7 +4,8 @@ Node90 Firmware
 
 # 1.7.0
 - add dim duration
-- 
+- add pdline and timer2
+- remove wolfcrypt and wolfssl
 
 # 1.6.0
 - add pwm, i2c, io_expander, dac, adc

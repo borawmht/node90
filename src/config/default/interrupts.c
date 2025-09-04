@@ -68,6 +68,7 @@
 // *****************************************************************************
 // *****************************************************************************
 void CORE_TIMER_Handler (void);
+void TIMER_3_Handler (void);
 void SPI_2_Handler (void);
 void UART_2_Handler (void);
 void FCE_Handler (void);
@@ -85,6 +86,11 @@ void __attribute__((used)) CORE_TIMER_Handler (void)
 }
 
 
+
+void __attribute__((used)) TIMER_3_Handler (void)
+{
+    TIMER_3_InterruptHandler();
+}
 
 void __attribute__((used)) SPI_2_Handler (void)
 {

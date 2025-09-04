@@ -201,26 +201,6 @@ extern "C" {
 #define TCPIP_EMAC_FLOW_CONTROL_EMPTY_WMARK         0
 
 
-/******************************************************************************/
-/*wolfSSL TLS Layer Configuration*/
-/******************************************************************************/
-
-#define WOLFSSL_ALT_NAMES
-#define WOLFSSL_DER_LOAD
-// #define KEEP_OUR_CERT
-// #define KEEP_PEER_CERT
-#define HAVE_CRL_IO
-#define HAVE_IO_TIMEOUT
-#define TFM_NO_ASM
-#define WOLFSSL_NO_ASM
-#define SIZEOF_LONG_LONG 8
-#define WOLFSSL_USER_IO
-#define NO_WRITEV
-#define MICROCHIP_TCPIP
-#define NO_PWDBASED
-#define WOLFSSL_SMALL_STACK
-#define NO_OLD_TLS
-
 
 /*** TCP Configuration ***/
 #define TCPIP_TCP_MAX_SEG_SIZE_TX		        	1460
@@ -405,56 +385,6 @@ extern "C" {
 #define DRV_ETHPHY_LAN8720_NEG_DONE_TMO            2000
 #define DRV_ETHPHY_LAN8720_RESET_CLR_TMO           500
 
-
-
-/*** wolfCrypt Library Configuration ***/
-#define MICROCHIP_PIC32
-#define MICROCHIP_MPLAB_HARMONY
-#define MICROCHIP_MPLAB_HARMONY_3
-#define HAVE_MCAPI
-#define SIZEOF_LONG_LONG 8
-#define WOLFSSL_USER_IO
-#define NO_WRITEV
-#define NO_FILESYSTEM
-#define USE_FAST_MATH
-#define NO_PWDBASED
-#define HAVE_MCAPI
-#define WOLF_CRYPTO_CB  // provide call-back support
-#if (__XC32_VERSION > 100000000)
-#define WOLFSSL_HAVE_MIN
-#define WOLFSSL_HAVE_MAX
-#endif
-#undef WOLFSSL_HAVE_MIN
-#undef WOLFSSL_HAVE_MAX
-// ---------- FUNCTIONAL CONFIGURATION START ----------
-#define WOLFSSL_AES_SMALL_TABLES
-#define NO_MD4
-#define NO_SHA // specifically, no SHA1 (legacy name)
-#define WOLFSSL_SHA224
-#define NO_DES3
-#define WOLFSSL_AES_128
-#define NO_AES_192 // not supported by HW accelerator
-#define NO_AES_256 // not supported by HW accelerator
-#define WOLFSSL_AES_DIRECT
-#define HAVE_AES_DECRYPT
-#define NO_AES_CBC
-#define HAVE_AESGCM
-#define NO_RC4
-#define NO_HC128
-#define NO_RABBIT
-#define NO_DH
-#define NO_DSA
-#define FP_MAX_BITS 4096
-#define USE_CERT_BUFFERS_2048
-#define WOLFSSL_STATIC_RSA
-#define NO_DEV_RANDOM
-#define HAVE_HASHDRBG
-#define WC_NO_HARDEN
-#define FREERTOS
-#define NO_SIG_WRAPPER
-#define DEBUG
-#define DEBUG_WOLFSSL
-// ---------- FUNCTIONAL CONFIGURATION END ----------
 
 #define TCPIP_STACK_NETWORK_INTERAFCE_COUNT  	1
 

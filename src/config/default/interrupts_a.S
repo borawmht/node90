@@ -83,6 +83,37 @@ _CORE_TIMER_Handler:
     nop
     portRESTORE_CONTEXT
     .end    _CORE_TIMER_Handler
+   .extern  TIMER_3_Handler
+
+   .section .vector_12,code, keep
+   .equ     __vector_dispatch_12, IntVectorTIMER_3_Handler
+   .global  __vector_dispatch_12
+   .set     nomicromips
+   .set     noreorder
+   .set     nomips16
+   .set     noat
+   .ent  IntVectorTIMER_3_Handler
+
+IntVectorTIMER_3_Handler:
+    la    $26,  _TIMER_3_Handler
+    jr    $26
+    nop
+    .end    IntVectorTIMER_3_Handler
+
+   .section .TIMER_3_Handler_vector_text, code, keep
+   .set     nomicromips
+   .set     noreorder
+   .set     nomips16
+   .set     noat
+   .ent  _TIMER_3_Handler
+
+_TIMER_3_Handler:
+    portSAVE_CONTEXT
+    la    s6,  TIMER_3_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end    _TIMER_3_Handler
    .extern  SPI_2_Handler
 
    .section .vector_31,code, keep
